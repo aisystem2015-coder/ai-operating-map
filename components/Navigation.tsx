@@ -24,11 +24,12 @@ export default function Navigation() {
     { href: "/what-works", label: "What Works" },
     { href: "/ai-mindset", label: "AI Mindset" },
     { href: "/execution-checklist", label: "Execution Checklist" },
+    { href: "/sprint", label: "Sprint" },
   ];
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-10 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
           ? "bg-white/80 backdrop-blur-xl border-b border-black/5 shadow-sm"
           : "bg-transparent"
