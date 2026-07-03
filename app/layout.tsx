@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Inter, Manrope } from "next/font/google";
+import MayaBanner from "@/components/MayaBanner";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -26,7 +27,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${manrope.variable}`}>
+      <body className={`${inter.variable} ${manrope.variable} pt-10`}>
+        <MayaBanner />
         {children}
       </body>
     </html>

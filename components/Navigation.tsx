@@ -22,8 +22,11 @@ export default function Navigation() {
     { href: "/origins", label: "The Tech" },
     { href: "/market-reality", label: "Market Reality" },
     { href: "/what-works", label: "What Works" },
+    { href: "/vertical-ai", label: "Vertical AI" },
+    { href: "/agent-architecture", label: "Agents" },
     { href: "/ai-mindset", label: "AI Mindset" },
-    { href: "/execution-checklist", label: "Execution Checklist" },
+    { href: "/execution-checklist", label: "Execution" },
+    { href: "/ai-now-2026", label: "2026 Now" },
     { href: "/sprint", label: "Sprint" },
   ];
 
