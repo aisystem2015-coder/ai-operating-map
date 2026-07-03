@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Inter, Manrope } from "next/font/google";
 import MayaBanner from "@/components/MayaBanner";
+import Footer from "@/components/Footer";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -16,8 +17,13 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "AI Operating Map",
-  description: "Executive clarity on AI systems, data foundations, and what actually works",
+  title: "AI Operating Map · 2026",
+  description: "A complete reference for operations professionals navigating AI in 2026 — model landscape, agent architecture, and what actually works in production.",
+  openGraph: {
+    title: "AI Operating Map · 2026",
+    description: "From model landscape to agent architecture to production results. Built for operators, not engineers.",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
@@ -30,6 +36,7 @@ export default function RootLayout({
       <body className={`${inter.variable} ${manrope.variable} pt-10`}>
         <MayaBanner />
         {children}
+        <Footer />
       </body>
     </html>
   );

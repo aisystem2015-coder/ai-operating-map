@@ -874,7 +874,59 @@ export default function Home() {
             </div>
           </section>
 
-          {/* ── 18. CTA ── */}
+          {/* ── 18. EXPLORE THE MAP ── */}
+          <section className="space-y-10">
+            <motion.div {...fadeIn} className="space-y-3">
+              <SectionBadge label="Explore the map" color="emerald" />
+              <h2 className="text-3xl md:text-4xl font-heading font-bold leading-tight">
+                Go deeper on what matters to you
+              </h2>
+              <p className="text-secondary leading-relaxed max-w-2xl">
+                Each section of the map is a standalone deep-dive. Pick the one closest to where you are now.
+              </p>
+            </motion.div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {[
+                { href: "/origins", tag: "Foundations", title: "The Tech", desc: "How transformers, GPUs, and vector databases actually work — without the engineering degree.", color: "indigo" },
+                { href: "/market-reality", tag: "Data", title: "Market Reality", desc: "Why 95% of GenAI pilots fail to scale and what separates the ones that don't.", color: "orange" },
+                { href: "/why-pilots-fail", tag: "Root causes", title: "Why Pilots Fail", desc: "The 6 failure patterns that kill AI initiatives before they reach production.", color: "red" },
+                { href: "/what-works", tag: "Patterns", title: "What Works", desc: "The operational patterns behind AI deployments with real ROI in 2024–2026.", color: "teal" },
+                { href: "/ai-mindset", tag: "Framework", title: "AI Mindset", desc: "The five-layer system model that separates AI users from AI operators.", color: "emerald" },
+                { href: "/agent-architecture", tag: "Technical", title: "Agent Architecture", desc: "Stack, patterns, failure modes, and how to build an agent that runs in production.", color: "violet" },
+                { href: "/vertical-ai", tag: "Strategy", title: "Vertical AI", desc: "Why generic AI has no competitive moat and how vertical AI compounds over time.", color: "blue" },
+                { href: "/execution-checklist", tag: "Action", title: "Execution Checklist", desc: "The decisions to make before committing teams and budgets to AI work.", color: "emerald" },
+                { href: "/ai-now-2026", tag: "Current", title: "AI Now — 2026", desc: "Where the technology actually stands right now — benchmarks, models, deployments.", color: "pink" },
+              ].map((page, i) => {
+                const c = colorMap[page.color] ?? colorMap.emerald;
+                return (
+                  <motion.div
+                    key={page.href}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.04 }}
+                  >
+                    <Link
+                      href={page.href}
+                      className="group block rounded-2xl border border-black/6 bg-white hover:border-black/12 hover:shadow-md p-6 space-y-3 transition-all h-full"
+                    >
+                      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide border ${c.bg} ${c.text} ${c.border}`}>
+                        {page.tag}
+                      </span>
+                      <h3 className="text-base font-semibold text-foreground group-hover:text-accent transition-colors">
+                        {page.title}
+                      </h3>
+                      <p className="text-sm text-secondary leading-relaxed">{page.desc}</p>
+                      <div className="flex items-center gap-1 text-xs font-medium text-secondary group-hover:text-accent transition-colors pt-1">
+                        Read more <ArrowRight size={12} />
+                      </div>
+                    </Link>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* ── 19. CTA ── */}
           <section>
             <motion.div
               {...fadeIn}
