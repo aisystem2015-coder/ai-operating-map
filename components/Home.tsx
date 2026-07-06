@@ -188,30 +188,30 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
               className="relative overflow-hidden rounded-3xl border border-emerald-100 shadow-xl"
-              style={{ background: "linear-gradient(135deg, #0f2e1f 0%, #0d3527 40%, #0a1628 100%)" }}
+              style={{ background: "linear-gradient(135deg, #ecfdf5 0%, #f0fdfa 45%, #ffffff 100%)" }}
             >
               {/* Grid texture */}
-              <div className="pointer-events-none absolute inset-0 opacity-10" aria-hidden style={{ backgroundImage: "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.15) 1px, transparent 0)", backgroundSize: "28px 28px" }} />
+              <div className="pointer-events-none absolute inset-0 opacity-[0.4]" aria-hidden style={{ backgroundImage: "radial-gradient(circle at 1px 1px, rgba(16,24,40,0.06) 1px, transparent 0)", backgroundSize: "28px 28px" }} />
               {/* Glow */}
-              <div className="pointer-events-none absolute top-0 right-0 w-96 h-96 rounded-full bg-emerald-500/10 blur-3xl" aria-hidden />
-              <div className="pointer-events-none absolute bottom-0 left-1/3 w-64 h-64 rounded-full bg-violet-500/10 blur-3xl" aria-hidden />
+              <div className="pointer-events-none absolute top-0 right-0 w-96 h-96 rounded-full bg-emerald-300/20 blur-3xl" aria-hidden />
+              <div className="pointer-events-none absolute bottom-0 left-1/3 w-64 h-64 rounded-full bg-violet-300/20 blur-3xl" aria-hidden />
 
               <div className="relative px-8 py-14 lg:px-14 lg:py-20 space-y-10">
                 <div className="flex items-center gap-3 flex-wrap">
-                  <span className="inline-flex items-center gap-2 rounded-full bg-emerald-500/20 border border-emerald-500/30 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-300">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="inline-flex items-center gap-2 rounded-full bg-emerald-100 border border-emerald-200 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                     AI Operating Map
                   </span>
-                  <span className="text-xs text-slate-400 font-medium">Updated July 2026</span>
+                  <span className="text-xs text-secondary font-medium">Updated July 2026</span>
                 </div>
 
                 <div className="space-y-5 max-w-3xl">
-                  <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold leading-[1.1] text-white">
+                  <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold leading-[1.1] text-foreground">
                     AI is not a product.<br />
-                    <span className="text-emerald-400">It is the reasoning layer</span><br />
+                    <span className="text-emerald-600">It is the reasoning layer</span><br />
                     inside your system.
                   </h1>
-                  <p className="text-lg text-slate-300 leading-relaxed max-w-2xl">
+                  <p className="text-lg text-secondary leading-relaxed max-w-2xl">
                     A complete reference for operations professionals navigating AI in 2026 — from model landscape to agent architecture to production results.
                   </p>
                 </div>
@@ -225,8 +225,8 @@ export default function Home() {
                     { stat: "2026", label: "the year agents went to production" },
                   ].map((s) => (
                     <div key={s.stat} className="space-y-0.5">
-                      <div className="text-2xl font-heading font-bold text-emerald-400">{s.stat}</div>
-                      <div className="text-xs text-slate-400">{s.label}</div>
+                      <div className="text-2xl font-heading font-bold text-emerald-600">{s.stat}</div>
+                      <div className="text-xs text-secondary">{s.label}</div>
                     </div>
                   ))}
                 </div>
@@ -235,7 +235,7 @@ export default function Home() {
                   <Link href="/ai-mindset" className="inline-flex items-center gap-2 justify-center rounded-xl bg-emerald-500 hover:bg-emerald-400 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-500/30 transition">
                     Start with the AI Mindset <ArrowRight size={16} />
                   </Link>
-                  <Link href="/execution-checklist" className="inline-flex items-center gap-2 justify-center rounded-xl border border-white/20 bg-white/10 hover:bg-white/20 px-6 py-3 text-sm font-semibold text-white transition">
+                  <Link href="/execution-checklist" className="inline-flex items-center gap-2 justify-center rounded-xl border border-black/10 bg-white hover:bg-slate-50 px-6 py-3 text-sm font-semibold text-foreground shadow-sm transition">
                     Execution Checklist <ChevronRight size={16} />
                   </Link>
                 </div>
@@ -543,15 +543,15 @@ export default function Home() {
             <motion.div
               {...fadeIn}
               className="relative overflow-hidden rounded-3xl border border-violet-100 p-10 lg:p-14 space-y-6"
-              style={{ background: "linear-gradient(135deg, #1e0a3c 0%, #150830 100%)" }}
+              style={{ background: "linear-gradient(135deg, #f5f3ff 0%, #ffffff 100%)" }}
             >
-              <div className="pointer-events-none absolute top-0 right-0 w-80 h-80 rounded-full bg-violet-500/15 blur-3xl" aria-hidden />
+              <div className="pointer-events-none absolute top-0 right-0 w-80 h-80 rounded-full bg-violet-300/20 blur-3xl" aria-hidden />
               <SectionBadge label="Agent Architecture" color="violet" />
               <div className="space-y-4 max-w-3xl relative">
-                <h2 className="text-4xl md:text-5xl font-heading font-black leading-tight text-white">
-                  LLMs think.<br /><span className="text-violet-400">Agents act.</span>
+                <h2 className="text-4xl md:text-5xl font-heading font-black leading-tight text-foreground">
+                  LLMs think.<br /><span className="text-violet-600">Agents act.</span>
                 </h2>
-                <p className="text-slate-300 leading-relaxed text-lg">
+                <p className="text-secondary leading-relaxed text-lg">
                   A language model responds to prompts. An AI agent uses tools, executes tasks, and operates autonomously. The gap between these two is the gap between &ldquo;impressive demo&rdquo; and &ldquo;operational leverage.&rdquo;
                 </p>
               </div>
@@ -564,12 +564,12 @@ export default function Home() {
                 ].map((item) => {
                   const Icon = item.icon;
                   return (
-                    <div key={item.title} className="rounded-xl border border-white/10 bg-white/5 p-5 space-y-3 hover:bg-white/10 transition-colors">
-                      <div className="h-8 w-8 rounded-lg bg-violet-500/20 border border-violet-500/30 flex items-center justify-center">
-                        <Icon size={16} className="text-violet-300" />
+                    <div key={item.title} className="rounded-xl border border-black/5 bg-white shadow-sm p-5 space-y-3 hover:shadow-md transition-shadow">
+                      <div className="h-8 w-8 rounded-lg bg-violet-50 border border-violet-200 flex items-center justify-center">
+                        <Icon size={16} className="text-violet-700" />
                       </div>
-                      <h3 className="text-sm font-semibold text-white">{item.title}</h3>
-                      <p className="text-xs text-slate-400 leading-relaxed">{item.desc}</p>
+                      <h3 className="text-sm font-semibold text-foreground">{item.title}</h3>
+                      <p className="text-xs text-secondary leading-relaxed">{item.desc}</p>
                     </div>
                   );
                 })}
@@ -824,51 +824,51 @@ export default function Home() {
           {/* ── 17. AI USER vs AI OPERATOR ── */}
           <section>
             <div
-              className="relative overflow-hidden rounded-3xl p-10 lg:p-14 space-y-8"
-              style={{ background: "linear-gradient(135deg, #0f2818 0%, #0a1628 60%, #150830 100%)" }}
+              className="relative overflow-hidden rounded-3xl border border-black/5 p-10 lg:p-14 space-y-8 shadow-sm"
+              style={{ background: "linear-gradient(135deg, #ecfdf5 0%, #ffffff 55%, #f5f3ff 100%)" }}
             >
-              <div className="pointer-events-none absolute inset-0 opacity-10" aria-hidden style={{ backgroundImage: "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.15) 1px, transparent 0)", backgroundSize: "28px 28px" }} />
-              <div className="pointer-events-none absolute top-0 right-0 w-80 h-80 rounded-full bg-emerald-500/10 blur-3xl" aria-hidden />
-              <div className="pointer-events-none absolute bottom-0 left-0 w-64 h-64 rounded-full bg-violet-500/10 blur-3xl" aria-hidden />
+              <div className="pointer-events-none absolute inset-0 opacity-[0.4]" aria-hidden style={{ backgroundImage: "radial-gradient(circle at 1px 1px, rgba(16,24,40,0.06) 1px, transparent 0)", backgroundSize: "28px 28px" }} />
+              <div className="pointer-events-none absolute top-0 right-0 w-80 h-80 rounded-full bg-emerald-300/20 blur-3xl" aria-hidden />
+              <div className="pointer-events-none absolute bottom-0 left-0 w-64 h-64 rounded-full bg-violet-300/20 blur-3xl" aria-hidden />
               <div className="relative space-y-2">
                 <SectionBadge label="The position to take in 2026" color="emerald" />
-                <h2 className="text-3xl md:text-4xl font-heading font-bold text-white leading-tight">
+                <h2 className="text-3xl md:text-4xl font-heading font-bold text-foreground leading-tight">
                   The gap between AI users<br />and AI operators is widening.
                 </h2>
               </div>
               <div className="relative grid md:grid-cols-2 gap-6">
-                <div className="rounded-2xl border border-white/10 bg-white/5 p-6 space-y-4">
+                <div className="rounded-2xl border border-black/5 bg-slate-50 p-6 space-y-4">
                   <div className="flex items-center gap-3">
-                    <div className="h-9 w-9 rounded-xl bg-white/10 flex items-center justify-center">
-                      <Globe size={18} className="text-slate-300" />
+                    <div className="h-9 w-9 rounded-xl bg-white border border-black/5 flex items-center justify-center">
+                      <Globe size={18} className="text-secondary" />
                     </div>
-                    <h3 className="font-semibold text-slate-200">AI user</h3>
+                    <h3 className="font-semibold text-foreground">AI user</h3>
                   </div>
                   <ul className="space-y-2 text-sm">
                     {["Uses ChatGPT, Claude.ai, Gemini interchangeably", "Prompts for individual tasks in isolation", "No persistent knowledge base or domain memory", "Dependent on the same tools as everyone else", "Productivity gains: 10–30%"].map((item) => (
-                      <li key={item} className="flex items-start gap-2 text-slate-400">
-                        <span className="h-1.5 w-1.5 rounded-full bg-slate-500 mt-1.5 flex-shrink-0" />{item}
+                      <li key={item} className="flex items-start gap-2 text-secondary">
+                        <span className="h-1.5 w-1.5 rounded-full bg-slate-400 mt-1.5 flex-shrink-0" />{item}
                       </li>
                     ))}
                   </ul>
                 </div>
-                <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-6 space-y-4">
+                <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 space-y-4">
                   <div className="flex items-center gap-3">
-                    <div className="h-9 w-9 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center">
-                      <Sparkles size={18} className="text-emerald-400" />
+                    <div className="h-9 w-9 rounded-xl bg-emerald-100 border border-emerald-200 flex items-center justify-center">
+                      <Sparkles size={18} className="text-emerald-700" />
                     </div>
-                    <h3 className="font-semibold text-emerald-400">AI operator</h3>
+                    <h3 className="font-semibold text-emerald-700">AI operator</h3>
                   </div>
                   <ul className="space-y-2 text-sm">
                     {["Builds systems that use AI — not just uses AI", "Orchestrates agents across end-to-end workflows", "Domain knowledge stored, indexed, and queryable", "Proprietary data and systems create competitive moat", "Leverage gains: 5–10× and compounding"].map((item) => (
-                      <li key={item} className="flex items-start gap-2 text-slate-200">
-                        <CheckCircle size={14} className="text-emerald-400 mt-0.5 flex-shrink-0" />{item}
+                      <li key={item} className="flex items-start gap-2 text-foreground">
+                        <CheckCircle size={14} className="text-emerald-600 mt-0.5 flex-shrink-0" />{item}
                       </li>
                     ))}
                   </ul>
                 </div>
               </div>
-              <p className="relative text-slate-300 leading-relaxed max-w-3xl">
+              <p className="relative text-secondary leading-relaxed max-w-3xl">
                 The operations professional who understands AI as infrastructure — who can design the system, wire the tools, and govern the outputs — is the most valuable person in any organization in 2026. This map exists to create that person.
               </p>
             </div>
