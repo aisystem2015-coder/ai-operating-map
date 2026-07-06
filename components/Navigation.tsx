@@ -50,17 +50,20 @@ export default function Navigation() {
   return (
     <>
       <nav
-        className="fixed top-10 left-0 right-0 z-50 transition-all duration-300 border-b border-white/[0.07]"
-        style={{ background: isScrolled ? "rgba(8,13,26,0.97)" : "rgba(10,16,30,0.75)", backdropFilter: "blur(16px)" }}
+        className={`fixed top-10 left-0 right-0 z-50 transition-all duration-300 ${
+          isScrolled
+            ? "bg-white/80 backdrop-blur-xl border-b border-black/5 shadow-sm"
+            : "bg-transparent"
+        }`}
       >
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Link
               href="/"
-              className="flex items-center gap-2 hover:opacity-75 transition-opacity focus:outline-none rounded"
+              className="flex items-center gap-2 hover:opacity-70 transition-opacity focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 rounded"
             >
               <FGMark size={24} />
-              <span className="text-sm font-medium text-white">AI Operating Map</span>
+              <span className="text-sm font-medium text-foreground">AI Operating Map</span>
             </Link>
 
             {/* Desktop nav */}
@@ -69,10 +72,10 @@ export default function Navigation() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                  className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 ${
                     pathname === item.href
-                      ? "text-emerald-400 bg-emerald-500/10"
-                      : "text-slate-200 hover:text-white hover:bg-white/[0.09]"
+                      ? "text-accent bg-accent/10"
+                      : "text-secondary hover:text-foreground hover:bg-black/5"
                   }`}
                 >
                   {item.label}
@@ -83,10 +86,10 @@ export default function Navigation() {
               <div className="relative">
                 <button
                   onClick={() => setMoreOpen((v) => !v)}
-                  className={`flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                  className={`flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 ${
                     isMoreActive
-                      ? "text-emerald-400 bg-emerald-500/10"
-                      : "text-slate-200 hover:text-white hover:bg-white/[0.09]"
+                      ? "text-accent bg-accent/10"
+                      : "text-secondary hover:text-foreground hover:bg-black/5"
                   }`}
                 >
                   More
@@ -95,15 +98,15 @@ export default function Navigation() {
                 {moreOpen && (
                   <>
                     <div className="fixed inset-0 z-10" onClick={() => setMoreOpen(false)} />
-                    <div className="absolute right-0 top-full mt-2 z-20 w-52 rounded-2xl border border-white/[0.08] shadow-2xl overflow-hidden" style={{ background:"rgba(12,18,32,0.96)", backdropFilter:"blur(20px)" }}>
+                    <div className="absolute right-0 top-full mt-2 z-20 w-52 rounded-2xl border border-black/8 bg-white shadow-xl overflow-hidden">
                       {moreNav.map((item) => (
                         <Link
                           key={item.href}
                           href={item.href}
                           className={`block px-4 py-2.5 text-sm transition-colors ${
                             pathname === item.href
-                              ? "text-emerald-400 bg-emerald-500/10 font-medium"
-                              : "text-slate-400 hover:text-white hover:bg-white/[0.06]"
+                              ? "text-accent bg-accent/10 font-medium"
+                              : "text-secondary hover:text-foreground hover:bg-black/5"
                           }`}
                         >
                           {item.label}
@@ -117,7 +120,7 @@ export default function Navigation() {
 
             {/* Mobile menu toggle */}
             <button
-              className="md:hidden p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.07] transition-colors"
+              className="md:hidden p-2 rounded-lg text-secondary hover:text-foreground hover:bg-black/5 transition-colors"
               onClick={() => setMobileOpen((v) => !v)}
               aria-label="Toggle menu"
             >
@@ -130,8 +133,8 @@ export default function Navigation() {
       {/* Mobile drawer */}
       {mobileOpen && (
         <div className="fixed inset-0 z-40 md:hidden">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMobileOpen(false)} />
-          <div className="absolute top-[4.5rem] left-4 right-4 rounded-2xl border border-white/[0.08] shadow-2xl overflow-hidden" style={{ background:"rgba(12,18,32,0.97)", backdropFilter:"blur(20px)" }}>
+          <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={() => setMobileOpen(false)} />
+          <div className="absolute top-[5.5rem] left-4 right-4 rounded-2xl bg-white shadow-2xl border border-black/8 overflow-hidden">
             <div className="px-2 py-3 space-y-0.5 max-h-[70vh] overflow-y-auto">
               {allNav.map((item) => (
                 <Link
@@ -139,8 +142,8 @@ export default function Navigation() {
                   href={item.href}
                   className={`block px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
                     pathname === item.href
-                      ? "text-emerald-400 bg-emerald-500/10"
-                      : "text-slate-400 hover:text-white hover:bg-white/[0.07]"
+                      ? "text-accent bg-accent/10"
+                      : "text-secondary hover:text-foreground hover:bg-black/5"
                   }`}
                 >
                   {item.label}
