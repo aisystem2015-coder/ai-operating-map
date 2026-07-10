@@ -1,8 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import Navigation from "../Navigation";
 import SectionReveal from "../learning/SectionReveal";
-import DigitalTwinSection from "../ai-mindset/digital-twin-section";
 import {
   Layers,
   Lightbulb,
@@ -801,8 +801,31 @@ export default function AIMindsetPage() {
                 </SectionReveal>
               </section>
 
-              {/* Digital Twin — the personal application layer */}
-              <DigitalTwinSection />
+              {/* Digital Twin teaser — full treatment lives on its own page */}
+              <section id="digital-twin-teaser" className="scroll-mt-24">
+                <SectionReveal>
+                  <Link
+                    href="/digital-twin"
+                    className="group flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 rounded-3xl border border-black/5 bg-gradient-to-r from-emerald-50/70 via-white to-white p-10 shadow-sm hover:shadow-md transition-shadow"
+                  >
+                    <div className="space-y-2 max-w-2xl">
+                      <p className="text-sm font-semibold uppercase tracking-[0.18em] text-secondary">
+                        The personal layer
+                      </p>
+                      <h2 className="text-2xl md:text-3xl font-heading font-semibold text-foreground leading-tight">
+                        Same system thinking, applied to one person: your digital twin.
+                      </h2>
+                      <p className="text-secondary leading-relaxed">
+                        Definition, market context, the four kinds of &ldquo;digital twin&rdquo; in
+                        circulation, and a step-by-step guide to building your own.
+                      </p>
+                    </div>
+                    <span className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition group-hover:bg-emerald-700 whitespace-nowrap">
+                      Explore Digital Twin →
+                    </span>
+                  </Link>
+                </SectionReveal>
+              </section>
 
               {/* Bridge */}
               <section id="bridge" className="scroll-mt-24">
