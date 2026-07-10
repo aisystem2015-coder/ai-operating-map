@@ -5,6 +5,11 @@ import Link from "next/link";
 import Image from "next/image";
 import Navigation from "./Navigation";
 import SystemViewCard from "./ui/system-view-card";
+import StatTile from "./charts/StatTile";
+import RankedBarChart from "./charts/RankedBarChart";
+import SlopeChart from "./charts/SlopeChart";
+import { CATEGORICAL } from "./charts/tokens";
+import { BENCHMARKS_2026, OPERATIONS_IMPACT } from "@/data/ai-now-2026";
 import {
   Zap, Brain, Network, Bot, TrendingUp, Shield, Eye,
   Layers, Target, Globe, CheckCircle, XCircle, AlertTriangle,
@@ -136,22 +141,6 @@ const productionFailures = [
   { failure: "Permission creep", cause: "Agent is given too many tools just in case, then uses them incorrectly", fix: "Grant minimum viable permissions. Define explicit tool scope at deployment time." },
 ];
 
-const benchmarks2026 = [
-  { name: "SWE-bench (coding)", score2023: "< 5%", score2026: "65–80%", meaning: "Agents now autonomously fix real GitHub issues", pct: 72 },
-  { name: "GAIA (general AI assistant)", score2023: "< 20%", score2026: "55–70%", meaning: "Complex multi-step tasks completed without human help", pct: 62 },
-  { name: "Humanity's Last Exam", score2023: "n/a", score2026: "40–60%", meaning: "PhD-level questions across science, law, medicine", pct: 50 },
-  { name: "ARC-AGI", score2023: "< 10%", score2026: "75–85%", meaning: "Novel reasoning that required human-level adaptation", pct: 80 },
-];
-
-const operationsImpact = [
-  { function: "Supply Chain", icon: GitBranch, before: "Weekly manual demand review, spreadsheet-based forecasting, reactive inventory", after: "Daily AI-driven demand signals, automated PO generation, predictive exception alerts", roi: "15–30% cost reduction" },
-  { function: "Customer Operations", icon: Mic2, before: "Tier-1 support handled by humans, 48-hour average resolution time", after: "70% deflection by AI agents, 4-hour resolution, humans handle complex cases with full context", roi: "40–60% support cost ↓" },
-  { function: "Finance / FP&A", icon: BarChart2, before: "3-day month-end close, manual variance commentary, static budgets", after: "Hours-long close, AI-drafted commentary reviewed by humans, rolling AI-updated forecasts", roi: "60% close time ↓" },
-  { function: "IT / DevOps", icon: Cpu, before: "Manual ticket triage, human-only code review, reactive incident response", after: "AI-routed tickets, AI-assisted PR review at scale, anomaly detection and first-response automation", roi: "50% MTTR ↓, 3× throughput" },
-  { function: "HR / Talent", icon: Building2, before: "Manual resume screening, reactive workforce planning, generic onboarding", after: "AI-first screening against structured criteria, predictive workforce models, personalized onboarding", roi: "70% faster time-to-hire" },
-  { function: "Content / Marketing", icon: Radio, before: "Manual content creation, slow campaign iteration, generic messaging", after: "AI-generated content in brand voice, automated A/B testing, personalized messaging at scale", roi: "5× content throughput" },
-];
-
 const watchList = [
   { name: "Reasoning-native workflows", desc: "As o3-level reasoning becomes standard, AI shifts from completing tasks to solving problems. Organizations that redesign workflows around reasoning agents will have a structural advantage.", horizon: "Now — 2027", icon: Brain },
   { name: "AI memory infrastructure", desc: "Persistent, evolving AI memory (personal knowledge graphs, organizational memory) is the next foundation layer. Obsidian + MCP is the early pattern. Enterprise versions are being built.", horizon: "2026 — 2028", icon: Database },
@@ -217,17 +206,19 @@ export default function Home() {
                 </div>
 
                 {/* Stats row */}
-                <div className="flex flex-wrap gap-6">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {[
                     { stat: "95%", label: "of GenAI pilots fail to scale" },
                     { stat: "300+", label: "MCP connectors available" },
                     { stat: "5–10×", label: "leverage for AI operators" },
                     { stat: "2026", label: "the year agents went to production" },
-                  ].map((s) => (
-                    <div key={s.stat} className="space-y-0.5">
-                      <div className="text-2xl font-heading font-bold text-emerald-600">{s.stat}</div>
-                      <div className="text-xs text-secondary">{s.label}</div>
-                    </div>
+                  ].map((s, i) => (
+                    <StatTile
+                      key={s.stat}
+                      label={s.label}
+                      value={s.stat}
+                      accentColor={CATEGORICAL[i % CATEGORICAL.length]}
+                    />
                   ))}
                 </div>
 
@@ -721,40 +712,23 @@ export default function Home() {
                 The jump is not incremental — it is a category change. Tasks that required human experts now run autonomously.
               </p>
             </motion.div>
-            <div className="grid md:grid-cols-2 gap-5">
-              {benchmarks2026.map((b, i) => (
-                <motion.div
-                  key={b.name}
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.08 }}
-                  className="rounded-2xl border border-black/5 bg-white p-6 shadow-sm space-y-4"
-                >
-                  <h3 className="text-sm font-semibold text-foreground">{b.name}</h3>
-                  <div className="flex items-center gap-4">
-                    <div className="text-center">
-                      <div className="text-2xl font-black text-slate-300">{b.score2023}</div>
-                      <div className="text-xs text-secondary mt-0.5">2023</div>
-                    </div>
-                    <ArrowRight size={18} className="text-emerald-400 flex-shrink-0" />
-                    <div className="text-center">
-                      <div className="text-2xl font-black text-emerald-600">{b.score2026}</div>
-                      <div className="text-xs text-secondary mt-0.5">2026</div>
-                    </div>
+            <div className="rounded-2xl border border-black/5 bg-white shadow-sm p-6 md:p-8">
+              <RankedBarChart
+                series={BENCHMARKS_2026.map((b, i) => ({
+                  label: b.name,
+                  value: b.pct,
+                  valueLabel: b.score2026,
+                  color: CATEGORICAL[i % CATEGORICAL.length],
+                }))}
+                max={100}
+              />
+              <div className="mt-6 grid sm:grid-cols-2 gap-x-8 gap-y-2">
+                {BENCHMARKS_2026.map((b) => (
+                  <div key={b.name} className="text-xs text-secondary leading-relaxed">
+                    <span className="font-semibold text-foreground">{b.name}</span> — {b.meaning}. 2023 baseline: {b.score2023}.
                   </div>
-                  <div className="space-y-1.5">
-                    <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
-                      <motion.div
-                        className="h-full rounded-full bg-emerald-500"
-                        initial={{ width: 0 }}
-                        animate={{ width: `${b.pct}%` }}
-                        transition={{ delay: i * 0.08 + 0.3, duration: 0.8, ease: "easeOut" }}
-                      />
-                    </div>
-                    <p className="text-xs text-secondary">{b.meaning}</p>
-                  </div>
-                </motion.div>
-              ))}
+                ))}
+              </div>
             </div>
           </section>
 
@@ -769,40 +743,14 @@ export default function Home() {
                 Not projections. Outcomes reported by companies that went past pilot stage in 2024–2025 and are now running AI in production.
               </p>
             </motion.div>
-            <div className="space-y-4">
-              {operationsImpact.map((row, i) => {
-                const Icon = row.icon;
-                return (
-                  <motion.div
-                    key={row.function}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.05 }}
-                    className="rounded-2xl border border-black/5 bg-white shadow-sm overflow-hidden"
-                  >
-                    <div className="border-b border-black/5 bg-slate-50/60 px-6 py-3 flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="h-7 w-7 rounded-lg bg-teal-50 border border-teal-200 flex items-center justify-center">
-                          <Icon size={14} className="text-teal-700" />
-                        </div>
-                        <h3 className="text-sm font-semibold text-foreground">{row.function}</h3>
-                      </div>
-                      <span className="text-xs font-bold text-teal-700 bg-teal-50 border border-teal-200 px-3 py-1 rounded-full">{row.roi}</span>
-                    </div>
-                    <div className="grid sm:grid-cols-2 gap-0 divide-y sm:divide-y-0 sm:divide-x divide-black/5">
-                      <div className="px-6 py-4 space-y-1">
-                        <p className="text-xs font-semibold uppercase tracking-wide text-secondary flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-slate-300" />Before</p>
-                        <p className="text-sm text-secondary leading-relaxed">{row.before}</p>
-                      </div>
-                      <div className="px-6 py-4 space-y-1">
-                        <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700 flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />After</p>
-                        <p className="text-sm text-foreground leading-relaxed">{row.after}</p>
-                      </div>
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </div>
+            <SlopeChart
+              rows={OPERATIONS_IMPACT.map((row) => ({
+                label: `${row.function} — ${row.roi}`,
+                before: row.before,
+                after: row.after,
+                improved: true,
+              }))}
+            />
           </section>
 
           {/* ── 16. WATCH LIST ── */}
