@@ -10,20 +10,15 @@ const primaryNav = [
   { href: "/", label: "Home" },
   { href: "/origins", label: "The Tech" },
   { href: "/market-reality", label: "Market Reality" },
-  { href: "/what-works", label: "What Works" },
+  { href: "/what-works", label: "What Works Today" },
   { href: "/ai-mindset", label: "AI Mindset" },
   { href: "/execution-checklist", label: "Execution" },
 ];
 
 const moreNav = [
-  { href: "/agent-architecture", label: "Agent Architecture" },
   { href: "/vertical-ai", label: "Vertical AI" },
-  { href: "/why-pilots-fail", label: "Why Pilots Fail" },
   { href: "/ai-now-2026", label: "AI Now — 2026" },
-  { href: "/timeline", label: "Timeline" },
-  { href: "/examples", label: "Examples" },
   { href: "/resources", label: "Resources" },
-  { href: "/sprint", label: "Sprint Report" },
 ];
 
 const allNav = [...primaryNav, ...moreNav];

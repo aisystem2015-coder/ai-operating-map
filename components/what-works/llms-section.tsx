@@ -80,6 +80,52 @@ export default function LLMsSection() {
             </div>
           </SectionReveal>
 
+          {/* Mirror of the human brain */}
+          <SectionReveal delay={0.04}>
+            <div className="rounded-3xl border border-black/5 bg-gradient-to-br from-slate-900 to-slate-800 p-10 text-white space-y-5">
+              <p className="text-sm uppercase tracking-[0.2em] text-emerald-400">
+                Why it feels intelligent
+              </p>
+              <h3 className="text-2xl md:text-3xl font-heading font-semibold leading-tight">
+                An LLM is a rough mirror of the human brain — not a metaphor, an engineering choice.
+              </h3>
+              <p className="text-slate-300 leading-relaxed text-lg">
+                Biological neurons fire, produce small signals, and share them with other neurons.
+                No single neuron &ldquo;knows&rdquo; anything — intelligence emerges from billions
+                of them connected together, and we still don&apos;t fully understand how. A
+                parameter in an LLM is the same idea at a different substrate: a small trained
+                value that means nothing alone, but combined with billions of others, produces
+                reasoning-like behavior. That&apos;s not fluff — it&apos;s the actual design
+                target, which is why the output feels organic instead of mechanical.
+              </p>
+              <p className="text-slate-300 leading-relaxed text-lg">
+                Keep both of the model&apos;s identities in view at once: it is a{" "}
+                <span className="text-white font-semibold">predictive engine</span> — a probability
+                machine choosing the statistically likely next token — and, at the same time, the
+                closest working approximation we have to how a brain turns signal into language.
+                That is exactly why it is powerful and exactly why it drifts into confident,
+                fluent nonsense without grounding.
+              </p>
+            </div>
+          </SectionReveal>
+
+          {/* SLM placeholder */}
+          <SectionReveal delay={0.06}>
+            <div className="rounded-2xl border border-dashed border-emerald-300 bg-emerald-50/60 p-6 flex items-start gap-4">
+              <span className="text-2xl leading-none pt-0.5" aria-hidden>🧩</span>
+              <div className="space-y-1">
+                <p className="text-sm font-semibold uppercase tracking-wide text-emerald-800">
+                  Placeholder — SLMs (Small Language Models)
+                </p>
+                <p className="text-sm text-emerald-900/80 leading-relaxed">
+                  Smaller, distilled models that trade some general capability for speed, lower
+                  cost, and the ability to run on-device or privately. Sit next to LLMs, not
+                  instead of them — pick the size for the task. Full section coming.
+                </p>
+              </div>
+            </div>
+          </SectionReveal>
+
           {/* Strengths & Limitations */}
           <SectionReveal delay={0.08}>
             <div className="grid md:grid-cols-2 gap-6">

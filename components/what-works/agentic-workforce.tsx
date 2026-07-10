@@ -17,6 +17,23 @@ export default function AgenticWorkforce() {
         </p>
       </SectionReveal>
 
+      {/* Definition */}
+      <SectionReveal delay={0.05}>
+        <div className="max-w-4xl mx-auto mb-16 rounded-3xl border border-black/5 bg-white shadow-xl shadow-emerald-100/50 p-10 space-y-5">
+          <p className="text-sm uppercase tracking-[0.2em] text-emerald-600">Agentic system defined</p>
+          <h3 className="text-2xl md:text-3xl font-heading font-bold text-foreground leading-tight">
+            One agent executes a task. An agentic system runs a function.
+          </h3>
+          <p className="text-lg text-secondary leading-relaxed">
+            A single agent handles one job end to end. An agentic system is a governed network of
+            several specialized agents — each narrow, each auditable — coordinated by an
+            orchestrator that decomposes work, routes it, and synthesizes the results. It behaves
+            less like a tool and more like a small team: someone plans, someone executes,
+            someone checks the work, and a manager keeps it all coherent.
+          </p>
+        </div>
+      </SectionReveal>
+
       {/* Example 1 */}
       <SectionReveal delay={0.1}>
         <div className="max-w-6xl mx-auto mb-16">

@@ -1,7 +1,9 @@
 "use client";
 
-import { CheckSquare } from "lucide-react";
+import { useState } from "react";
+import { CheckSquare, ChevronDown } from "lucide-react";
 import Navigation from "../Navigation";
+import { EXAMPLE_CASES } from "@/data/examples";
 
 type CourseCardProps = {
   title: string;
@@ -270,6 +272,25 @@ export default function ExecutionChecklistPage() {
             </div>
           </section>
 
+          {/* Examples in practice */}
+          <section className="space-y-10">
+            <div className="space-y-2">
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-secondary">
+                Execution in practice
+              </p>
+              <h2 className="text-3xl md:text-4xl font-heading font-semibold text-foreground leading-tight">
+                Nine vertical AI systems, mapped to this checklist
+              </h2>
+              <p className="text-secondary leading-relaxed max-w-3xl">
+                Each of these is a real pattern across operations, support, manufacturing, sales,
+                HR, finance, IT, and compliance — built by applying the same levels above. Click
+                one to see the problem, why generic tools fail at it, and how the system is
+                designed.
+              </p>
+            </div>
+            <ExamplesGrid />
+          </section>
+
           {/* Closing */}
           <section className="space-y-3">
             <p className="text-lg text-secondary leading-relaxed max-w-3xl">
@@ -279,6 +300,65 @@ export default function ExecutionChecklistPage() {
           </section>
         </div>
       </main>
+    </div>
+  );
+}
+
+function ExamplesGrid() {
+  const [openId, setOpenId] = useState<string | null>(null);
+
+  return (
+    <div className="grid md:grid-cols-2 gap-5">
+      {EXAMPLE_CASES.map((ex) => {
+        const isOpen = openId === ex.id;
+        return (
+          <div
+            key={ex.id}
+            className="rounded-2xl border border-black/5 bg-white/70 shadow-sm overflow-hidden hover:shadow-md transition-shadow"
+          >
+            <button
+              onClick={() => setOpenId(isOpen ? null : ex.id)}
+              className="w-full flex items-start justify-between gap-4 p-6 text-left"
+              aria-expanded={isOpen}
+            >
+              <div className="space-y-2">
+                <span className="text-xs font-semibold uppercase tracking-[0.18em] text-secondary bg-slate-100 px-3 py-1 rounded-full">
+                  {ex.domain}
+                </span>
+                <h3 className="text-lg font-semibold text-foreground">{ex.title}</h3>
+                <p className="text-sm text-secondary">Owner: {ex.humanOwner}</p>
+              </div>
+              <ChevronDown
+                size={18}
+                className={`flex-shrink-0 mt-1 text-secondary transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+              />
+            </button>
+            {isOpen && (
+              <div className="px-6 pb-6 space-y-4 text-sm">
+                <div>
+                  <p className="text-xs font-semibold text-foreground uppercase tracking-wide mb-1">Problem</p>
+                  <p className="text-secondary leading-relaxed">{ex.problem}</p>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-foreground uppercase tracking-wide mb-1">Why current tools fail</p>
+                  <p className="text-secondary leading-relaxed">{ex.whyCurrentToolsFail}</p>
+                </div>
+                <div className="rounded-xl bg-emerald-50 border border-emerald-100 p-4 space-y-2">
+                  <p className="text-xs font-semibold text-emerald-700 uppercase tracking-wide">System design</p>
+                  <p className="text-sm text-emerald-950 leading-relaxed">{ex.systemDesign.description}</p>
+                  <div className="flex flex-wrap gap-1.5 pt-1">
+                    {ex.systemDesign.layers.map((l) => (
+                      <span key={l} className="text-xs bg-white text-emerald-800 px-2.5 py-1 rounded-full font-medium border border-emerald-100">
+                        {l}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }

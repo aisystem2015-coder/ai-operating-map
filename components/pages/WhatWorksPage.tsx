@@ -3,21 +3,18 @@
 import Link from "next/link";
 import Navigation from "../Navigation";
 import SectionReveal from "../learning/SectionReveal";
-import EvolutionStackVisualization from "../what-works/evolution-stack-visualization";
-import LLMsSection from "../what-works/llms-section";
-import AgentsSection from "../what-works/agents-section";
-import AgenticWorkforce from "../what-works/agentic-workforce";
+import WhatWorksExplorer from "../what-works/what-works-explorer";
 
 export default function WhatWorksPage() {
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
-      
+
       <main>
-        {/* Section 1: Evolution Stack Visualization */}
+        {/* Section 1: What Works Today — interactive 4-stage explorer */}
         <section className="py-32 px-6 lg:px-8 bg-white/40">
           <div className="max-w-7xl mx-auto">
-            <EvolutionStackVisualization />
+            <WhatWorksExplorer />
           </div>
         </section>
 
@@ -67,20 +64,6 @@ export default function WhatWorksPage() {
                 </div>
               </div>
             </SectionReveal>
-          </div>
-        </section>
-
-        {/* Section 2: Large Language Models - What Finally Worked */}
-        <LLMsSection />
-
-        {/* Section 3: Agents - Where Reasoning Meets Execution */}
-        <AgentsSection />
-
-        {/* Section 4: Agentic Workforce - Where Value Compounds */}
-        <section id="agentic-workforce-section" className="py-32 px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto">
-            <div id="agentic-systems" className="h-0" aria-hidden />
-            <AgenticWorkforce />
           </div>
         </section>
       </main>

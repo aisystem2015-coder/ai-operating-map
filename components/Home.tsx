@@ -10,7 +10,7 @@ import {
   Layers, Target, Globe, CheckCircle, XCircle, AlertTriangle,
   BarChart2, Cpu, Database, GitBranch, Clock, Sparkles,
   ArrowRight, Building2, Rocket, FlaskConical, ChevronRight,
-  Radio, Smartphone, Factory, BookOpen, Lock, Mic2,
+  Radio, Smartphone, Factory, BookOpen, Lock, Mic2, MessageSquare,
 } from "lucide-react";
 
 const fadeIn = {
@@ -522,20 +522,39 @@ export default function Home() {
             <SystemViewCard layoutId="home-system-view" variant="expanded" showDetailPanel={true} showCaption={true} showSubtitles={true} />
           </motion.div>
 
-          {/* ── 9. WHAT WORKS ── */}
+          {/* ── 9. WHAT WORKS TODAY ── */}
           <motion.div {...fadeIn} className="rounded-3xl border border-black/5 bg-gradient-to-br from-emerald-50/40 to-white p-10 shadow-sm space-y-6">
             <div className="space-y-3">
-              <SectionBadge label="What Works" color="emerald" />
+              <SectionBadge label="What Works Today" color="emerald" />
               <h2 className="text-3xl md:text-4xl font-heading font-bold leading-tight">
                 LLMs are AI. The system around them makes them compound.
               </h2>
               <p className="text-base text-secondary leading-relaxed max-w-4xl">
-                LLMs are the reasoning layer — our job is to wire them into our knowledge, tools, and flows so they execute real work. Connect them to your data, APIs, and schemas to get enterprise-grade outcomes instead of isolated demos.
+                LLMs are the reasoning layer — our job is to wire them into our knowledge, tools, and flows so they execute real work. Four stages, one progression: LLM → Assistant → AI Agent → Agentic System.
               </p>
             </div>
-            <div className="relative rounded-2xl border border-black/5 bg-white shadow-md overflow-hidden">
-              <Image src="/what-works/evolution-arc.png" alt="AI evolution arc" width={1212} height={615} sizes="(max-width: 768px) 100vw, 80vw" quality={95} priority className="w-full h-auto object-contain" style={{ objectPosition: "65% center" }} />
-            </div>
+            <Link
+              href="/what-works"
+              className="grid grid-cols-2 md:grid-cols-4 gap-3 rounded-2xl border border-black/5 bg-white shadow-md p-5 hover:shadow-lg transition-shadow"
+            >
+              {[
+                { name: "LLMs", year: "2022", icon: Cpu, bg: "bg-foreground", text: "text-white" },
+                { name: "Assistants", year: "2022", icon: MessageSquare, bg: "bg-emerald-700", text: "text-white" },
+                { name: "AI Agents", year: "2023", icon: Bot, bg: "bg-emerald-500", text: "text-white" },
+                { name: "Agentic Systems", year: "2024", icon: Network, bg: "bg-emerald-200", text: "text-emerald-950" },
+              ].map((s) => {
+                const Icon = s.icon;
+                return (
+                  <div key={s.name} className="flex flex-col items-center text-center gap-2 py-2">
+                    <div className={`h-12 w-12 rounded-xl flex items-center justify-center ${s.bg}`}>
+                      <Icon size={22} className={s.text} strokeWidth={1.75} />
+                    </div>
+                    <div className="text-[10px] font-semibold uppercase tracking-wide text-secondary">{s.year}</div>
+                    <div className="text-sm font-heading font-semibold text-foreground">{s.name}</div>
+                  </div>
+                );
+              })}
+            </Link>
           </motion.div>
 
           {/* ── 10. AGENTS ── */}
@@ -888,13 +907,11 @@ export default function Home() {
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {[
                 { href: "/origins", tag: "Foundations", title: "The Tech", desc: "How transformers, GPUs, and vector databases actually work — without the engineering degree.", color: "indigo" },
-                { href: "/market-reality", tag: "Data", title: "Market Reality", desc: "Why 95% of GenAI pilots fail to scale and what separates the ones that don't.", color: "orange" },
-                { href: "/why-pilots-fail", tag: "Root causes", title: "Why Pilots Fail", desc: "The 6 failure patterns that kill AI initiatives before they reach production.", color: "red" },
-                { href: "/what-works", tag: "Patterns", title: "What Works", desc: "The operational patterns behind AI deployments with real ROI in 2024–2026.", color: "teal" },
-                { href: "/ai-mindset", tag: "Framework", title: "AI Mindset", desc: "The five-layer system model that separates AI users from AI operators.", color: "emerald" },
-                { href: "/agent-architecture", tag: "Technical", title: "Agent Architecture", desc: "Stack, patterns, failure modes, and how to build an agent that runs in production.", color: "violet" },
+                { href: "/market-reality", tag: "Data", title: "Market Reality", desc: "Why 95% of GenAI pilots fail to scale, the maturity timeline, and what separates the ones that don't.", color: "orange" },
+                { href: "/what-works", tag: "Patterns", title: "What Works Today", desc: "LLMs, Assistants, AI Agents, and Agentic Systems — click through each stage and how to build it.", color: "teal" },
+                { href: "/ai-mindset", tag: "Framework", title: "AI Mindset", desc: "The five-layer system model — and your own digital twin — that separates AI users from AI operators.", color: "emerald" },
                 { href: "/vertical-ai", tag: "Strategy", title: "Vertical AI", desc: "Why generic AI has no competitive moat and how vertical AI compounds over time.", color: "blue" },
-                { href: "/execution-checklist", tag: "Action", title: "Execution Checklist", desc: "The decisions to make before committing teams and budgets to AI work.", color: "emerald" },
+                { href: "/execution-checklist", tag: "Action", title: "Execution Checklist", desc: "The decisions to make before committing teams and budgets to AI work, plus 9 real systems.", color: "emerald" },
                 { href: "/ai-now-2026", tag: "Current", title: "AI Now — 2026", desc: "Where the technology actually stands right now — benchmarks, models, deployments.", color: "pink" },
               ].map((page, i) => {
                 const c = colorMap[page.color] ?? colorMap.emerald;

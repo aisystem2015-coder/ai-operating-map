@@ -9,15 +9,13 @@ const sections = [
     links: [
       { href: "/origins", label: "The Tech" },
       { href: "/market-reality", label: "Market Reality" },
-      { href: "/why-pilots-fail", label: "Why Pilots Fail" },
-      { href: "/what-works", label: "What Works" },
+      { href: "/what-works", label: "What Works Today" },
+      { href: "/ai-mindset", label: "AI Mindset" },
     ],
   },
   {
     title: "Build",
     links: [
-      { href: "/ai-mindset", label: "AI Mindset" },
-      { href: "/agent-architecture", label: "Agent Architecture" },
       { href: "/vertical-ai", label: "Vertical AI" },
       { href: "/execution-checklist", label: "Execution Checklist" },
     ],
@@ -26,15 +24,7 @@ const sections = [
     title: "Context",
     links: [
       { href: "/ai-now-2026", label: "AI Now — 2026" },
-      { href: "/timeline", label: "Timeline" },
-      { href: "/examples", label: "Live Examples" },
       { href: "/resources", label: "Resources" },
-    ],
-  },
-  {
-    title: "Lab",
-    links: [
-      { href: "/sprint", label: "Sprint Report" },
       { href: "/ai-map", label: "Interactive Map" },
     ],
   },
@@ -44,7 +34,7 @@ export default function Footer() {
   return (
     <footer className="border-t border-black/8 bg-white mt-32">
       <div className="max-w-6xl mx-auto px-6 lg:px-10 py-16">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-10">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
           {/* Brand column */}
           <div className="col-span-2 md:col-span-1 space-y-4">
             <Link href="/" className="flex items-center gap-2 hover:opacity-70 transition-opacity">

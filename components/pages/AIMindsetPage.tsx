@@ -2,6 +2,7 @@
 
 import Navigation from "../Navigation";
 import SectionReveal from "../learning/SectionReveal";
+import DigitalTwinSection from "../ai-mindset/digital-twin-section";
 import {
   Layers,
   Lightbulb,
@@ -799,6 +800,9 @@ export default function AIMindsetPage() {
                   </div>
                 </SectionReveal>
               </section>
+
+              {/* Digital Twin — the personal application layer */}
+              <DigitalTwinSection />
 
               {/* Bridge */}
               <section id="bridge" className="scroll-mt-24">
