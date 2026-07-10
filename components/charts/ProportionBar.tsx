@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { COMPARISON, CHROME } from "./tokens";
 import ChartSource from "./ChartSource";
 
@@ -22,7 +23,7 @@ export default function ProportionBar({
   actualLabel?: string;
   baselineValueLabel?: string;
   actualValueLabel?: string;
-  description?: string;
+  description?: ReactNode;
   sourceLabel?: string;
   sourceHref?: string;
 }) {

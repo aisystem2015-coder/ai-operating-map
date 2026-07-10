@@ -1,11 +1,9 @@
 "use client";
 
 import SectionReveal from "../learning/SectionReveal";
-import Callout from "../learning/Callout";
-
-const ACCENT = "#1bc4a6"; // Oracle green
-const NEUTRAL = "#d1d5db"; // neutral gray for horizontal pillars
-const LEGACY = "#9ca3af"; // muted gray for legacy header
+import RankedBarChart from "../charts/RankedBarChart";
+import ChartSource from "../charts/ChartSource";
+import { COMPARISON } from "../charts/tokens";
 
 export default function VerticalAISection() {
   return (
@@ -87,89 +85,29 @@ export default function VerticalAISection() {
             </div>
           </SectionReveal>
 
-          {/* Oracle-style dual tables */}
+          {/* Depth of integration comparison */}
           <SectionReveal delay={0.1}>
-            <div className="grid md:grid-cols-2 gap-10">
-              <div className="bg-white/80 p-8 rounded-3xl border border-black/5 shadow-md flex flex-col gap-6">
-                <div className="space-y-3">
-                  <p className="text-sm font-semibold uppercase tracking-wide text-foreground/60">
-                    Today - Horizontal Focus
-                  </p>
-                  <div
-                    className="h-11 rounded-full flex items-center justify-center text-white font-semibold text-sm"
-                    style={{ backgroundColor: ACCENT }}
-                  >
-                    Copilots - Digital Assistants
-                  </div>
+            <div className="bg-white/80 p-8 rounded-3xl border border-black/5 shadow-md space-y-6">
+              <p className="text-sm font-semibold uppercase tracking-wide text-foreground/60 text-center">
+                Depth of integration
+              </p>
+              <RankedBarChart
+                series={[
+                  { label: "Today", value: 30, valueLabel: "Shallow", color: COMPARISON.baseline },
+                  { label: "Tomorrow", value: 90, valueLabel: "Deep", color: COMPARISON.actual },
+                ]}
+                max={100}
+              />
+              <div className="grid sm:grid-cols-2 gap-6 text-sm text-foreground/70 text-center">
+                <div>
+                  <span className="font-semibold text-foreground">Today — Horizontal focus.</span> Copilots and digital assistants: shallow, generic use.
                 </div>
-
-                <div className="flex items-end justify-center gap-5 pt-2">
-                  {[0, 1, 2].map((i) => (
-                    <div
-                      key={i}
-                      className="w-16 h-32 rounded-xl border border-foreground/10 bg-white shadow-sm flex items-end justify-center pb-3"
-                      style={{ backgroundColor: NEUTRAL }}
-                    >
-                      <span className="text-[11px] uppercase tracking-wide text-foreground/70 font-semibold">
-                        Function
-                      </span>
-                    </div>
-                  ))}
-                </div>
-                <div className="text-sm text-foreground/70 text-center">
-                  Shallow, generic use
-                </div>
-
-                <div className="text-sm text-foreground/60">
-                  Source: Oracle{" "}
-                  <a
-                    href="#"
-                    className="text-primary underline underline-offset-4 font-medium"
-                  >
-                    Link
-                  </a>
+                <div>
+                  <span className="font-semibold text-foreground">Tomorrow — Vertical focus.</span> AI orchestrator: deep, function-specific integration.
                 </div>
               </div>
-
-              <div className="bg-white/80 p-8 rounded-3xl border border-black/5 shadow-md flex flex-col gap-6">
-                <div className="space-y-3">
-                  <p className="text-sm font-semibold uppercase tracking-wide text-foreground/60">
-                    Tomorrow - Vertical Focus
-                  </p>
-                  <div
-                    className="h-11 rounded-full flex items-center justify-center text-white font-semibold text-sm"
-                    style={{ backgroundColor: ACCENT }}
-                  >
-                    AI Orchestrator
-                  </div>
-                </div>
-
-                <div className="flex items-end justify-center gap-5 pt-2">
-                  {[0, 1, 2].map((i) => (
-                    <div
-                      key={i}
-                      className="w-16 h-32 rounded-xl border border-foreground/10 shadow-sm flex items-end justify-center pb-3"
-                      style={{ backgroundColor: ACCENT }}
-                    >
-                      <span className="text-[11px] uppercase tracking-wide text-white font-semibold">
-                        Function
-                      </span>
-                    </div>
-                  ))}
-                </div>
-                <div className="text-sm text-foreground/70 text-center">
-                  Deep, function specific integration
-                </div>
-
-                <div className="text-sm text-foreground/60">
-                  Source: Oracle{" "}
-                  <a
-                    href="#"
-                    className="text-primary underline underline-offset-4 font-medium"
-                  >
-                    Link
-                  </a>
-                </div>
+              <div className="flex justify-center">
+                <ChartSource label="Oracle" />
               </div>
             </div>
           </SectionReveal>
