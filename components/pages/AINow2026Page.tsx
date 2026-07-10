@@ -2,159 +2,23 @@
 
 import { motion } from "framer-motion";
 import Navigation from "../Navigation";
+import InteractiveGlow from "../ui/interactive-glow";
+import RankedBarChart from "../charts/RankedBarChart";
+import SlopeChart from "../charts/SlopeChart";
+import { CATEGORICAL } from "../charts/tokens";
+import {
+  MAJOR_SHIFTS_2026,
+  MODELS_2026,
+  BENCHMARKS_2026,
+  OPERATIONS_IMPACT,
+  WATCH_LIST,
+} from "@/data/ai-now-2026";
 
 const fade = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
   transition: { duration: 0.5, ease: "easeOut" },
 };
-
-const models2026 = [
-  {
-    org: "Anthropic",
-    models: [
-      { name: "Claude Fable 5", tier: "Frontier", strength: "Most capable — complex reasoning, long-form analysis, agentic workflows" },
-      { name: "Claude Opus 4.8", tier: "Expert", strength: "Deep reasoning, coding, multi-step planning. Best for technical depth." },
-      { name: "Claude Sonnet 4.6", tier: "Default", strength: "The 80/20 model — excellent quality at production speed and cost" },
-      { name: "Claude Haiku 4.5", tier: "Fast", strength: "Sub-second responses, low cost, high throughput. Ideal for classification, routing, and summarization." },
-    ],
-  },
-  {
-    org: "OpenAI",
-    models: [
-      { name: "GPT-5", tier: "Frontier", strength: "Multimodal, tool-use, long context. Strong on structured reasoning." },
-      { name: "o3 / o4", tier: "Reasoning", strength: "Thinks before it answers. Best for math, science, and complex logic." },
-      { name: "GPT-4o mini", tier: "Fast", strength: "Low-cost, fast — widely deployed in consumer applications." },
-    ],
-  },
-  {
-    org: "Google",
-    models: [
-      { name: "Gemini 2.5 Ultra", tier: "Frontier", strength: "1M+ token context window. Best for processing entire codebases or document sets." },
-      { name: "Gemini 2.5 Flash", tier: "Fast", strength: "Speed-optimized, highly cost-effective for high-volume tasks." },
-    ],
-  },
-  {
-    org: "Open Source",
-    models: [
-      { name: "Llama 4 (Meta)", tier: "Open", strength: "Multimodal, runs locally. Changed the economics of private deployment." },
-      { name: "DeepSeek R2", tier: "Open", strength: "Frontier-level reasoning at open-source cost. Shocked the market in 2025." },
-      { name: "Mistral Large", tier: "Open", strength: "European alternative, strong multilingual capabilities." },
-    ],
-  },
-];
-
-const majorShifts2026 = [
-  {
-    shift: "MCP becomes the standard",
-    what:
-      "Model Context Protocol (MCP), open-sourced by Anthropic in 2024, became the universal connector layer for AI tools in 2025–2026. 300+ connectors available. Every major AI tool now speaks MCP. This is what makes AI integrations composable instead of custom-coded.",
-    impact: "Infrastructure",
-  },
-  {
-    shift: "Agentic systems replace copilots",
-    what:
-      "The market shifted from 'AI that assists' to 'AI that acts.' Claude Code, Cursor, Devin, and similar tools handle full software development cycles. Multi-agent orchestration frameworks (n8n, LangGraph, CrewAI) power end-to-end business processes without human intervention at each step.",
-    impact: "Workflow",
-  },
-  {
-    shift: "On-device AI goes mainstream",
-    what:
-      "Apple Intelligence, Qualcomm Snapdragon X Elite NPUs, and Samsung Galaxy AI bring capable models to personal devices. Data never leaves the device for sensitive tasks. Inference latency drops to milliseconds. Privacy-preserving AI becomes the default for personal use.",
-    impact: "Privacy",
-  },
-  {
-    shift: "Physical AI arrives",
-    what:
-      "Figure 02, Apptronik Apollo, and Tesla Optimus begin limited commercial deployment. These are reasoning models in robot bodies — not the rigid automation of previous decades. Boston Dynamics' Atlas integrates foundation models for task generalization. Industrial AI shifts from software-only to embodied.",
-    impact: "Physical",
-  },
-  {
-    shift: "Reasoning models change the ceiling",
-    what:
-      "OpenAI's o3, Anthropic's extended thinking (Claude 3.7+), and Google's Gemini Thinking show that 'thinking before answering' dramatically changes what AI can solve. PhD-level science, complex legal analysis, and multi-week research projects become single-agent tasks.",
-    impact: "Capability",
-  },
-  {
-    shift: "Open source closes the gap",
-    what:
-      "DeepSeek R1 matched GPT-4-level performance at open-source cost. Llama 4 added multimodal capability. The cost of deploying frontier-quality AI dropped 95% between 2023 and 2026. This democratized advanced AI for startups, individuals, and non-enterprise organizations.",
-    impact: "Accessibility",
-  },
-  {
-    shift: "Knowledge externalization as strategy",
-    what:
-      "The most effective AI practitioners in 2026 treat their knowledge as structured infrastructure. Obsidian + MCP, Notion databases, and personal vector stores become standard professional tools. The gap between people who externalize knowledge to AI and those who don&apos;t compounds with every week.",
-    impact: "Personal",
-  },
-];
-
-const operationsImpact = [
-  {
-    function: "Supply Chain",
-    before: "Weekly manual demand review, spreadsheet-based forecasting, reactive inventory adjustments",
-    after: "Daily AI-driven demand signals, automated PO generation within defined rules, predictive exception alerts",
-    roi: "15–30% reduction in inventory carrying costs",
-  },
-  {
-    function: "Customer Operations",
-    before: "Tier-1 support handled entirely by humans, 48-hour average resolution time",
-    after: "70% deflection by AI agents, 4-hour average resolution, human agents handle complex cases with full context",
-    roi: "40–60% support cost reduction, CSAT +15–20 points",
-  },
-  {
-    function: "Finance / FP&A",
-    before: "3-day month-end close, manual variance commentary, static budgets",
-    after: "Hours-long close process, AI-drafted commentary reviewed by humans, rolling AI-updated forecasts",
-    roi: "60% reduction in close time, 80% reduction in FP&A analyst time on routine tasks",
-  },
-  {
-    function: "IT / DevOps",
-    before: "Manual ticket triage, human-only code review, reactive incident response",
-    after: "AI-routed tickets, AI-assisted PR review at scale, anomaly detection and first-response automation",
-    roi: "50% reduction in MTTR, 3x developer throughput",
-  },
-  {
-    function: "HR / Talent",
-    before: "Manual resume screening, reactive workforce planning, generic onboarding",
-    after: "AI-first screening against structured criteria, predictive workforce models, personalized onboarding agents",
-    roi: "70% reduction in time-to-hire, 40% improvement in new hire 90-day retention",
-  },
-  {
-    function: "Content / Marketing",
-    before: "Manual content creation, slow campaign iteration, generic messaging",
-    after: "AI-generated content in brand voice, automated A/B testing, personalized messaging at scale",
-    roi: "5x content throughput, 30–40% improvement in campaign conversion",
-  },
-];
-
-const watchList = [
-  {
-    name: "Reasoning-native workflows",
-    desc: "As o3-level reasoning becomes standard, AI shifts from 'completing tasks' to 'solving problems.' The organizations that redesign workflows around reasoning agents (not just automation) will have a structural advantage.",
-    horizon: "Now — 2027",
-  },
-  {
-    name: "AI memory infrastructure",
-    desc: "Persistent, evolving AI memory (personal knowledge graphs, organizational memory systems) is the next foundation layer. Obsidian + MCP is the early pattern. Enterprise versions are being built.",
-    horizon: "2026 — 2028",
-  },
-  {
-    name: "Physical-digital AI integration",
-    desc: "Reasoning models that operate robots and physical systems will transform manufacturing, logistics, and field operations. The same model that drafts your strategy memo will eventually operate your warehouse.",
-    horizon: "2026 — 2030",
-  },
-  {
-    name: "AI governance as infrastructure",
-    desc: "The EU AI Act is live. US framework is developing. Organizations without AI governance infrastructure face regulatory and reputational exposure. Governance is no longer optional — it is infrastructure.",
-    horizon: "Now",
-  },
-  {
-    name: "Multi-modal as default",
-    desc: "Text-only AI is already an edge case. Voice, image, video, and code are native inputs for 2026 frontier models. The next wave of vertical AI will be built for multi-modal operations: video quality inspection, voice-driven ERP commands, visual anomaly detection.",
-    horizon: "Now — 2027",
-  },
-];
 
 export default function AINow2026Page() {
   return (
@@ -165,17 +29,20 @@ export default function AINow2026Page() {
         <div className="max-w-6xl mx-auto px-6 lg:px-8 space-y-28">
 
           {/* Hero */}
-          <motion.section {...fade} className="space-y-8">
-            <div className="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700 border border-emerald-200 shadow-sm">
-              AI Today — July 2026
-            </div>
-            <div className="space-y-6 max-w-4xl">
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-heading font-bold leading-tight text-foreground">
-                Where AI actually is right now.
-              </h1>
-              <p className="text-xl text-secondary leading-relaxed">
-                Not the hype. Not the demos. The operational reality of AI in July 2026 — what works, what&apos;s changed, what&apos;s next, and what it means for operations professionals.
-              </p>
+          <motion.section {...fade} className="relative isolate overflow-hidden rounded-3xl py-10 px-2 -mx-2 space-y-8">
+            <InteractiveGlow colors={["#1BC4A6", "#7C3AED", "#2563EB"]} />
+            <div className="relative z-10 space-y-8">
+              <div className="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700 border border-emerald-200 shadow-sm">
+                AI Today — July 2026
+              </div>
+              <div className="space-y-6 max-w-4xl">
+                <h1 className="text-5xl md:text-6xl lg:text-7xl font-heading font-bold leading-tight text-foreground">
+                  Where AI actually is right now.
+                </h1>
+                <p className="text-xl text-secondary leading-relaxed">
+                  Not the hype. Not the demos. The operational reality of AI in July 2026 — what works, what&apos;s changed, what&apos;s next, and what it means for operations professionals.
+                </p>
+              </div>
             </div>
           </motion.section>
 
@@ -188,25 +55,59 @@ export default function AINow2026Page() {
               </h2>
             </div>
             <div className="space-y-4">
-              {majorShifts2026.map((s, i) => (
-                <motion.div
-                  key={s.shift}
-                  initial={{ opacity: 0, x: -12 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.06, duration: 0.45, ease: "easeOut" }}
-                  className="rounded-2xl border border-black/5 bg-white p-7 shadow-sm flex items-start gap-6"
-                >
-                  <div className="flex-shrink-0 rounded-xl bg-emerald-50 border border-emerald-100 px-3 py-1.5 text-xs font-semibold text-emerald-700 whitespace-nowrap">
-                    {s.impact}
-                  </div>
-                  <div className="space-y-2">
-                    <h3 className="text-lg font-semibold text-foreground">{s.shift}</h3>
-                    <p className="text-sm text-secondary leading-relaxed">{s.what}</p>
-                  </div>
-                </motion.div>
-              ))}
+              {MAJOR_SHIFTS_2026.map((s, i) => {
+                const color = CATEGORICAL[i % CATEGORICAL.length];
+                return (
+                  <motion.div
+                    key={s.shift}
+                    initial={{ opacity: 0, x: -12 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.06, duration: 0.45, ease: "easeOut" }}
+                    className="rounded-2xl border border-black/5 bg-white p-7 shadow-sm flex items-start gap-6"
+                  >
+                    <div
+                      className="flex-shrink-0 rounded-xl px-3 py-1.5 text-xs font-semibold whitespace-nowrap"
+                      style={{ backgroundColor: `${color}1A`, color }}
+                    >
+                      {s.impact}
+                    </div>
+                    <div className="space-y-2">
+                      <h3 className="text-lg font-semibold text-foreground">{s.shift}</h3>
+                      <p className="text-sm text-secondary leading-relaxed">{s.what}</p>
+                    </div>
+                  </motion.div>
+                );
+              })}
             </div>
           </motion.section>
+
+          {/* Benchmarks */}
+          <section className="space-y-8">
+            <div className="space-y-2">
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-secondary">Measured, not claimed</p>
+              <h2 className="text-3xl md:text-4xl font-heading font-semibold text-foreground leading-tight">
+                What frontier models can do now vs. 2023
+              </h2>
+            </div>
+            <div className="rounded-2xl border border-black/5 bg-white shadow-sm p-6 md:p-8">
+              <RankedBarChart
+                series={BENCHMARKS_2026.map((b, i) => ({
+                  label: b.name,
+                  value: b.pct,
+                  valueLabel: b.score2026,
+                  color: CATEGORICAL[i % CATEGORICAL.length],
+                }))}
+                max={100}
+              />
+              <div className="mt-6 grid sm:grid-cols-2 gap-x-8 gap-y-2">
+                {BENCHMARKS_2026.map((b) => (
+                  <div key={b.name} className="text-xs text-secondary leading-relaxed">
+                    <span className="font-semibold text-foreground">{b.name}</span> — {b.meaning}. 2023 baseline: {b.score2023}.
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
 
           {/* Models */}
           <section className="space-y-10">
@@ -220,22 +121,33 @@ export default function AINow2026Page() {
               </p>
             </div>
             <div className="space-y-6">
-              {models2026.map((org) => (
-                <div key={org.org} className="space-y-3">
-                  <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-secondary pl-1">{org.org}</h3>
-                  <div className="grid sm:grid-cols-2 gap-3">
-                    {org.models.map((m) => (
-                      <div key={m.name} className="rounded-xl border border-black/5 bg-white p-5 shadow-sm space-y-2 hover:border-emerald-200 transition-colors">
-                        <div className="flex items-center justify-between">
-                          <h4 className="text-sm font-semibold text-foreground">{m.name}</h4>
-                          <span className="text-xs bg-slate-100 text-slate-600 px-2.5 py-0.5 rounded-full font-medium">{m.tier}</span>
+              {MODELS_2026.map((org, orgIndex) => {
+                const color = CATEGORICAL[orgIndex % CATEGORICAL.length];
+                return (
+                  <div key={org.org} className="space-y-3">
+                    <h3 className="text-sm font-semibold uppercase tracking-[0.18em] pl-1 flex items-center gap-2">
+                      <span className="h-2 w-2 rounded-full" style={{ backgroundColor: color }} />
+                      <span className="text-secondary">{org.org}</span>
+                    </h3>
+                    <div className="grid sm:grid-cols-2 gap-3">
+                      {org.models.map((m) => (
+                        <div key={m.name} className="rounded-xl border border-black/5 bg-white p-5 shadow-sm space-y-2 hover:shadow-md transition-shadow">
+                          <div className="flex items-center justify-between">
+                            <h4 className="text-sm font-semibold text-foreground">{m.name}</h4>
+                            <span
+                              className="text-xs px-2.5 py-0.5 rounded-full font-medium"
+                              style={{ backgroundColor: `${color}1A`, color }}
+                            >
+                              {m.tier}
+                            </span>
+                          </div>
+                          <p className="text-sm text-secondary leading-relaxed">{m.strength}</p>
                         </div>
-                        <p className="text-sm text-secondary leading-relaxed">{m.strength}</p>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
             <div className="rounded-2xl border border-black/5 bg-slate-50 p-6 space-y-2">
               <p className="text-sm font-semibold text-foreground">The rule of thumb for 2026</p>
@@ -246,7 +158,7 @@ export default function AINow2026Page() {
           </section>
 
           {/* Operations impact */}
-          <section className="space-y-10">
+          <section className="space-y-8">
             <div className="space-y-2">
               <p className="text-sm font-semibold uppercase tracking-[0.18em] text-secondary">Operational impact — measured</p>
               <h2 className="text-3xl md:text-4xl font-heading font-semibold text-foreground leading-tight">
@@ -256,32 +168,14 @@ export default function AINow2026Page() {
                 Not projections. Outcomes being reported by companies that went past pilot stage in 2024–2025 and are now running AI in production operations.
               </p>
             </div>
-            <div className="space-y-4">
-              {operationsImpact.map((row, i) => (
-                <motion.div
-                  key={row.function}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.06, duration: 0.4 }}
-                  className="rounded-2xl border border-black/5 bg-white shadow-sm overflow-hidden"
-                >
-                  <div className="border-b border-black/5 bg-slate-50/60 px-6 py-3 flex items-center justify-between">
-                    <h3 className="text-sm font-semibold text-foreground">{row.function}</h3>
-                    <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-100 px-3 py-1 rounded-full">{row.roi}</span>
-                  </div>
-                  <div className="grid sm:grid-cols-2 gap-6 p-6">
-                    <div className="space-y-1">
-                      <p className="text-xs font-semibold uppercase tracking-wide text-secondary">Before</p>
-                      <p className="text-sm text-secondary leading-relaxed">{row.before}</p>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">After</p>
-                      <p className="text-sm text-foreground leading-relaxed">{row.after}</p>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
+            <SlopeChart
+              rows={OPERATIONS_IMPACT.map((row) => ({
+                label: `${row.function} — ${row.roi}`,
+                before: row.before,
+                after: row.after,
+                improved: true,
+              }))}
+            />
           </section>
 
           {/* Watch list */}
@@ -293,21 +187,27 @@ export default function AINow2026Page() {
               </h2>
             </div>
             <div className="grid md:grid-cols-2 gap-5">
-              {watchList.map((w, i) => (
-                <motion.div
-                  key={w.name}
-                  initial={{ opacity: 0, y: 14 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.07 }}
-                  className="rounded-2xl border border-black/5 bg-white p-7 shadow-sm space-y-4"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <h3 className="text-base font-semibold text-foreground leading-snug">{w.name}</h3>
-                    <span className="flex-shrink-0 text-xs font-medium text-secondary bg-slate-100 px-2.5 py-1 rounded-full whitespace-nowrap">{w.horizon}</span>
-                  </div>
-                  <p className="text-sm text-secondary leading-relaxed">{w.desc}</p>
-                </motion.div>
-              ))}
+              {WATCH_LIST.map((w, i) => {
+                const color = CATEGORICAL[i % CATEGORICAL.length];
+                return (
+                  <motion.div
+                    key={w.name}
+                    initial={{ opacity: 0, y: 14 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.07 }}
+                    className="rounded-2xl border border-black/5 bg-white shadow-sm overflow-hidden"
+                  >
+                    <div className="h-1 w-full" style={{ backgroundColor: color }} />
+                    <div className="p-7 space-y-4">
+                      <div className="flex items-start justify-between gap-3">
+                        <h3 className="text-base font-semibold text-foreground leading-snug">{w.name}</h3>
+                        <span className="flex-shrink-0 text-xs font-medium text-secondary bg-slate-100 px-2.5 py-1 rounded-full whitespace-nowrap">{w.horizon}</span>
+                      </div>
+                      <p className="text-sm text-secondary leading-relaxed">{w.desc}</p>
+                    </div>
+                  </motion.div>
+                );
+              })}
             </div>
           </section>
 
