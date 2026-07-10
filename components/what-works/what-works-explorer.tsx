@@ -9,6 +9,7 @@ import AssistantsSection from "./assistants-section";
 import AgentsSection from "./agents-section";
 import AgentPatternsSection from "./agent-patterns-section";
 import AgenticWorkforce from "./agentic-workforce";
+import VerticalDeploymentsSection from "./vertical-deployments-section";
 
 type StageId = "llm" | "assistant" | "agent" | "agentic";
 
@@ -154,6 +155,7 @@ export default function WhatWorksExplorer() {
               <section className="py-20 px-6 lg:px-8">
                 <div className="max-w-7xl mx-auto">
                   <AgenticWorkforce />
+                  <VerticalDeploymentsSection />
                 </div>
               </section>
             )}

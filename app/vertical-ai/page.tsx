@@ -1,9 +1,5 @@
-import VerticalAIPage from "@/components/pages/VerticalAIPage";
+import { redirect } from "next/navigation";
 
 export default function Page() {
-  return <VerticalAIPage />;
+  redirect("/what-works");
 }
-
-
-
-

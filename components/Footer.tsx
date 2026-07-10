@@ -16,7 +16,6 @@ const sections = [
   {
     title: "Build",
     links: [
-      { href: "/vertical-ai", label: "Vertical AI" },
       { href: "/execution-checklist", label: "Execution Checklist" },
     ],
   },

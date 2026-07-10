@@ -413,7 +413,7 @@ export default function Home() {
           </section>
 
           {/* ── 6. PRODUCTION EXAMPLES ── */}
-          <section className="space-y-10">
+          <section id="vertical-ai-examples" className="space-y-10 scroll-mt-28">
             <motion.div {...fadeIn} className="space-y-3">
               <SectionBadge label="Real-world deployments — 2025–2026" color="violet" />
               <h2 className="text-3xl md:text-4xl font-heading font-bold leading-tight">
@@ -858,7 +858,6 @@ export default function Home() {
                 { href: "/market-reality", tag: "Data", title: "Market Reality", desc: "Why 95% of GenAI pilots fail to scale, the maturity timeline, and what separates the ones that don't.", color: "orange" },
                 { href: "/what-works", tag: "Patterns", title: "What Works Today", desc: "LLMs, Assistants, AI Agents, and Agentic Systems — click through each stage and how to build it.", color: "teal" },
                 { href: "/ai-mindset", tag: "Framework", title: "AI Mindset", desc: "The five-layer system model — and your own digital twin — that separates AI users from AI operators.", color: "emerald" },
-                { href: "/vertical-ai", tag: "Strategy", title: "Vertical AI", desc: "Why generic AI has no competitive moat and how vertical AI compounds over time.", color: "blue" },
                 { href: "/execution-checklist", tag: "Action", title: "Execution Checklist", desc: "The decisions to make before committing teams and budgets to AI work, plus 9 real systems.", color: "emerald" },
                 { href: "/ai-now-2026", tag: "Current", title: "AI Now — 2026", desc: "Where the technology actually stands right now — benchmarks, models, deployments.", color: "pink" },
               ].map((page, i) => {
