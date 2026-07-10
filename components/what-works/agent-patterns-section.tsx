@@ -1,6 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
+import RankedBarChart from "../charts/RankedBarChart";
+import { CATEGORICAL } from "../charts/tokens";
+import { BENCHMARKS_2026 } from "@/data/ai-now-2026";
 
 const agentPatterns = [
   {
@@ -103,13 +106,6 @@ const productionFailures = [
     cause: "Agent is given too many tools 'just in case', then uses them incorrectly",
     fix: "Grant minimum viable permissions. Define explicit tool scope at deployment time.",
   },
-];
-
-const benchmarks2026 = [
-  { name: "SWE-bench (coding)", score2023: "< 5%", score2026: "65–80%", meaning: "Agents now autonomously fix real GitHub issues" },
-  { name: "GAIA (general AI assistant)", score2023: "< 20%", score2026: "55–70%", meaning: "Complex multi-step tasks completed without human help" },
-  { name: "Humanity's Last Exam", score2023: "n/a", score2026: "40–60%", meaning: "PhD-level questions across science, law, medicine" },
-  { name: "ARC-AGI", score2023: "< 10%", score2026: "75–85%", meaning: "Novel reasoning that required human-level adaptation" },
 ];
 
 export default function AgentPatternsSection() {
@@ -242,27 +238,23 @@ export default function AgentPatternsSection() {
             Agent capability in 2026 vs. 2023
           </h3>
         </div>
-        <div className="overflow-x-auto rounded-2xl border border-black/5 bg-white shadow-sm">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-black/5 bg-slate-50/60">
-                <th className="text-left text-xs font-semibold uppercase tracking-[0.16em] text-secondary px-6 py-4">Benchmark</th>
-                <th className="text-left text-xs font-semibold uppercase tracking-[0.16em] text-secondary px-6 py-4">2023</th>
-                <th className="text-left text-xs font-semibold uppercase tracking-[0.16em] text-secondary px-6 py-4">2026</th>
-                <th className="text-left text-xs font-semibold uppercase tracking-[0.16em] text-secondary px-6 py-4">What this means</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-black/5">
-              {benchmarks2026.map((b) => (
-                <tr key={b.name} className="hover:bg-slate-50/50 transition-colors">
-                  <td className="px-6 py-4 text-sm font-semibold text-foreground">{b.name}</td>
-                  <td className="px-6 py-4 text-sm text-secondary">{b.score2023}</td>
-                  <td className="px-6 py-4 text-sm font-semibold text-emerald-700">{b.score2026}</td>
-                  <td className="px-6 py-4 text-sm text-secondary leading-relaxed">{b.meaning}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="rounded-2xl border border-black/5 bg-white shadow-sm p-6 md:p-8">
+          <RankedBarChart
+            series={BENCHMARKS_2026.map((b, i) => ({
+              label: b.name,
+              value: b.pct,
+              valueLabel: b.score2026,
+              color: CATEGORICAL[i % CATEGORICAL.length],
+            }))}
+            max={100}
+          />
+          <div className="mt-6 grid sm:grid-cols-2 gap-x-8 gap-y-2">
+            {BENCHMARKS_2026.map((b) => (
+              <div key={b.name} className="text-xs text-secondary leading-relaxed">
+                <span className="font-semibold text-foreground">{b.name}</span> — {b.meaning}. 2023 baseline: {b.score2023}.
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
