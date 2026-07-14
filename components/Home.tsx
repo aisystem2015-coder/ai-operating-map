@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import Navigation from "./Navigation";
 import SystemViewCard from "./ui/system-view-card";
+import { AnimatedGradientText } from "./ui/animated-gradient-text";
 import StatTile from "./charts/StatTile";
 import RankedBarChart from "./charts/RankedBarChart";
 import SlopeChart from "./charts/SlopeChart";
@@ -197,7 +198,7 @@ export default function Home() {
                 <div className="space-y-5 max-w-3xl">
                   <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold leading-[1.1] text-foreground">
                     AI is not a product.<br />
-                    <span className="text-emerald-600">It is the reasoning layer</span><br />
+                    <AnimatedGradientText className="font-bold">It is the reasoning layer</AnimatedGradientText><br />
                     inside your system.
                   </h1>
                   <p className="text-lg text-secondary leading-relaxed max-w-2xl">

@@ -362,7 +362,7 @@ export default function ExecutionChecklistPage() {
               </h2>
               <p className="text-secondary leading-relaxed text-lg max-w-3xl">
                 Every layer of the system map needs to progress through the same three levels. Stopping
-                early at any layer is a specific, named failure mode — not a vague sense of "not ready."
+                early at any layer is a specific, named failure mode — not a vague sense of &ldquo;not ready.&rdquo;
               </p>
             </div>
 

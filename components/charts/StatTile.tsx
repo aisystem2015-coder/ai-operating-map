@@ -1,6 +1,17 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { NumberTicker } from "../ui/number-ticker";
+
+/** "$34B" -> {prefix:"$", number:34, suffix:"B"}; falls back to null (plain
+ * static text) for values with no parseable leading number. */
+function parseStatValue(value: string) {
+  const match = value.match(/^([^\d]*)(\d+(?:\.\d+)?)(.*)$/);
+  if (!match) return null;
+  const [, prefix, number, suffix] = match;
+  const decimalPlaces = number.includes(".") ? number.split(".")[1].length : 0;
+  return { prefix, number: parseFloat(number), suffix, decimalPlaces };
+}
 
 export default function StatTile({
   label,
@@ -21,6 +32,7 @@ export default function StatTile({
 }) {
   const isNegative = delta?.trim().startsWith("-");
   const deltaIsGood = isNegative ? !deltaDirectionIsGood : deltaDirectionIsGood;
+  const parsed = parseStatValue(value);
 
   return (
     <motion.div
@@ -40,7 +52,16 @@ export default function StatTile({
           }`}
           style={{ color: accentColor }}
         >
-          {value}
+          {parsed ? (
+            <NumberTicker
+              value={parsed.number}
+              decimalPlaces={parsed.decimalPlaces}
+              prefix={parsed.prefix}
+              suffix={parsed.suffix}
+            />
+          ) : (
+            value
+          )}
         </div>
         {delta && (
           <span

@@ -12,7 +12,7 @@ export default function WhatWorksPage() {
 
       <main>
         {/* Section 1: What Works Today — interactive 4-stage explorer */}
-        <section className="py-32 px-6 lg:px-8 bg-white/40">
+        <section id="top" className="py-32 px-6 lg:px-8 bg-white/40 scroll-mt-8">
           <div className="max-w-7xl mx-auto">
             <WhatWorksExplorer />
           </div>
@@ -38,10 +38,10 @@ export default function WhatWorksPage() {
                   </div>
 
                   <Link
-                    href="/market-reality#vertical-ai"
+                    href="#top"
                     className="inline-flex items-center gap-2 text-accent font-semibold text-lg underline decoration-2 underline-offset-8"
                   >
-                    Learn more about Vertical AI →
+                    See it in the Agentic Systems stage above ↑
                   </Link>
                 </div>
 

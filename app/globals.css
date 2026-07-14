@@ -77,6 +77,15 @@ html {
   }
 }
 
+@keyframes gradient-pan {
+  0% {
+    background-position: 0% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
 /* Hide scrollbar utility */
 .scrollbar-hide {
   -ms-overflow-style: none;

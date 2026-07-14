@@ -8,7 +8,6 @@ import ExpectationMismatch from "../market-reality/expectation-mismatch";
 import WeakDataFoundations from "../market-reality/weak-data-foundations";
 import GateModel from "../market-reality/gate-model";
 import MaturityTimeline from "../market-reality/maturity-timeline";
-import VerticalAISection from "../market-reality/vertical-ai";
 
 export default function MarketRealityPage() {
   return (
@@ -31,8 +30,8 @@ export default function MarketRealityPage() {
         {/* F) Root Cause #1 */}
         <WeakDataFoundations />
 
-        {/* G) Vertical AI (replaces basic horizontal vs vertical view) */}
-        <VerticalAISection />
+        {/* G) Vertical AI now lives on /what-works (Agentic Systems stage) —
+            merged there to remove the duplicate treatment Francisco flagged. */}
 
         {/* H) GATE */}
         <GateModel />

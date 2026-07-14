@@ -2,6 +2,7 @@
 
 import SectionReveal from "../learning/SectionReveal";
 import MatrixGrid from "../charts/MatrixGrid";
+import { Marquee } from "../ui/marquee";
 
 const stackColumns = [
   { id: "examples", label: "Examples (2026)" },
@@ -45,6 +46,24 @@ export default function VerticalDeploymentsSection() {
             The 2026 vertical AI stack
           </h4>
           <MatrixGrid columns={stackColumns} rows={stackRows} />
+        </div>
+      </SectionReveal>
+
+      <SectionReveal delay={0.2}>
+        <div className="space-y-3">
+          <p className="text-center text-xs font-semibold uppercase tracking-[0.18em] text-secondary">
+            Real tools running this stack today
+          </p>
+          <Marquee pauseOnHover className="[--duration:35s] [mask-image:linear-gradient(to_right,transparent,white_10%,white_90%,transparent)]">
+            {stackRows.flatMap((row) => row.cells.examples.primary.split(", ")).map((tool) => (
+              <span
+                key={tool}
+                className="mx-1.5 whitespace-nowrap rounded-full border border-black/5 bg-white px-4 py-2 text-sm font-medium text-secondary shadow-sm"
+              >
+                {tool}
+              </span>
+            ))}
+          </Marquee>
         </div>
       </SectionReveal>
     </div>
