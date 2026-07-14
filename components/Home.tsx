@@ -11,6 +11,7 @@ import RankedBarChart from "./charts/RankedBarChart";
 import SlopeChart from "./charts/SlopeChart";
 import { CATEGORICAL } from "./charts/tokens";
 import { BENCHMARKS_2026, OPERATIONS_IMPACT } from "@/data/ai-now-2026";
+import { NeuroNoise } from "@/components/ui/neuro-noise";
 import {
   Zap, Brain, Network, Bot, TrendingUp, Shield, Eye,
   Layers, Target, Globe, CheckCircle, XCircle, AlertTriangle,
@@ -896,8 +897,24 @@ export default function Home() {
           <section>
             <motion.div
               {...fadeIn}
-              className="rounded-3xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-white p-10 lg:p-14 shadow-sm space-y-6"
+              className="relative isolate overflow-hidden rounded-3xl border border-emerald-200 p-10 lg:p-14 shadow-sm space-y-6"
             >
+              {/* Ambient shader background — this is the one section on the page
+                  with no flat/gradient fill of its own, so it doubles as a
+                  closing "vision" moment instead of competing with a section
+                  that already has a background treatment. */}
+              <NeuroNoise
+                className="pointer-events-none absolute inset-0 -z-10 h-full w-full"
+                colorFront="#0E7A68"
+                colorMid="#9FE3D5"
+                colorBack="#F4F3F5"
+                brightness={0.45}
+                contrast={0.35}
+                speed={0.35}
+                scale={1.2}
+              />
+              <div className="pointer-events-none absolute inset-0 -z-10 bg-white/55" aria-hidden />
+
               <div className="flex items-center gap-3">
                 <div className="h-10 w-10 rounded-xl bg-emerald-100 border border-emerald-200 flex items-center justify-center">
                   <Rocket size={20} className="text-emerald-700" />
