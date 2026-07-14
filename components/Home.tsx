@@ -179,13 +179,23 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
               className="relative overflow-hidden rounded-3xl border border-emerald-100 shadow-xl"
-              style={{ background: "linear-gradient(135deg, #ecfdf5 0%, #f0fdfa 45%, #ffffff 100%)" }}
             >
-              {/* Grid texture */}
-              <div className="pointer-events-none absolute inset-0 opacity-[0.4]" aria-hidden style={{ backgroundImage: "radial-gradient(circle at 1px 1px, rgba(16,24,40,0.06) 1px, transparent 0)", backgroundSize: "28px 28px" }} />
-              {/* Glow */}
-              <div className="pointer-events-none absolute top-0 right-0 w-96 h-96 rounded-full bg-emerald-300/20 blur-3xl" aria-hidden />
-              <div className="pointer-events-none absolute bottom-0 left-1/3 w-64 h-64 rounded-full bg-violet-300/20 blur-3xl" aria-hidden />
+              {/* Ambient shader background — same NeuroNoise treatment as the
+                  closing CTA, so the page opens and closes on the same
+                  animated "system" motif instead of a flat gradient. Replaces
+                  the old static gradient + grid-texture + blur blobs, which
+                  would otherwise fight the shader's own movement. */}
+              <NeuroNoise
+                className="pointer-events-none absolute inset-0 -z-10 h-full w-full"
+                colorFront="#0E7A68"
+                colorMid="#9FE3D5"
+                colorBack="#F4F3F5"
+                brightness={0.45}
+                contrast={0.35}
+                speed={0.3}
+                scale={1.4}
+              />
+              <div className="pointer-events-none absolute inset-0 -z-10 bg-white/60" aria-hidden />
 
               <div className="relative px-8 py-14 lg:px-14 lg:py-20 space-y-10">
                 <div className="flex items-center gap-3 flex-wrap">
