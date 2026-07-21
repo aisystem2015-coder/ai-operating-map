@@ -8,7 +8,7 @@ import {
   useTransform,
   useMotionValueEvent,
 } from "framer-motion";
-import { Cpu, MessageSquare, Bot, Network, ArrowUp } from "lucide-react";
+import { Cpu, MessageSquare, Bot, Network } from "lucide-react";
 import SectionReveal from "../learning/SectionReveal";
 import LLMsSection from "./llms-section";
 import AssistantsSection from "./assistants-section";
@@ -89,6 +89,18 @@ const stages: Array<{
 // performance over raw speed).
 const washEase: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
+// Literal Tailwind class strings (not computed via .replace() on stage.bg) —
+// Tailwind's JIT scanner needs the exact class text present in source to
+// generate it; a dynamically-built "text-emerald-700" from string
+// replacement never gets into the CSS bundle and silently falls back to
+// inherited/default color. Keep this in sync with each stage's `bg` above.
+const RING_TEXT_CLASS: Record<StageId, string> = {
+  llm: "text-foreground",
+  assistant: "text-emerald-700",
+  agent: "text-emerald-500",
+  agentic: "text-emerald-200",
+};
+
 export default function WhatWorksExplorer() {
   const [active, setActive] = useState<StageId>("llm");
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -133,66 +145,104 @@ export default function WhatWorksExplorer() {
         </div>
       </SectionReveal>
 
-      {/* The stack — LLMs as the widest foundation, each layer above narrower,
-          so the "builds on top of" hierarchy reads visually, not just in prose. */}
-      <div className="relative w-full max-w-3xl mx-auto px-4">
-        <div className="flex flex-col items-center gap-3">
-          {[...stages].reverse().map((stage, reversedI) => {
-            const i = stages.length - 1 - reversedI;
+      {/* The "rainbow": LLM as the core, each layer an outer ring built on top
+          of it — restores the arcoíris Francisco asked for (Meet 14/15), not
+          a pyramid. A ring's clickable area is just its own stroke annulus
+          (fill="none" + SVG's default pointer-events), so clicking inside a
+          ring correctly falls through to the layer beneath it. */}
+      <div className="flex flex-col md:flex-row items-center gap-10 md:gap-14 max-w-4xl mx-auto px-4">
+        <div className="relative w-full max-w-[22rem] mx-auto md:mx-0 aspect-square shrink-0">
+          <svg
+            viewBox="0 0 480 480"
+            className="w-full h-full"
+            role="tablist"
+            aria-label="LLMs en el centro, cada capa se construye alrededor"
+          >
+            {[...stages].reverse().map((stage) => {
+              const isActive = active === stage.id;
+              const isLLM = stage.id === "llm";
+              const radius = { llm: 60, assistant: 108, agent: 165, agentic: 215 }[stage.id]!;
+              const strokeWidth = { llm: 0, assistant: 72, agent: 58, agentic: 46 }[stage.id]!;
+              return (
+                <motion.circle
+                  key={stage.id}
+                  cx={240}
+                  cy={240}
+                  r={radius}
+                  fill={isLLM ? "currentColor" : "none"}
+                  stroke={isLLM ? "none" : "currentColor"}
+                  strokeWidth={strokeWidth}
+                  className={`${RING_TEXT_CLASS[stage.id]} cursor-pointer focus:outline-none`}
+                  initial={false}
+                  animate={{ opacity: isActive ? 1 : 0.72, scale: isActive ? 1.02 : 1 }}
+                  transition={{ type: "spring", stiffness: 260, damping: 22 }}
+                  style={{ transformOrigin: "240px 240px" }}
+                  onClick={() => setActive(stage.id)}
+                  role="tab"
+                  aria-selected={isActive}
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") setActive(stage.id);
+                  }}
+                />
+              );
+            })}
+            {/* Center icon for the innermost (LLM) layer, always visible */}
+            <foreignObject x={240 - 26} y={240 - 26} width={52} height={52}>
+              <div className="w-full h-full flex items-center justify-center">
+                <Cpu size={24} className="text-white" strokeWidth={1.75} aria-hidden />
+              </div>
+            </foreignObject>
+          </svg>
+        </div>
+
+        {/* Legend — also clickable, stays in sync with the diagram */}
+        <div className="flex flex-col gap-2 w-full md:w-auto">
+          {stages.map((stage) => {
             const Icon = stage.icon;
             const isActive = active === stage.id;
             return (
-              <div key={stage.id} className="w-full flex flex-col items-center">
-                {reversedI > 0 && (
-                  <ArrowUp
-                    size={16}
-                    className="text-black/20 mb-2"
-                    strokeWidth={2.5}
-                    aria-hidden
-                  />
-                )}
-                <button
-                  onClick={() => setActive(stage.id)}
-                  aria-selected={isActive}
-                  role="tab"
-                  style={{ width: `${stage.widthPct}%` }}
-                  className="group relative flex items-center gap-4 rounded-2xl px-5 py-4 text-left focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
-                >
-                  <motion.div
-                    layout
-                    initial={false}
-                    animate={{
-                      scale: isActive ? 1.05 : 1,
-                      boxShadow: isActive
-                        ? "0 12px 30px -8px rgba(0,0,0,0.25)"
-                        : "0 2px 8px -2px rgba(0,0,0,0.08)",
-                    }}
-                    transition={{ type: "spring", stiffness: 300, damping: 24 }}
-                    className={`absolute inset-0 rounded-2xl ${stage.bg} ${
-                      isActive ? "ring-2 ring-accent ring-offset-2" : "opacity-90 group-hover:opacity-100"
-                    }`}
-                  />
-                  <div className="relative z-10 h-11 w-11 md:h-12 md:w-12 shrink-0 rounded-xl bg-white/15 flex items-center justify-center">
-                    <Icon size={22} className={stage.text} strokeWidth={1.75} />
-                    {stage.tag && (
-                      <span className="absolute -bottom-2 -right-2 text-[10px] font-semibold uppercase tracking-wide bg-white text-emerald-700 border border-emerald-200 rounded-full px-1.5 py-0.5 shadow-sm">
-                        {stage.tag}
-                      </span>
-                    )}
+              <button
+                key={stage.id}
+                onClick={() => setActive(stage.id)}
+                aria-selected={isActive}
+                role="tab"
+                className="group relative flex items-center gap-4 rounded-2xl px-5 py-3.5 text-left focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+              >
+                <motion.div
+                  layout
+                  initial={false}
+                  animate={{
+                    scale: isActive ? 1.03 : 1,
+                    boxShadow: isActive
+                      ? "0 12px 30px -8px rgba(0,0,0,0.25)"
+                      : "0 2px 8px -2px rgba(0,0,0,0.08)",
+                  }}
+                  transition={{ type: "spring", stiffness: 300, damping: 24 }}
+                  className={`absolute inset-0 rounded-2xl ${stage.bg} ${
+                    isActive ? "ring-2 ring-accent ring-offset-2" : "opacity-90 group-hover:opacity-100"
+                  }`}
+                />
+                <div className="relative z-10 h-10 w-10 shrink-0 rounded-xl bg-white/15 flex items-center justify-center">
+                  <Icon size={20} className={stage.text} strokeWidth={1.75} />
+                  {stage.tag && (
+                    <span className="absolute -bottom-2 -right-2 text-[10px] font-semibold uppercase tracking-wide bg-white text-emerald-700 border border-emerald-200 rounded-full px-1.5 py-0.5 shadow-sm">
+                      {stage.tag}
+                    </span>
+                  )}
+                </div>
+                <div className="relative z-10 space-y-0.5">
+                  <div className={`text-[11px] font-semibold uppercase tracking-wide ${stage.text} opacity-70`}>
+                    {stage.year}
                   </div>
-                  <div className="relative z-10 space-y-0.5">
-                    <div className={`text-[11px] font-semibold uppercase tracking-wide ${stage.text} opacity-70`}>
-                      {stage.year}
-                    </div>
-                    <div className={`text-base md:text-lg font-heading font-semibold ${stage.text}`}>
-                      {stage.name}
-                    </div>
-                    <div className={`hidden md:block text-xs ${stage.text} opacity-80`}>
-                      {stage.tagline}
-                    </div>
+                  <div className={`text-base md:text-lg font-heading font-semibold ${stage.text}`}>
+                    {stage.name}
                   </div>
-                </button>
-              </div>
+                  <div className={`hidden md:block text-xs ${stage.text} opacity-80`}>
+                    {stage.tagline}
+                  </div>
+                </div>
+              </button>
             );
           })}
         </div>
