@@ -201,10 +201,10 @@ export default function DigitalTwinPage() {
                     Your Digital Twin
                   </h1>
                   <p className="text-lg text-secondary leading-relaxed">
-                    In plain terms: imagine a version of you that never forgets anything you've told
+                    In plain terms: imagine a version of you that never forgets anything you&apos;ve told
                     it, and can answer questions or draft things on your behalf — grounded in what
                     you actually know and how you actually talk, not a generic internet-trained
-                    chatbot. That's the whole idea. Nothing more complicated than that.
+                    chatbot. That&apos;s the whole idea. Nothing more complicated than that.
                   </p>
                 </div>
               </SectionReveal>
@@ -429,6 +429,28 @@ export default function DigitalTwinPage() {
                   </p>
                 </div>
               </div>
+            </section>
+
+            {/* New beginner-friendly product page — additive card only, does
+                not touch this page's own content or its stub chat widget
+                below. See components/pages/CreateYourDigitalTwinPage.tsx. */}
+            <section id="build-your-own-cta" className="scroll-mt-28">
+              <SectionReveal>
+                <div className="rounded-3xl border border-indigo-100 bg-gradient-to-br from-indigo-50 via-sky-50 to-amber-50 p-8 lg:p-10 flex flex-col lg:flex-row items-center justify-between gap-6">
+                  <div className="space-y-2 text-center lg:text-left">
+                    <p className="text-sm font-semibold uppercase tracking-[0.18em] text-indigo-600">New — beginner friendly</p>
+                    <h2 className="text-2xl font-heading font-semibold text-foreground leading-tight">
+                      New to all this? Try the plain-language version — and talk to a real twin live.
+                    </h2>
+                    <p className="text-sm text-secondary leading-relaxed max-w-xl">
+                      A separate, no-jargon walkthrough with a working chat you can actually talk to right now.
+                    </p>
+                  </div>
+                  <ShimmerButton href="/create-your-digital-twin" background="#6366F1" className="shrink-0">
+                    Build your own twin →
+                  </ShimmerButton>
+                </div>
+              </SectionReveal>
             </section>
 
             {/* Bridge */}
