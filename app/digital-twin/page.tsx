@@ -1,8 +1,9 @@
-import { redirect } from "next/navigation";
+import DigitalTwinPage from "@/components/pages/DigitalTwinPage";
 
-// Digital Twin moved into /ai-mindset as its closing section (Meet 13:
-// Francisco asked to relocate it out of its own nav item). Keep this route
-// alive as a redirect so any bookmarked/shared /digital-twin link still works.
+// Promoted back to a real, dedicated page (Meet 16, 2026-07-21) — was a
+// redirect into /ai-mindset#digital-twin since Meet 13. See
+// components/pages/DigitalTwinPage.tsx for the full page and the teaser
+// left in its old spot on /ai-mindset.
 export default function Page() {
-  redirect("/ai-mindset#digital-twin");
+  return <DigitalTwinPage />;
 }
