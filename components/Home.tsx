@@ -870,8 +870,6 @@ export default function Home() {
                 { href: "/market-reality", tag: "Data", title: "Market Reality", desc: "Why 95% of GenAI pilots fail to scale, the maturity timeline, and what separates the ones that don't.", color: "orange" },
                 { href: "/what-works", tag: "Patterns", title: "What Works Today", desc: "LLMs, Assistants, AI Agents, and Agentic Systems — click through each stage and how to build it.", color: "teal" },
                 { href: "/ai-mindset", tag: "Framework", title: "AI Mindset", desc: "The five-layer system model that separates AI users from AI operators.", color: "emerald" },
-                { href: "/digital-twin", tag: "Personal", title: "Digital Twin", desc: "Same compounding logic as vertical AI, applied to one person — definition, market context, and how to build your own.", color: "violet" },
-                { href: "/create-your-digital-twin", tag: "New · Try it live", title: "Build Your Own Twin", desc: "The beginner-friendly, step-by-step guide — plus a real, live chat with Francisco's own digital twin.", color: "indigo" },
                 { href: "/execution-checklist", tag: "Action", title: "Execution Checklist", desc: "The decisions to make before committing teams and budgets to AI work, plus 9 real systems.", color: "emerald" },
                 { href: "/ai-now-2026", tag: "Current", title: "AI Now — 2026", desc: "Where the technology actually stands right now — benchmarks, models, deployments.", color: "pink" },
               ].map((page, i) => {

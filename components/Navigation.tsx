@@ -16,8 +16,6 @@ const primaryNav = [
 ];
 
 const moreNav = [
-  { href: "/digital-twin", label: "Digital Twin" },
-  { href: "/create-your-digital-twin", label: "Build Your Own Twin" },
   { href: "/ai-now-2026", label: "AI Now — 2026" },
   { href: "/resources", label: "Resources" },
 ];

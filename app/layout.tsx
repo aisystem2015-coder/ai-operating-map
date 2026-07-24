@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Inter, Manrope, DM_Sans } from "next/font/google";
+import { Inter, Manrope } from "next/font/google";
 import MayaBanner from "@/components/MayaBanner";
 import Footer from "@/components/Footer";
 
@@ -13,18 +13,6 @@ const inter = Inter({
 const manrope = Manrope({
   subsets: ["latin"],
   variable: "--font-manrope",
-  display: "swap",
-});
-
-// Used ONLY by /create-your-digital-twin (applied via inline style on that
-// page's root wrapper) — a deliberate one-off exception to the main
-// site's Inter/Manrope pairing, see that page's CLAUDE.md note. Declaring
-// the font variable here (global layout) is the only way next/font/google
-// can load it, but no other page references --font-dm-sans.
-const dmSans = DM_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "700"],
-  variable: "--font-dm-sans",
   display: "swap",
 });
 
@@ -45,7 +33,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${manrope.variable} ${dmSans.variable} pt-10`}>
+      <body className={`${inter.variable} ${manrope.variable} pt-10`}>
         <MayaBanner />
         {children}
         <Footer />

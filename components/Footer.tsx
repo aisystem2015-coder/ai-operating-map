@@ -11,8 +11,6 @@ const sections = [
       { href: "/market-reality", label: "Market Reality" },
       { href: "/what-works", label: "What Works Today" },
       { href: "/ai-mindset", label: "AI Mindset" },
-      { href: "/digital-twin", label: "Digital Twin" },
-      { href: "/create-your-digital-twin", label: "Build Your Own Twin" },
     ],
   },
   {

@@ -785,38 +785,6 @@ export default function AIMindsetPage() {
                 </SectionReveal>
               </section>
 
-              {/* Digital Twin — promoted back to its own real page (Meet 16,
-                  2026-07-21): "esto tiene que volverse ahora a una página de
-                  verdad". This used to be the full closing section (Meet 13
-                  decision); the full content, stats, examples, and build
-                  guide now live at /digital-twin — see
-                  components/pages/DigitalTwinPage.tsx. This is just the
-                  pointer, kept at the same #digital-twin anchor so existing
-                  links still land somewhere sensible. */}
-              <section id="digital-twin" className="scroll-mt-28">
-                <SectionReveal>
-                  <div className="rounded-3xl border border-black/5 bg-gradient-to-br from-slate-900 to-slate-800 p-10 lg:p-12 text-white space-y-4">
-                    <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-400">
-                      The personal layer
-                    </p>
-                    <h2 className="text-3xl md:text-4xl font-heading font-bold leading-tight">
-                      Digital Twin: this system thinking, applied to one person
-                    </h2>
-                    <p className="text-slate-300 leading-relaxed text-lg max-w-2xl">
-                      Same 5-layer logic as above — inputs, reasoning, orchestration, tools, outcomes —
-                      scoped down to a single person&apos;s knowledge and voice instead of a company. Now
-                      its own dedicated page: what it is, what it takes to build one, where to store the
-                      data, and a live &ldquo;Nivel 2&rdquo; chat with it.
-                    </p>
-                    <div>
-                      <ShimmerButton href="/digital-twin">
-                        Go to Digital Twin →
-                      </ShimmerButton>
-                    </div>
-                  </div>
-                </SectionReveal>
-              </section>
-
               {/* Bridge */}
               <section id="bridge" className="scroll-mt-24">
                 <SectionReveal>
