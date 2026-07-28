@@ -10,12 +10,21 @@ import path from "node:path";
  * Shells out to the `claude` CLI, same subprocess pattern used by
  * scripts/telegram_asistente_bot.py in the AI_Lab repo.
  *
- * ── HARD LIMITATION (do not let this be mistaken for production-ready) ──
- * This ONLY works while this Next.js app runs via `npm run dev` on
- * Francisco's Mac mini. It will NOT work once this app is deployed to
- * Vercel: a hosted serverless function cannot shell out to a local
- * `claude` CLI binary, and has no network path to this Mac's local
- * Obsidian vault.
+ * ── Two runtime paths (added 2026-07-27, Tailscale bridge) ──
+ * 1. Deployed on Vercel (process.env.VERCEL is set): a serverless function
+ *    can't shell out to a local `claude` CLI or reach the Mac mini's
+ *    Obsidian vault directly, so this proxies the request to a narrow
+ *    public backend (scripts/twin_public_backend.mjs) running on the Mac
+ *    mini and exposed via `tailscale funnel`. See TWIN_BACKEND_URL /
+ *    TWIN_SHARED_SECRET below. That backend is hard-clamped to public
+ *    access level — it can never grant elevated access, by design.
+ * 2. Running locally on the Mac mini (via `next start`, kept alive by
+ *    scripts/twin_backend_watchdog.sh): unchanged execFile-based path
+ *    below. This process is reachable either directly on the Mac or via
+ *    `tailscale serve` (tailnet-private, e.g. Francisco's iPhone) — never
+ *    via funnel — so anything that reaches it here is already
+ *    network-trusted, which is why the non-QA default access level is
+ *    higher than the public path's.
  *
  * ── Privacy — access levels ──
  * Per the vault's access-level scale (05 - Contexto Fran/Digital
@@ -120,6 +129,45 @@ function runClaude(prompt: string): Promise<string> {
   });
 }
 
+// Trusted-network default for the LOCAL path only (never used on Vercel).
+// Anything reaching this process here already came in either directly on
+// the Mac or through `tailscale serve` (tailnet-private) — the public
+// internet is only ever handed to twin_public_backend.mjs via funnel,
+// which hard-clamps to level 1 regardless of what it's asked for.
+const LOCAL_TRUSTED_DEFAULT_LEVEL = 3;
+
+async function proxyToMacMini(message: string, debugAccessLevel: number | null, isQaPreview: boolean) {
+  const backendUrl = process.env.TWIN_BACKEND_URL;
+  const secret = process.env.TWIN_SHARED_SECRET;
+  if (!backendUrl || !secret) {
+    return NextResponse.json({
+      reply: "The twin's backend isn't configured on this deployment yet.",
+      connected: false,
+    });
+  }
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 25_000);
+    const res = await fetch(backendUrl, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-twin-shared-secret": secret,
+      },
+      body: JSON.stringify({ message, debugAccessLevel: isQaPreview ? debugAccessLevel : null }),
+      signal: controller.signal,
+    });
+    clearTimeout(timeout);
+    const data = await res.json();
+    return NextResponse.json(data);
+  } catch {
+    return NextResponse.json({
+      reply: "Couldn't reach the twin's backend just now — try again in a moment.",
+      connected: false,
+    });
+  }
+}
+
 export async function POST(request: NextRequest) {
   let message = "";
   let debugAccessLevel: number | null = null;
@@ -140,10 +188,15 @@ export async function POST(request: NextRequest) {
   message = message.slice(0, MAX_MESSAGE_LENGTH);
 
   // The QA header is the only thing that lets debugAccessLevel raise the
-  // ceiling above the public default — it is set exclusively by the
-  // on-page dev/QA selector, never sent by the normal chat UI.
+  // ceiling above the default — it is set exclusively by the on-page
+  // dev/QA selector, never sent by the normal chat UI.
   const isQaPreview = request.headers.get("x-dt-qa") === "1" && debugAccessLevel !== null;
-  const effectiveLevel = isQaPreview ? (debugAccessLevel as number) : 1;
+
+  if (process.env.VERCEL) {
+    return proxyToMacMini(message, debugAccessLevel, isQaPreview);
+  }
+
+  const effectiveLevel = isQaPreview ? (debugAccessLevel as number) : LOCAL_TRUSTED_DEFAULT_LEVEL;
 
   const groundingPrompt = buildGroundingPrompt(effectiveLevel, isQaPreview);
   const fullPrompt = `${groundingPrompt}\n\n---\n\nVisitor question: ${message}\n\nYour answer:`;
@@ -160,8 +213,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       reply: isTimeout
         ? "That took too long to answer (over 2 minutes) — try a shorter or simpler question."
-        : "Something went wrong reaching the twin's backend just now — try again in a moment. " +
-          "(This chat only runs on Francisco's local dev server, not on the deployed version of this site.)",
+        : "Something went wrong reaching the twin's backend just now — try again in a moment.",
       connected: false,
     });
   }
