@@ -215,7 +215,7 @@ export default function WhatIsSection() {
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {maturityLevels.map((lvl, i) => (
-              <div key={lvl.title} className="rounded-2xl border border-black/5 bg-white shadow-sm overflow-hidden">
+              <div key={lvl.title} className="hover-glow rounded-2xl border border-black/5 bg-white shadow-sm overflow-hidden">
                 <div className="h-1.5" style={{ backgroundColor: SEQUENTIAL_EMERALD[i + 1] }} />
                 <div className="p-5 space-y-3">
                   <div

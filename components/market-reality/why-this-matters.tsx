@@ -46,7 +46,7 @@ export default function WhyThisMatters() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="text-center"
+                className="hover-glow-flat text-center rounded-2xl border border-transparent -mx-4 -my-2 px-4 py-2"
               >
                 <div className="mb-6">
                   <div className="w-16 h-16 mx-auto rounded-full border border-emerald-200 bg-emerald-100 flex items-center justify-center">
@@ -67,7 +67,7 @@ export default function WhyThisMatters() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: 0.3 }}
-                className="text-center"
+                className="hover-glow-flat text-center rounded-2xl border border-transparent -mx-4 -my-2 px-4 py-2"
               >
                 <div className="mb-6">
                   <div className="w-16 h-16 mx-auto rounded-full border border-emerald-200 bg-emerald-100 flex items-center justify-center">
@@ -88,7 +88,7 @@ export default function WhyThisMatters() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: 0.4 }}
-                className="text-center"
+                className="hover-glow-flat text-center rounded-2xl border border-transparent -mx-4 -my-2 px-4 py-2"
               >
                 <div className="mb-6">
                   <div className="w-16 h-16 mx-auto rounded-full border border-emerald-200 bg-emerald-100 flex items-center justify-center">

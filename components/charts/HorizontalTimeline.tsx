@@ -46,7 +46,7 @@ export default function HorizontalTimeline({ items }: { items: TimelineItem[] })
               <button
                 key={item.id}
                 onClick={() => setActiveId(item.id)}
-                className="group relative flex flex-col items-center pt-1 pb-3 focus:outline-none"
+                className="group relative flex flex-col items-center pt-1 pb-3 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 rounded-lg"
               >
                 {/* baseline segment */}
                 <div className="absolute top-4 left-0 right-0 h-[2px] bg-black/10" />
@@ -58,7 +58,9 @@ export default function HorizontalTimeline({ items }: { items: TimelineItem[] })
                     scale: isActive ? 1.3 : 1,
                     backgroundColor: isActive ? "#0E7A68" : rampColor,
                   }}
-                  className="relative z-10 h-4 w-4 rounded-full ring-4 ring-white shadow"
+                  whileHover={{ scale: isActive ? 1.4 : 1.2 }}
+                  transition={{ duration: 0.2 }}
+                  className="relative z-10 h-4 w-4 rounded-full ring-4 ring-white shadow group-hover:shadow-[0_0_0_5px_rgba(27,196,166,0.25)]"
                 />
                 <div
                   className={`mt-3 text-xs font-semibold tabular-nums ${

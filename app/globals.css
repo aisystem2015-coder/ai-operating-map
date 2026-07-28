@@ -96,3 +96,57 @@ html {
   display: none;
 }
 
+/* ── Shared hover/interaction language ──────────────────────────────────
+   One consistent emerald "glow" treatment for every card, stat tile, and
+   clickable box across the site: soft lift, emerald ring + shadow bloom,
+   faint tint — 200ms, matching this project's existing hover-transition
+   speed. Apply `.hover-glow` alongside a component's normal classes
+   instead of hand-rolling hover states per section. Emerald-only, no new
+   brand colors. */
+.hover-glow {
+  transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease,
+    background-color 200ms ease;
+}
+
+.hover-glow:hover,
+.hover-glow:focus-visible {
+  transform: translateY(-3px);
+  border-color: rgba(27, 196, 166, 0.4);
+  background-color: rgba(27, 196, 166, 0.035);
+  box-shadow:
+    0 0 0 1px rgba(27, 196, 166, 0.2),
+    0 20px 36px -20px rgba(27, 196, 166, 0.5),
+    0 10px 20px -12px rgba(0, 0, 0, 0.12);
+}
+
+/* Same glow, no lift — for elements where a vertical shift would fight the
+   layout (full-width rows, table-like lists, nav items). */
+.hover-glow-flat {
+  transition: box-shadow 200ms ease, border-color 200ms ease, background-color 200ms ease;
+}
+
+.hover-glow-flat:hover,
+.hover-glow-flat:focus-visible {
+  border-color: rgba(27, 196, 166, 0.4);
+  background-color: rgba(27, 196, 166, 0.035);
+  box-shadow: 0 0 0 1px rgba(27, 196, 166, 0.2), 0 12px 24px -16px rgba(27, 196, 166, 0.45);
+}
+
+/* Respect reduced-motion: keep the color/glow feedback, drop the transform
+   and let the browser's own reduced-motion CSS handle the rest. */
+@media (prefers-reduced-motion: reduce) {
+  .hover-glow:hover,
+  .hover-glow:focus-visible {
+    transform: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+

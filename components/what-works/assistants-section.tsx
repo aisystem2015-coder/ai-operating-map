@@ -62,7 +62,7 @@ export default function AssistantsSection() {
         <SectionReveal delay={0.1}>
           <div className="grid sm:grid-cols-2 gap-5">
             {traits.map((t) => (
-              <div key={t.title} className="rounded-2xl border border-black/5 bg-white p-6 shadow-sm space-y-3">
+              <div key={t.title} className="hover-glow rounded-2xl border border-black/5 bg-white p-6 shadow-sm space-y-3">
                 <div className="h-8 w-8 rounded-lg bg-emerald-100 flex items-center justify-center">
                   <span className="h-3 w-3 rounded-full bg-emerald-500" />
                 </div>

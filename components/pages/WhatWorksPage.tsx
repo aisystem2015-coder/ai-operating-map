@@ -39,7 +39,7 @@ export default function WhatWorksPage() {
 
                   <Link
                     href="#top"
-                    className="inline-flex items-center gap-2 text-accent font-semibold text-lg underline decoration-2 underline-offset-8"
+                    className="inline-flex items-center gap-2 text-accent font-semibold text-lg underline decoration-2 underline-offset-8 transition-colors duration-200 hover:text-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 rounded"
                   >
                     See it in the Agentic Systems stage above ↑
                   </Link>

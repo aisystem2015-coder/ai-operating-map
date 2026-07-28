@@ -29,7 +29,7 @@ export default function VerticalAIPitch() {
 
       <SectionReveal>
         <div className="grid md:grid-cols-2 gap-6">
-          <div className="bg-white/70 p-7 rounded-3xl border border-black/5 shadow-sm">
+          <div className="hover-glow bg-white/70 p-7 rounded-3xl border border-black/5 shadow-sm">
             <h4 className="text-xl font-heading font-semibold text-foreground mb-3">
               Generic AI Assistant
             </h4>
@@ -57,7 +57,7 @@ export default function VerticalAIPitch() {
             </ul>
           </div>
 
-          <div className="bg-white/70 p-7 rounded-3xl border-2 border-accent shadow-sm">
+          <div className="hover-glow bg-white/70 p-7 rounded-3xl border-2 border-accent shadow-sm">
             <h4 className="text-xl font-heading font-semibold text-foreground mb-3">
               Vertical AI System
             </h4>

@@ -104,7 +104,7 @@ export default function ExamplesSection() {
             <p className="text-sm font-semibold text-foreground">By scope / complexity — smallest unit to the whole workflow</p>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {scopeLevels.map((level, i) => (
-                <div key={level.title} className="rounded-2xl border border-black/5 bg-white shadow-sm overflow-hidden">
+                <div key={level.title} className="hover-glow rounded-2xl border border-black/5 bg-white shadow-sm overflow-hidden">
                   <div className="h-1.5" style={{ backgroundColor: SEQUENTIAL_EMERALD[i + 1] }} />
                   <div className="p-4 space-y-2">
                     <div

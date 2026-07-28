@@ -57,7 +57,10 @@ export default function GateModel() {
                   question: "Do users trust outputs and decisions?",
                 },
               ].map((gate, index) => (
-                <div key={gate.letter} className="flex items-start gap-6">
+                <div
+                  key={gate.letter}
+                  className="hover-glow-flat flex items-start gap-6 rounded-2xl border border-transparent px-3 py-2 -mx-3"
+                >
                   <div
                     className="w-20 h-20 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm"
                     style={{ backgroundColor: ACTUAL_COLOR }}

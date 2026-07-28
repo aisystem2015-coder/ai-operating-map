@@ -81,7 +81,7 @@ export default function ResourcesPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-60px" }}
                   transition={{ duration: 0.4, delay: i * 0.05 }}
-                  className="rounded-2xl border border-black/5 bg-white shadow-sm overflow-hidden"
+                  className="hover-glow rounded-2xl border border-black/5 bg-white shadow-sm overflow-hidden"
                 >
                   <div className="h-1.5 w-full" style={{ backgroundColor: color }} />
                   <div className="p-6">

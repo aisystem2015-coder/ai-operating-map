@@ -160,7 +160,7 @@ export default function AgentPatternsSection() {
           </p>
           <div className="grid md:grid-cols-3 gap-5">
             {autonomyModes.map((mode) => (
-              <div key={mode.title} className="rounded-2xl border border-black/5 bg-white p-6 shadow-sm space-y-3">
+              <div key={mode.title} className="hover-glow rounded-2xl border border-black/5 bg-white p-6 shadow-sm space-y-3">
                 <h4 className="text-lg font-heading font-semibold text-foreground">{mode.title}</h4>
                 <p className="text-sm text-secondary leading-relaxed">{mode.desc}</p>
                 <p className="text-xs text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-lg px-3 py-2 leading-relaxed">{mode.example}</p>
@@ -210,7 +210,7 @@ export default function AgentPatternsSection() {
         </div>
         <div className="grid md:grid-cols-2 gap-5">
           {productionFailures.map((f) => (
-            <div key={f.failure} className="rounded-2xl border border-black/5 bg-white p-6 shadow-sm space-y-4">
+            <div key={f.failure} className="hover-glow rounded-2xl border border-black/5 bg-white p-6 shadow-sm space-y-4">
               <div className="flex items-center gap-3">
                 <div className="h-2 w-2 rounded-full bg-red-400 flex-shrink-0" />
                 <h4 className="text-base font-semibold text-foreground">{f.failure}</h4>

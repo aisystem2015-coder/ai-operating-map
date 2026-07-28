@@ -36,7 +36,7 @@ export default function SlopeChart({
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: "-40px" }}
               transition={{ duration: 0.4, delay: i * 0.05 }}
-              className="rounded-xl border border-black/5 bg-white shadow-sm px-5 py-4"
+              className="hover-glow-flat rounded-xl border border-black/5 bg-white shadow-sm px-5 py-4"
             >
               <div className="text-sm font-semibold text-foreground mb-2">{row.label}</div>
               <div className="flex items-center gap-3">

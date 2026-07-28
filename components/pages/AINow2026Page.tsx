@@ -63,7 +63,7 @@ export default function AINow2026Page() {
                     initial={{ opacity: 0, x: -12 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.06, duration: 0.45, ease: "easeOut" }}
-                    className="rounded-2xl border border-black/5 bg-white p-7 shadow-sm flex items-start gap-6"
+                    className="hover-glow-flat rounded-2xl border border-black/5 bg-white p-7 shadow-sm flex items-start gap-6"
                   >
                     <div
                       className="flex-shrink-0 rounded-xl px-3 py-1.5 text-xs font-semibold whitespace-nowrap"
@@ -131,7 +131,7 @@ export default function AINow2026Page() {
                     </h3>
                     <div className="grid sm:grid-cols-2 gap-3">
                       {org.models.map((m) => (
-                        <div key={m.name} className="rounded-xl border border-black/5 bg-white p-5 shadow-sm space-y-2 hover:shadow-md transition-shadow">
+                        <div key={m.name} className="hover-glow rounded-xl border border-black/5 bg-white p-5 shadow-sm space-y-2">
                           <div className="flex items-center justify-between">
                             <h4 className="text-sm font-semibold text-foreground">{m.name}</h4>
                             <span
@@ -195,7 +195,7 @@ export default function AINow2026Page() {
                     initial={{ opacity: 0, y: 14 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.07 }}
-                    className="rounded-2xl border border-black/5 bg-white shadow-sm overflow-hidden"
+                    className="hover-glow rounded-2xl border border-black/5 bg-white shadow-sm overflow-hidden"
                   >
                     <div className="h-1 w-full" style={{ backgroundColor: color }} />
                     <div className="p-7 space-y-4">

@@ -53,7 +53,7 @@ export default function MatrixGrid({
               return (
                 <div
                   key={`${row.label}-${col.id}`}
-                  className="rounded-xl border border-black/5 bg-white shadow-sm px-3 py-3"
+                  className="hover-glow-flat rounded-xl border border-black/5 bg-white shadow-sm px-3 py-3"
                 >
                   {cell ? (
                     <>

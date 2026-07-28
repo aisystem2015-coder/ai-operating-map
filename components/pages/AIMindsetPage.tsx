@@ -238,7 +238,7 @@ function SystemViewCard({
           {diagramItems.map((item) => (
             <div
               key={item.id}
-              className={`group relative flex h-full flex-col justify-between rounded-2xl border bg-gradient-to-b from-slate-50 to-white shadow-sm transition-all duration-200 ${
+              className={`hover-glow group relative flex h-full flex-col justify-between rounded-2xl border bg-gradient-to-b from-slate-50 to-white shadow-sm transition-all duration-200 cursor-pointer ${
                 isExpanded ? "p-5 border-black/8" : "p-4 border-black/5"
               }`}
               tabIndex={0}

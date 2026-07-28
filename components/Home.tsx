@@ -298,7 +298,7 @@ export default function Home() {
               {models2026.map((org) => {
                 const c = colorMap[org.color];
                 return (
-                  <div key={org.org} className={`rounded-2xl border ${c.border} bg-white shadow-sm overflow-hidden`}>
+                  <div key={org.org} className={`hover-glow rounded-2xl border ${c.border} bg-white shadow-sm overflow-hidden`}>
                     <div className={`px-5 py-3 ${c.bg} border-b ${c.border}`}>
                       <h3 className={`text-sm font-bold uppercase tracking-[0.18em] ${c.text}`}>{org.org}</h3>
                     </div>
@@ -350,7 +350,7 @@ export default function Home() {
                   { id: "02", title: "Data", body: "Weak data foundations: messy, siloed, or incomplete data. 60–70% of AI use cases fail at the data layer.", icon: Database, color: "rose" as string },
                   { id: "03", title: "Wrong mindset", body: "Horizontal thinking: building generic AI that tries to do everything instead of vertical, domain-specific solutions.", icon: Globe, color: "rose" as string },
                 ].map((r) => (
-                  <div key={r.id} className="bg-white/70 rounded-2xl border border-rose-100 p-6 space-y-3 shadow-sm">
+                  <div key={r.id} className="hover-glow bg-white/70 rounded-2xl border border-rose-100 p-6 space-y-3 shadow-sm">
                     <div className="flex items-center gap-3">
                       <div className="h-9 w-9 rounded-xl bg-rose-50 border border-rose-200 flex items-center justify-center">
                         <r.icon size={18} className="text-rose-600" />
@@ -663,7 +663,7 @@ export default function Home() {
                 const c = colorMap[row.color];
                 const Icon = row.icon;
                 return (
-                  <div key={row.layer} className={`rounded-2xl border ${c.border} ${c.bg} p-6 space-y-3`}>
+                  <div key={row.layer} className={`hover-glow rounded-2xl border ${c.border} ${c.bg} p-6 space-y-3`}>
                     <div className="flex items-center gap-3">
                       <div className={`h-9 w-9 rounded-xl flex items-center justify-center bg-white border ${c.border}`}>
                         <Icon size={18} className={c.text} />
@@ -691,7 +691,7 @@ export default function Home() {
             </motion.div>
             <div className="grid md:grid-cols-2 gap-4">
               {productionFailures.map((f) => (
-                <div key={f.failure} className="rounded-2xl border border-red-100 bg-white p-6 shadow-sm space-y-4">
+                <div key={f.failure} className="hover-glow rounded-2xl border border-red-100 bg-white p-6 shadow-sm space-y-4">
                   <div className="flex items-center gap-3">
                     <div className="h-8 w-8 rounded-lg bg-red-50 border border-red-200 flex items-center justify-center">
                       <XCircle size={16} className="text-red-500" />

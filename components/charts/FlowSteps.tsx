@@ -41,7 +41,7 @@ export default function FlowSteps({
           return (
             <div
               key={step.id}
-              className="group relative flex flex-col justify-between rounded-2xl border border-black/5 bg-gradient-to-b from-slate-50 to-white p-4 shadow-sm transition-all duration-200 cursor-pointer"
+              className="hover-glow group relative flex flex-col justify-between rounded-2xl border border-black/5 bg-gradient-to-b from-slate-50 to-white p-4 shadow-sm transition-all duration-200 cursor-pointer"
               tabIndex={0}
               onMouseEnter={() => setActive(step.id)}
               onFocus={() => setActive(step.id)}

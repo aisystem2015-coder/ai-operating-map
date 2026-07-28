@@ -40,7 +40,7 @@ export default function StatTile({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.4 }}
-      className="rounded-2xl border border-black/5 bg-white shadow-sm px-6 py-5"
+      className="hover-glow rounded-2xl border border-black/5 bg-white shadow-sm px-6 py-5"
     >
       <div className="text-xs font-semibold uppercase tracking-[0.14em] text-secondary/70 mb-2">
         {label}

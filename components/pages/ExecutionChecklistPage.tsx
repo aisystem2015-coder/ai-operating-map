@@ -183,8 +183,8 @@ function MaturityBoard() {
                   <button
                     key={key}
                     onClick={() => setSelected(isActive ? null : { tier, layer })}
-                    className={`text-left rounded-xl border px-3 py-3 shadow-sm transition-all ${
-                      isActive ? "border-black/15 bg-white shadow-md" : "border-black/5 bg-white hover:shadow-md"
+                    className={`hover-glow-flat text-left rounded-xl border px-3 py-3 shadow-sm cursor-pointer transition-all ${
+                      isActive ? "border-black/15 bg-white shadow-md" : "border-black/5 bg-white"
                     }`}
                     style={isActive ? { boxShadow: `inset 3px 0 0 0 ${color}` } : undefined}
                   >
@@ -339,7 +339,7 @@ export default function ExecutionChecklistPage() {
               {IMMEDIATE_CHECKS.map((item) => (
                 <div
                   key={item.title}
-                  className="rounded-2xl border border-black/5 bg-white/80 p-4 shadow-sm flex gap-3 items-start"
+                  className="hover-glow rounded-2xl border border-black/5 bg-white/80 p-4 shadow-sm flex gap-3 items-start"
                 >
                   <CheckSquare className="h-5 w-5 text-emerald-600 mt-0.5" aria-hidden />
                   <div className="space-y-2">
@@ -370,7 +370,7 @@ export default function ExecutionChecklistPage() {
               {TIERS.map((tier, i) => (
                 <div
                   key={tier.id}
-                  className="rounded-xl border border-black/5 bg-white/70 px-4 py-3"
+                  className="hover-glow-flat rounded-xl border border-black/5 bg-white/70 px-4 py-3"
                   style={{ borderLeftWidth: 4, borderLeftColor: CATEGORICAL[i % CATEGORICAL.length] }}
                 >
                   <p className="text-sm font-semibold text-foreground">{tier.headline}</p>

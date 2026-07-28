@@ -9,7 +9,7 @@ import AIOriginsHero from "../ai-origins/ai-origins-hero";
 import HistoricalArc from "../ai-origins/historical-arc";
 
 const BrainAmnesiaVisual = () => (
-  <div className="rounded-3xl border border-black/5 bg-white shadow-xl shadow-rose-100/50 p-4">
+  <div className="hover-glow rounded-3xl border border-black/5 bg-white shadow-xl shadow-rose-100/50 p-4">
     <div className="rounded-2xl overflow-hidden bg-gradient-to-br from-white via-rose-50 to-white border border-rose-100">
       <Image
         src="/ai-origins/genius-amnesia.png"
@@ -24,7 +24,7 @@ const BrainAmnesiaVisual = () => (
 );
 
 const OpenBookVisual = () => (
-  <div className="rounded-3xl border border-black/5 bg-white shadow-lg shadow-emerald-100/60 p-4">
+  <div className="hover-glow rounded-3xl border border-black/5 bg-white shadow-lg shadow-emerald-100/60 p-4">
     <div className="rounded-2xl overflow-hidden border border-emerald-100 bg-gradient-to-br from-white via-emerald-50 to-white">
       <Image
         src="/ai-origins/open-book-rag.png"
@@ -38,7 +38,7 @@ const OpenBookVisual = () => (
 );
 
 const VectorCubeVisual = () => (
-  <div className="rounded-2xl overflow-hidden border border-emerald-100 bg-emerald-50/40">
+  <div className="hover-glow rounded-2xl overflow-hidden border border-emerald-100 bg-emerald-50/40">
     <Image
       src="/ai-origins/vector-rag.png"
       alt="Vector RAG cube visual"
@@ -50,7 +50,7 @@ const VectorCubeVisual = () => (
 );
 
 const SqlCalcVisual = () => (
-  <div className="rounded-2xl overflow-hidden border border-sky-100 bg-sky-50/40">
+  <div className="hover-glow rounded-2xl overflow-hidden border border-sky-100 bg-sky-50/40">
     <Image
       src="/ai-origins/sql-rag.png"
       alt="SQL RAG database and calculator"
@@ -62,7 +62,7 @@ const SqlCalcVisual = () => (
 );
 
 const WhichOneTable = () => (
-  <div className="rounded-2xl overflow-hidden border border-emerald-100 bg-emerald-50/30">
+  <div className="hover-glow rounded-2xl overflow-hidden border border-emerald-100 bg-emerald-50/30">
     <Image
       src="/ai-origins/which-one.png"
       alt="Comparison of Vector, SQL, and Graph RAG"
@@ -74,7 +74,7 @@ const WhichOneTable = () => (
 );
 
 const AgenticRagFlowVisual = () => (
-  <div className="rounded-2xl overflow-hidden border border-emerald-100 bg-emerald-50/30">
+  <div className="hover-glow rounded-2xl overflow-hidden border border-emerald-100 bg-emerald-50/30">
     <Image
       src="/ai-origins/agentic-rag.png"
       alt="Agentic RAG flow routing user question to vector or SQL RAG"
@@ -86,7 +86,7 @@ const AgenticRagFlowVisual = () => (
 );
 
 const GraphRagNetworkVisual = () => (
-  <div className="rounded-2xl overflow-hidden border border-emerald-100 bg-emerald-50/30">
+  <div className="hover-glow rounded-2xl overflow-hidden border border-emerald-100 bg-emerald-50/30">
     <Image
       src="/ai-origins/graph-rag.png"
       alt="Graph RAG network of connected entities"
@@ -224,7 +224,7 @@ export default function OriginsPage() {
                 ].map((item, idx) => (
                   <div
                     key={item.title}
-                    className="rounded-2xl border border-emerald-100 bg-white/80 shadow-lg shadow-emerald-100/40 p-6"
+                    className="hover-glow rounded-2xl border border-emerald-100 bg-white/80 shadow-lg shadow-emerald-100/40 p-6"
                   >
                     <div className="text-sm font-semibold text-emerald-700 mb-3">0{idx + 1}</div>
                     <h3 className="text-xl font-heading font-semibold text-foreground mb-2">{item.title}</h3>

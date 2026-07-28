@@ -44,7 +44,7 @@ export function BentoCard({
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.4 }}
       className={cn(
-        "group relative flex flex-col gap-4 overflow-hidden rounded-2xl border border-black/5 bg-white p-6 shadow-sm transition-shadow hover:shadow-md",
+        "hover-glow group relative flex flex-col gap-4 overflow-hidden rounded-2xl border border-black/5 bg-white p-6 shadow-sm",
         span === 2 ? "lg:col-span-2" : "",
         className,
       )}

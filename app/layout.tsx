@@ -3,6 +3,7 @@ import "./globals.css";
 import { Inter, Manrope } from "next/font/google";
 import MayaBanner from "@/components/MayaBanner";
 import Footer from "@/components/Footer";
+import ParticleField from "@/components/ui/particle-field";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -34,6 +35,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} ${manrope.variable} pt-10`}>
+        <ParticleField />
         <MayaBanner />
         {children}
         <Footer />

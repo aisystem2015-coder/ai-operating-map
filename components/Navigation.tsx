@@ -89,7 +89,7 @@ export default function Navigation() {
                   className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 ${
                     pathname === item.href
                       ? "text-accent bg-accent/10"
-                      : "text-secondary hover:text-foreground hover:bg-black/5"
+                      : "text-secondary hover:text-foreground hover:bg-black/5 hover:shadow-[0_0_0_1px_rgba(27,196,166,0.25)]"
                   }`}
                 >
                   {item.label}
@@ -110,7 +110,7 @@ export default function Navigation() {
                   className={`flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 ${
                     isWhatWorksActive
                       ? "text-accent bg-accent/10"
-                      : "text-secondary hover:text-foreground hover:bg-black/5"
+                      : "text-secondary hover:text-foreground hover:bg-black/5 hover:shadow-[0_0_0_1px_rgba(27,196,166,0.25)]"
                   }`}
                 >
                   What Works Today
@@ -126,7 +126,7 @@ export default function Navigation() {
                         <Link
                           key={item.href}
                           href={item.href}
-                          className="group flex items-start gap-3 rounded-xl p-3 hover:bg-accent/5 transition-colors"
+                          className="hover-glow-flat group flex items-start gap-3 rounded-xl border border-transparent p-3"
                         >
                           <div className="h-9 w-9 shrink-0 rounded-lg bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
                             <item.icon size={18} className="text-accent" strokeWidth={1.75} />
@@ -149,7 +149,7 @@ export default function Navigation() {
                   className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 ${
                     pathname === item.href
                       ? "text-accent bg-accent/10"
-                      : "text-secondary hover:text-foreground hover:bg-black/5"
+                      : "text-secondary hover:text-foreground hover:bg-black/5 hover:shadow-[0_0_0_1px_rgba(27,196,166,0.25)]"
                   }`}
                 >
                   {item.label}
@@ -163,7 +163,7 @@ export default function Navigation() {
                   className={`flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 ${
                     isMoreActive
                       ? "text-accent bg-accent/10"
-                      : "text-secondary hover:text-foreground hover:bg-black/5"
+                      : "text-secondary hover:text-foreground hover:bg-black/5 hover:shadow-[0_0_0_1px_rgba(27,196,166,0.25)]"
                   }`}
                 >
                   More
@@ -180,7 +180,7 @@ export default function Navigation() {
                           className={`block px-4 py-2.5 text-sm transition-colors ${
                             pathname === item.href
                               ? "text-accent bg-accent/10 font-medium"
-                              : "text-secondary hover:text-foreground hover:bg-black/5"
+                              : "text-secondary hover:text-foreground hover:bg-black/5 hover:shadow-[0_0_0_1px_rgba(27,196,166,0.25)]"
                           }`}
                         >
                           {item.label}
@@ -219,7 +219,7 @@ export default function Navigation() {
                         className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
                           isWhatWorksActive
                             ? "text-accent bg-accent/10"
-                            : "text-secondary hover:text-foreground hover:bg-black/5"
+                            : "text-secondary hover:text-foreground hover:bg-black/5 hover:shadow-[0_0_0_1px_rgba(27,196,166,0.25)]"
                         }`}
                       >
                         {item.label}
@@ -252,7 +252,7 @@ export default function Navigation() {
                     className={`block px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
                       pathname === item.href
                         ? "text-accent bg-accent/10"
-                        : "text-secondary hover:text-foreground hover:bg-black/5"
+                        : "text-secondary hover:text-foreground hover:bg-black/5 hover:shadow-[0_0_0_1px_rgba(27,196,166,0.25)]"
                     }`}
                   >
                     {item.label}
