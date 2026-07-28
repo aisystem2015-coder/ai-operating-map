@@ -1,14 +1,8 @@
 "use client";
 
-import { useRef, useState } from "react";
-import {
-  motion,
-  AnimatePresence,
-  useScroll,
-  useTransform,
-  useMotionValueEvent,
-} from "framer-motion";
-import { Cpu, MessageSquare, Bot, Network } from "lucide-react";
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Cpu, MessageSquare, Bot, Network, Fingerprint } from "lucide-react";
 import SectionReveal from "../learning/SectionReveal";
 import LLMsSection from "./llms-section";
 import AssistantsSection from "./assistants-section";
@@ -17,8 +11,9 @@ import AgentPatternsSection from "./agent-patterns-section";
 import AgenticWorkforce from "./agentic-workforce";
 import VerticalAIPitch from "../market-reality/vertical-ai-pitch";
 import VerticalDeploymentsSection from "./vertical-deployments-section";
+import DigitalTwinTeaser from "../digital-twin/digital-twin-teaser";
 
-type StageId = "llm" | "assistant" | "agent" | "agentic";
+type StageId = "llm" | "assistant" | "agent" | "agentic" | "digital-twin";
 
 const stages: Array<{
   id: StageId;
@@ -81,6 +76,18 @@ const stages: Array<{
     wash: "rgba(167, 243, 208, 0.35)",
     widthPct: 46,
   },
+  {
+    id: "digital-twin",
+    year: "2026",
+    name: "Digital Twins",
+    tagline: "A private model of one person.",
+    icon: Fingerprint,
+    bg: "bg-emerald-900",
+    text: "text-white",
+    tag: "New",
+    wash: "rgba(6, 78, 59, 0.10)",
+    widthPct: 30,
+  },
 ];
 
 // Custom ease — a wash this large reads as sluggish with CSS's default
@@ -99,35 +106,38 @@ const RING_TEXT_CLASS: Record<StageId, string> = {
   assistant: "text-emerald-700",
   agent: "text-emerald-500",
   agentic: "text-emerald-200",
+  "digital-twin": "text-emerald-900",
 };
+
+const VALID_STAGE_IDS: StageId[] = ["llm", "assistant", "agent", "agentic", "digital-twin"];
 
 export default function WhatWorksExplorer() {
   const [active, setActive] = useState<StageId>("llm");
-  const sectionRef = useRef<HTMLDivElement>(null);
 
-  // Scroll-driven progression (Meet 12: "scroll animation version" of this
-  // diagram) — scrolling through the section nudges the stage forward, but
-  // only forward, so a deliberate click is never undone by continuing to
-  // scroll past it.
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start 0.75", "end 0.25"],
-  });
-  const scrollStageIndex = useTransform(scrollYProgress, [0, 1], [0, stages.length - 1]);
-  useMotionValueEvent(scrollStageIndex, "change", (latest) => {
-    const idx = Math.min(stages.length - 1, Math.max(0, Math.round(latest)));
-    setActive((prev) => {
-      const prevIdx = stages.findIndex((s) => s.id === prev);
-      return idx > prevIdx ? stages[idx].id : prev;
-    });
-  });
+  // The "What Works Today" mega-menu (Navigation.tsx) links each of its 4
+  // items straight to a hash on this page (e.g. /what-works#agent) so a
+  // menu click lands on the right ring already selected, instead of
+  // always resetting to LLMs.
+  useEffect(() => {
+    const hash = window.location.hash.replace("#", "");
+    if (VALID_STAGE_IDS.includes(hash as StageId)) {
+      setActive(hash as StageId);
+    }
+  }, []);
 
+  // Click-only, on purpose (Meet 16 fix — see components/digital-twin/
+  // and the project history in components/rainbow/rainbow-layers.tsx):
+  // this diagram used to also advance on scroll, which Francisco flagged
+  // as a bug ("cuando hago un scroll, le cambia... es un problema de
+  // goteo" — scrolling silently changed the active layer without a
+  // deliberate click). The scroll-linked useScroll/useMotionValueEvent
+  // wiring that caused that has been removed entirely — state now only
+  // ever changes from an explicit click or keyboard activation below.
   const activeStage = stages.find((s) => s.id === active)!;
   const activeIdx = stages.findIndex((s) => s.id === active);
 
   return (
     <motion.div
-      ref={sectionRef}
       animate={{ backgroundColor: activeStage.wash }}
       transition={{ duration: 0.6, ease: washEase }}
       className="w-full rounded-[2.5rem]"
@@ -140,29 +150,30 @@ export default function WhatWorksExplorer() {
           <p className="text-base md:text-lg text-secondary leading-relaxed max-w-3xl mx-auto">
             LLMs are the engine. Everything else is built on top of it — a model you can talk
             to, given the ability to act on its own, then coordinated into a team of agents.
-            Click a layer, or scroll, to see what each one adds.
+            Click a layer to see what each one adds.
           </p>
         </div>
       </SectionReveal>
 
       {/* The "rainbow": LLM as the core, each layer an outer ring built on top
-          of it — restores the arcoíris Francisco asked for (Meet 14/15), not
-          a pyramid. A ring's clickable area is just its own stroke annulus
-          (fill="none" + SVG's default pointer-events), so clicking inside a
-          ring correctly falls through to the layer beneath it. */}
+          of it — restores the rainbow diagram Francisco asked for (Meet
+          14/15), not a pyramid. A ring's clickable area is just its own
+          stroke annulus (fill="none" + SVG's default pointer-events), so
+          clicking inside a ring correctly falls through to the layer
+          beneath it. */}
       <div className="flex flex-col md:flex-row items-center gap-10 md:gap-14 max-w-4xl mx-auto px-4">
         <div className="relative w-full max-w-[22rem] mx-auto md:mx-0 aspect-square shrink-0">
           <svg
             viewBox="0 0 480 480"
             className="w-full h-full"
             role="tablist"
-            aria-label="LLMs en el centro, cada capa se construye alrededor"
+            aria-label="LLMs at the center, each layer building around it"
           >
             {[...stages].reverse().map((stage) => {
               const isActive = active === stage.id;
               const isLLM = stage.id === "llm";
-              const radius = { llm: 60, assistant: 108, agent: 165, agentic: 215 }[stage.id]!;
-              const strokeWidth = { llm: 0, assistant: 72, agent: 58, agentic: 46 }[stage.id]!;
+              const radius = { llm: 60, assistant: 100, agent: 148, agentic: 190, "digital-twin": 226 }[stage.id]!;
+              const strokeWidth = { llm: 0, assistant: 64, agent: 52, agentic: 42, "digital-twin": 24 }[stage.id]!;
               return (
                 <motion.circle
                   key={stage.id}
@@ -276,6 +287,13 @@ export default function WhatWorksExplorer() {
                   <AgenticWorkforce />
                   <VerticalAIPitch />
                   <VerticalDeploymentsSection />
+                </div>
+              </section>
+            )}
+            {active === "digital-twin" && (
+              <section className="py-20 px-6 lg:px-8">
+                <div className="max-w-5xl mx-auto">
+                  <DigitalTwinTeaser />
                 </div>
               </section>
             )}

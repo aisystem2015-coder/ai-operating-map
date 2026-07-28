@@ -3,14 +3,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, Cpu, Bot, Network, Fingerprint } from "lucide-react";
 import FGMark from "./FGMark";
 
 const primaryNav = [
   { href: "/", label: "Home" },
   { href: "/origins", label: "The Tech" },
   { href: "/market-reality", label: "Market Reality" },
-  { href: "/what-works", label: "What Works Today" },
   { href: "/ai-mindset", label: "AI Mindset" },
   { href: "/execution-checklist", label: "Execution" },
 ];
@@ -20,13 +19,32 @@ const moreNav = [
   { href: "/resources", label: "Resources" },
 ];
 
-const allNav = [...primaryNav, ...moreNav];
+// "What Works Today" mega-menu — reference model: Logitech.com's mega
+// menu (Meet 17, Francisco: "esto se va a volver a una superpágina web
+// que va a tener mega menus"). Digital Twins joined this group
+// 2026-07-27 (merged in from the former standalone digital_twin_site) as
+// its 4th entry, explicitly NOT as its own top-level nav item.
+const whatWorksMegaMenu = [
+  { href: "/what-works#llm", label: "LLMs", icon: Cpu, desc: "The reasoning core — predicts the next token." },
+  { href: "/what-works#agent", label: "Agents", icon: Bot, desc: "Reasons, then acts on its own." },
+  { href: "/what-works#agentic", label: "Multi-Agents", icon: Network, desc: "A coordinated team of agents." },
+  { href: "/what-works/digital-twins", label: "Digital Twins", icon: Fingerprint, desc: "A private model of one person." },
+];
+
+const allNav = [
+  ...primaryNav.slice(0, 3),
+  { href: "/what-works", label: "What Works Today" },
+  ...primaryNav.slice(3),
+  ...moreNav,
+];
 
 export default function Navigation() {
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
+  const [whatWorksOpen, setWhatWorksOpen] = useState(false);
+  const [mobileWhatWorksOpen, setMobileWhatWorksOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -37,9 +55,11 @@ export default function Navigation() {
   useEffect(() => {
     setMobileOpen(false);
     setMoreOpen(false);
+    setWhatWorksOpen(false);
   }, [pathname]);
 
   const isMoreActive = moreNav.some((item) => item.href === pathname);
+  const isWhatWorksActive = pathname === "/what-works" || pathname.startsWith("/what-works/");
 
   return (
     <>
@@ -62,7 +82,67 @@ export default function Navigation() {
 
             {/* Desktop nav */}
             <div className="hidden md:flex items-center gap-0.5">
-              {primaryNav.map((item) => (
+              {primaryNav.slice(0, 3).map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 ${
+                    pathname === item.href
+                      ? "text-accent bg-accent/10"
+                      : "text-secondary hover:text-foreground hover:bg-black/5"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              ))}
+
+              {/* "What Works Today" mega-menu — Logitech.com reference
+                  model. Hover (desktop) or click opens a 4-card panel:
+                  LLMs, Agents, Multi-Agents, Digital Twins. */}
+              <div
+                className="relative"
+                onMouseEnter={() => setWhatWorksOpen(true)}
+                onMouseLeave={() => setWhatWorksOpen(false)}
+              >
+                <Link
+                  href="/what-works"
+                  onClick={() => setWhatWorksOpen(false)}
+                  className={`flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 ${
+                    isWhatWorksActive
+                      ? "text-accent bg-accent/10"
+                      : "text-secondary hover:text-foreground hover:bg-black/5"
+                  }`}
+                >
+                  What Works Today
+                  <ChevronDown
+                    size={14}
+                    className={`transition-transform duration-200 ${whatWorksOpen ? "rotate-180" : ""}`}
+                  />
+                </Link>
+                {whatWorksOpen && (
+                  <div className="absolute left-1/2 -translate-x-1/2 top-full pt-2 z-20">
+                    <div className="w-[36rem] rounded-2xl border border-black/8 bg-white shadow-xl overflow-hidden p-3 grid grid-cols-2 gap-2">
+                      {whatWorksMegaMenu.map((item) => (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          className="group flex items-start gap-3 rounded-xl p-3 hover:bg-accent/5 transition-colors"
+                        >
+                          <div className="h-9 w-9 shrink-0 rounded-lg bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
+                            <item.icon size={18} className="text-accent" strokeWidth={1.75} />
+                          </div>
+                          <div>
+                            <div className="text-sm font-semibold text-foreground">{item.label}</div>
+                            <div className="text-xs text-secondary mt-0.5 leading-snug">{item.desc}</div>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {primaryNav.slice(3).map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
@@ -130,19 +210,55 @@ export default function Navigation() {
           <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={() => setMobileOpen(false)} />
           <div className="absolute top-[5.5rem] left-4 right-4 rounded-2xl bg-white shadow-2xl border border-black/8 overflow-hidden">
             <div className="px-2 py-3 space-y-0.5 max-h-[70vh] overflow-y-auto">
-              {allNav.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`block px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                    pathname === item.href
-                      ? "text-accent bg-accent/10"
-                      : "text-secondary hover:text-foreground hover:bg-black/5"
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              ))}
+              {allNav.map((item) => {
+                if (item.label === "What Works Today") {
+                  return (
+                    <div key={item.href}>
+                      <button
+                        onClick={() => setMobileWhatWorksOpen((v) => !v)}
+                        className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                          isWhatWorksActive
+                            ? "text-accent bg-accent/10"
+                            : "text-secondary hover:text-foreground hover:bg-black/5"
+                        }`}
+                      >
+                        {item.label}
+                        <ChevronDown
+                          size={14}
+                          className={`transition-transform duration-200 ${mobileWhatWorksOpen ? "rotate-180" : ""}`}
+                        />
+                      </button>
+                      {mobileWhatWorksOpen && (
+                        <div className="pl-4 pr-2 py-1 space-y-0.5">
+                          {whatWorksMegaMenu.map((sub) => (
+                            <Link
+                              key={sub.href}
+                              href={sub.href}
+                              className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-secondary hover:text-foreground hover:bg-black/5 transition-colors"
+                            >
+                              <sub.icon size={15} strokeWidth={1.75} />
+                              {sub.label}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`block px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                      pathname === item.href
+                        ? "text-accent bg-accent/10"
+                        : "text-secondary hover:text-foreground hover:bg-black/5"
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </div>
