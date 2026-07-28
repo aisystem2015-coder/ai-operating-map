@@ -135,13 +135,11 @@ function runClaude(prompt: string): Promise<string> {
   });
 }
 
-// Trusted-network floor for the LOCAL path only (never used on Vercel).
-// Anything reaching this process here already came in either directly on
-// the Mac or through `tailscale serve` (tailnet-private). A valid level
-// password can still raise it further (e.g. to level 4), it just never
-// lowers it.
-const LOCAL_TRUSTED_DEFAULT_LEVEL = 3;
-
+// No network-trust floor (removed 2026-07-28, Francisco's ask): every
+// channel — this local/tailnet path, the public site, ChatGPT, Claude MCP —
+// defaults to level 0 and requires the matching TWIN_LEVEL_N_PASSWORD to go
+// higher. Reaching this process privately no longer grants access on its
+// own; the password is what grants access, always.
 const LEVEL_PASSWORDS: Record<number, string | undefined> = {
   1: process.env.TWIN_LEVEL_1_PASSWORD,
   2: process.env.TWIN_LEVEL_2_PASSWORD,
@@ -222,9 +220,7 @@ export async function POST(request: NextRequest) {
   }
 
   const { level: codeLevel, codeValid } = levelForCode(accessCode);
-  const effectiveLevel = isQaPreview
-    ? (debugAccessLevel as number)
-    : Math.max(LOCAL_TRUSTED_DEFAULT_LEVEL, codeLevel);
+  const effectiveLevel = isQaPreview ? (debugAccessLevel as number) : codeLevel;
 
   const groundingPrompt = buildGroundingPrompt(effectiveLevel, isQaPreview, !isQaPreview && codeLevel > 0);
   const fullPrompt = `${groundingPrompt}\n\n---\n\nVisitor question: ${message}\n\nYour answer:`;
