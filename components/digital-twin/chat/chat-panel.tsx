@@ -10,18 +10,25 @@
  */
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { Send, Sparkles } from "lucide-react";
-import AccessLevelSelector from "../access-level-selector";
+import { Lock, Send, Sparkles } from "lucide-react";
 import type { UseTwinChatReturn } from "./use-twin-chat";
 
 const EMERALD = "#1BC4A6";
 const EMERALD_DARK = "#0E7A68";
 
+const LEVEL_LABELS: Record<number, string> = {
+  0: "Public",
+  1: "Shareable",
+  2: "Private",
+  3: "Sensitive",
+  4: "Intimate",
+};
+
 export default function ChatPanel({ chat }: { chat: UseTwinChatReturn }) {
-  const { messages, loading, send, maxLength } = chat;
+  const { messages, loading, send, maxLength, unlockedLevel } = chat;
   const [input, setInput] = useState("");
-  const [qaLevel, setQaLevel] = useState(1);
-  const [qaEnabled, setQaEnabled] = useState(false);
+  const [accessCode, setAccessCode] = useState("");
+  const [codeBoxOpen, setCodeBoxOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -30,7 +37,7 @@ export default function ChatPanel({ chat }: { chat: UseTwinChatReturn }) {
 
   const handleSend = () => {
     if (!input.trim() || loading) return;
-    send(input, qaEnabled ? qaLevel : undefined);
+    send(input, undefined, accessCode || undefined);
     setInput("");
   };
 
@@ -71,18 +78,34 @@ export default function ChatPanel({ chat }: { chat: UseTwinChatReturn }) {
         )}
       </div>
 
-      {/* QA access-level selector */}
+      {/* Access code — unlocks a deeper level for this conversation */}
       <div className="px-3 pt-3">
-        <button
-          type="button"
-          onClick={() => setQaEnabled((v) => !v)}
-          className="text-[11px] font-semibold uppercase tracking-wide text-secondary hover:text-foreground transition-colors cursor-pointer"
-        >
-          {qaEnabled ? "Hide QA access-level preview ▲" : "QA: preview a different access level ▼"}
-        </button>
-        {qaEnabled && (
-          <div className="mt-2">
-            <AccessLevelSelector value={qaLevel} onChange={setQaLevel} />
+        <div className="flex items-center justify-between">
+          <button
+            type="button"
+            onClick={() => setCodeBoxOpen((v) => !v)}
+            className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-secondary hover:text-foreground transition-colors cursor-pointer"
+          >
+            <Lock className="h-3 w-3" aria-hidden />
+            {codeBoxOpen ? "Hide access code ▲" : "Have an access code? ▼"}
+          </button>
+          <span
+            className="rounded-full px-2 py-0.5 text-[10px] font-semibold"
+            style={{ backgroundColor: unlockedLevel > 0 ? EMERALD : "#E2E8F0", color: unlockedLevel > 0 ? "white" : "#475569" }}
+          >
+            {LEVEL_LABELS[unlockedLevel] ?? "Public"}
+          </span>
+        </div>
+        {codeBoxOpen && (
+          <div className="mt-2 flex items-center gap-2">
+            <input
+              type="password"
+              value={accessCode}
+              onChange={(e) => setAccessCode(e.target.value)}
+              placeholder="Access code"
+              className="flex-1 rounded-lg border border-black/10 bg-white px-3 py-2 text-sm text-foreground placeholder:text-secondary/60 focus:outline-none focus:ring-2 min-h-[40px]"
+              style={{ ["--tw-ring-color" as string]: EMERALD }}
+            />
           </div>
         )}
       </div>

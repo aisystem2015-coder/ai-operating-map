@@ -90,8 +90,10 @@ export function useTwinChat(options?: { isReturning?: boolean }) {
     });
   }, [isReturning]);
 
+  const [unlockedLevel, setUnlockedLevel] = useState(0);
+
   const send = useCallback(
-    async (rawText: string, debugAccessLevel?: number) => {
+    async (rawText: string, debugAccessLevel?: number, accessCode?: string) => {
       const text = rawText.trim().slice(0, MAX_MESSAGE_LENGTH);
       if (!text || loading) return;
 
@@ -106,12 +108,13 @@ export function useTwinChat(options?: { isReturning?: boolean }) {
         const res = await fetch("/api/twin-chat", {
           method: "POST",
           headers,
-          body: JSON.stringify({ message: text, debugAccessLevel }),
+          body: JSON.stringify({ message: text, debugAccessLevel, accessCode }),
         });
         const data = await res.json().catch(() => null);
         const reply: string =
           data?.reply ??
           "Something went wrong reaching the twin just now — mind trying again in a moment?";
+        if (typeof data?.effectiveLevel === "number") setUnlockedLevel(data.effectiveLevel);
         setMessages((prev) => [...prev, { id: `t-${Date.now()}`, role: "twin", text: reply }]);
       } catch {
         setMessages((prev) => [
@@ -129,7 +132,7 @@ export function useTwinChat(options?: { isReturning?: boolean }) {
     [loading],
   );
 
-  return { messages, loading, openChat, send, maxLength: MAX_MESSAGE_LENGTH };
+  return { messages, loading, openChat, send, maxLength: MAX_MESSAGE_LENGTH, unlockedLevel };
 }
 
 export type UseTwinChatReturn = ReturnType<typeof useTwinChat>;

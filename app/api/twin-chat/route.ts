@@ -33,19 +33,23 @@ import path from "node:path";
  * (default — day-to-day, unfiltered), 3 = sensitive/operational,
  * 4 = intimate (never auto-surfaced).
  *
- * A real, publicly deployed visitor is ALWAYS hard-locked to level 0-1 —
- * that clamp does not depend on anything the client sends. The optional
- * `debugAccessLevel` field lets the on-page QA selector (dev/local use
- * only, see components/digital-twin/access-level-selector.tsx) preview
- * how a higher tier *would* answer, so Francisco can verify gating logic
- * without a real auth/token system existing yet. It only has any effect
- * when the request also carries the `x-dt-qa` header the selector sets,
- * so a normal fetch from anywhere else can't quietly raise its own
- * access level.
+ * ── Per-level passwords (added 2026-07-28, Francisco's ask) ──
+ * A real, publicly deployed visitor with no `accessCode` gets level 0.
+ * Sending an `accessCode` that matches TWIN_LEVEL_N_PASSWORD unlocks that
+ * level for that request — up to and including level 4 — on the PUBLIC
+ * path too. This is what lets Francisco (or anyone he hands a code to)
+ * get full access through the public site or ChatGPT, not just through
+ * the private tailnet/Claude MCP paths. The actual lookup happens in
+ * scripts/twin_public_backend.mjs for the Vercel path; the LOCAL path
+ * below has its own copy since it never proxies. The separate
+ * `debugAccessLevel` + `x-dt-qa` header mechanism is left in place purely
+ * for internal dev testing (see components/digital-twin/access-level-
+ * selector.tsx) and does not affect the public/deployed behavior.
  */
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+export const maxDuration = 150;
 
 const MAX_MESSAGE_LENGTH = 500;
 const CLAUDE_TIMEOUT_MS = 120_000; // ~2 min
@@ -71,10 +75,12 @@ function levelFilterInstructions(maxLevel: number): string {
     .join(" / ")}), or notes with no access_level field that are clearly general/public in nature. NEVER surface anything from a note whose access_level is above ${maxLevel} — if a search result only exists at a higher level, treat it as if it does not exist for this conversation. Do not paraphrase around the filter.`;
 }
 
-function buildGroundingPrompt(maxLevel: number, isQaPreview: boolean): string {
+function buildGroundingPrompt(maxLevel: number, isQaPreview: boolean, unlockedWithCode = false): string {
   const voiceLine = isQaPreview
     ? `This is a QA preview session at access level ${maxLevel} (${LEVEL_LABELS[maxLevel]}) — Francisco or a teammate testing the gating logic, not a random public visitor. Behave exactly as the real widget would at this level: apply the filter below strictly, don't loosen it just because this is a test.`
-    : `You are answering ON BEHALF OF Francisco for a random website visitor you have never met before — you are not Francisco, and you must never speak as if you are him in the first person.`;
+    : unlockedWithCode
+      ? `This conversation unlocked access level ${maxLevel} (${LEVEL_LABELS[maxLevel]}) with a valid access code — treat this as Francisco himself, or someone he explicitly trusted with this code, not a random visitor. You may speak plainly and directly.`
+      : `You are answering ON BEHALF OF Francisco for a random website visitor you have never met before — you are not Francisco, and you must never speak as if you are him in the first person.`;
 
   return `${voiceLine}
 
@@ -129,14 +135,29 @@ function runClaude(prompt: string): Promise<string> {
   });
 }
 
-// Trusted-network default for the LOCAL path only (never used on Vercel).
+// Trusted-network floor for the LOCAL path only (never used on Vercel).
 // Anything reaching this process here already came in either directly on
-// the Mac or through `tailscale serve` (tailnet-private) — the public
-// internet is only ever handed to twin_public_backend.mjs via funnel,
-// which hard-clamps to level 1 regardless of what it's asked for.
+// the Mac or through `tailscale serve` (tailnet-private). A valid level
+// password can still raise it further (e.g. to level 4), it just never
+// lowers it.
 const LOCAL_TRUSTED_DEFAULT_LEVEL = 3;
 
-async function proxyToMacMini(message: string, debugAccessLevel: number | null, isQaPreview: boolean) {
+const LEVEL_PASSWORDS: Record<number, string | undefined> = {
+  1: process.env.TWIN_LEVEL_1_PASSWORD,
+  2: process.env.TWIN_LEVEL_2_PASSWORD,
+  3: process.env.TWIN_LEVEL_3_PASSWORD,
+  4: process.env.TWIN_LEVEL_4_PASSWORD,
+};
+
+function levelForCode(code: string): { level: number; codeValid: boolean } {
+  if (!code) return { level: 0, codeValid: true };
+  for (const [level, password] of Object.entries(LEVEL_PASSWORDS)) {
+    if (password && code === password) return { level: Number(level), codeValid: true };
+  }
+  return { level: 0, codeValid: false };
+}
+
+async function proxyToMacMini(message: string, accessCode: string) {
   const backendUrl = process.env.TWIN_BACKEND_URL;
   const secret = process.env.TWIN_SHARED_SECRET;
   if (!backendUrl || !secret) {
@@ -147,14 +168,16 @@ async function proxyToMacMini(message: string, debugAccessLevel: number | null, 
   }
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 25_000);
+    // Leaves headroom under the local backend's own 120s CLAUDE_TIMEOUT_MS
+    // and under Vercel's function budget (300s on Fluid Compute).
+    const timeout = setTimeout(() => controller.abort(), 130_000);
     const res = await fetch(backendUrl, {
       method: "POST",
       headers: {
         "content-type": "application/json",
         "x-twin-shared-secret": secret,
       },
-      body: JSON.stringify({ message, debugAccessLevel: isQaPreview ? debugAccessLevel : null }),
+      body: JSON.stringify({ message, accessCode }),
       signal: controller.signal,
     });
     clearTimeout(timeout);
@@ -171,9 +194,11 @@ async function proxyToMacMini(message: string, debugAccessLevel: number | null, 
 export async function POST(request: NextRequest) {
   let message = "";
   let debugAccessLevel: number | null = null;
+  let accessCode = "";
   try {
     const body = await request.json();
     message = typeof body?.message === "string" ? body.message.trim() : "";
+    accessCode = typeof body?.accessCode === "string" ? body.accessCode.trim() : "";
     if (typeof body?.debugAccessLevel === "number") {
       debugAccessLevel = Math.min(4, Math.max(0, Math.round(body.debugAccessLevel)));
     }
@@ -188,17 +213,20 @@ export async function POST(request: NextRequest) {
   message = message.slice(0, MAX_MESSAGE_LENGTH);
 
   // The QA header is the only thing that lets debugAccessLevel raise the
-  // ceiling above the default — it is set exclusively by the on-page
-  // dev/QA selector, never sent by the normal chat UI.
+  // ceiling above the default — internal dev testing only, independent of
+  // the real accessCode mechanism below.
   const isQaPreview = request.headers.get("x-dt-qa") === "1" && debugAccessLevel !== null;
 
   if (process.env.VERCEL) {
-    return proxyToMacMini(message, debugAccessLevel, isQaPreview);
+    return proxyToMacMini(message, accessCode);
   }
 
-  const effectiveLevel = isQaPreview ? (debugAccessLevel as number) : LOCAL_TRUSTED_DEFAULT_LEVEL;
+  const { level: codeLevel, codeValid } = levelForCode(accessCode);
+  const effectiveLevel = isQaPreview
+    ? (debugAccessLevel as number)
+    : Math.max(LOCAL_TRUSTED_DEFAULT_LEVEL, codeLevel);
 
-  const groundingPrompt = buildGroundingPrompt(effectiveLevel, isQaPreview);
+  const groundingPrompt = buildGroundingPrompt(effectiveLevel, isQaPreview, !isQaPreview && codeLevel > 0);
   const fullPrompt = `${groundingPrompt}\n\n---\n\nVisitor question: ${message}\n\nYour answer:`;
 
   try {
@@ -207,6 +235,7 @@ export async function POST(request: NextRequest) {
       reply: reply || "I didn't get a clear answer back that time — try rephrasing?",
       connected: true,
       effectiveLevel,
+      codeValid,
     });
   } catch (err) {
     const isTimeout = err instanceof Error && err.message === "timeout";
