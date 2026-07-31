@@ -15,6 +15,7 @@ const primaryNav = [
 ];
 
 const moreNav = [
+  { href: "/how-to-prompt", label: "How to Prompt" },
   { href: "/ai-now-2026", label: "AI Now — 2026" },
   { href: "/resources", label: "Resources" },
 ];

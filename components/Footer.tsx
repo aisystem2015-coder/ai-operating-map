@@ -17,6 +17,7 @@ const sections = [
     title: "Build",
     links: [
       { href: "/execution-checklist", label: "Execution Checklist" },
+      { href: "/how-to-prompt", label: "How to Prompt" },
     ],
   },
   {

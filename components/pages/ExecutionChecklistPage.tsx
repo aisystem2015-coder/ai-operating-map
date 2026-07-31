@@ -1,8 +1,9 @@
 "use client";
 
 import { Fragment, useState } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckSquare, ChevronDown } from "lucide-react";
+import { CheckSquare, ChevronDown, ArrowRight } from "lucide-react";
 import Navigation from "../Navigation";
 import InteractiveGlow from "../ui/interactive-glow";
 import { EXAMPLE_CASES } from "@/data/examples";
@@ -327,6 +328,13 @@ export default function ExecutionChecklistPage() {
                 Most organizations stop after superficial familiarity. Durable execution requires
                 progressing through three levels of understanding, with capability to match.
               </p>
+              <Link
+                href="/how-to-prompt"
+                className="inline-flex items-center gap-2 text-sm font-semibold text-accent hover:gap-3 transition-all"
+              >
+                Start with the one skill that transfers across every layer: how to prompt
+                <ArrowRight size={16} />
+              </Link>
             </div>
           </section>
 
