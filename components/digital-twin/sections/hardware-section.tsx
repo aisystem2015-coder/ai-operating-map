@@ -197,6 +197,40 @@ export default function HardwareSection() {
         </div>
       </SectionReveal>
 
+      {/* Competitive landscape — general market research, kept clearly
+          separate from Francisco's own AMD-keynote notes above */}
+      <SectionReveal>
+        <div className="space-y-6">
+          <div className="text-center max-w-2xl mx-auto space-y-2">
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">Market research, Jul 2026</p>
+            <h3 className="text-2xl md:text-3xl font-heading font-bold text-foreground">Who&apos;s winning the compute war</h3>
+            <p className="text-secondary leading-relaxed">
+              Zooming out from any one vendor&apos;s keynote: the market is quietly splitting into three
+              tiers, not staying a one-horse race.
+            </p>
+          </div>
+          <div className="grid sm:grid-cols-3 gap-5">
+            <StatTile label="NVIDIA share of AI accelerators, through 2028" value="60–75%" detail="Still dominant, no longer a monopoly" accentColor={CATEGORICAL[1]} />
+            <StatTile label="AMD share, credible merchant-silicon #2" value="10–15%" accentColor={CATEGORICAL[0]} />
+            <StatTile label="Custom silicon (in-house chips), cloud-locked inference" value="15–25%" accentColor={CATEGORICAL[4]} />
+          </div>
+          <ChartSource label="Silicon Analysts, AI GPU market-share modeling, July 2026" />
+          <div className="grid md:grid-cols-2 gap-5">
+            <InfoCard icon={TrendingUp} title="Custom ASICs are the fastest-growing slice" color={CATEGORICAL[2]}>
+              Custom AI chips (built in-house by the cloud providers themselves, e.g. Google TPUs, Amazon
+              Trainium) are growing <strong>44.6%</strong> year over year, nearly 3x the growth rate of
+              general-purpose GPUs at <strong>16.1%</strong> — the market is fragmenting, not consolidating.
+            </InfoCard>
+            <InfoCard icon={Scale} title="Consolidation among the challengers" color={CATEGORICAL[0]}>
+              Even as the market fragments by chip type, the smaller inference-specialist startups are
+              consolidating fast: Intel acquired SambaNova, and NVIDIA itself acquired Groq for{" "}
+              <strong>$20 billion</strong> — buying up the very challengers built to compete with it.
+            </InfoCard>
+          </div>
+          <ChartSource label="Zylos Research / Silicon Analysts, AI chip hardware acceleration trends, 2026" />
+        </div>
+      </SectionReveal>
+
       {/* Personal AI hardware */}
       <SectionReveal>
         <div className="space-y-6">

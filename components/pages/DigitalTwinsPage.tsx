@@ -21,9 +21,11 @@ import ExamplesSection from "../digital-twin/sections/examples-section";
 import HowItWorksSection from "../digital-twin/sections/how-it-works-section";
 import HardwareSection from "../digital-twin/sections/hardware-section";
 import ChatSection from "../digital-twin/sections/chat-section";
+import RainbowLayers from "../rainbow/rainbow-layers";
 
 const subNav = [
   { href: "#dt-explore", label: "What is it" },
+  { href: "#dt-stack", label: "Where it fits" },
   { href: "#dt-examples", label: "Examples & types" },
   { href: "#dt-how", label: "How it works" },
   { href: "#dt-hardware", label: "Hardware" },
@@ -59,6 +61,9 @@ export default function DigitalTwinsPage() {
 
         <div className="max-w-6xl mx-auto px-6 lg:px-8 space-y-28 py-20">
           <WhatIsSection />
+          <div id="dt-stack">
+            <RainbowLayers />
+          </div>
           <div id="dt-examples">
             <ExamplesSection />
           </div>
