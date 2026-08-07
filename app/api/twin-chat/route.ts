@@ -75,18 +75,31 @@ function levelFilterInstructions(maxLevel: number): string {
     .join(" / ")}), or notes with no access_level field that are clearly general/public in nature. NEVER surface anything from a note whose access_level is above ${maxLevel} — if a search result only exists at a higher level, treat it as if it does not exist for this conversation. Do not paraphrase around the filter.`;
 }
 
-function buildGroundingPrompt(maxLevel: number, isQaPreview: boolean, unlockedWithCode = false): string {
+function buildGroundingPrompt(maxLevel: number, isQaPreview: boolean, unlockedWithCode = false, context = ""): string {
   const voiceLine = isQaPreview
     ? `This is a QA preview session at access level ${maxLevel} (${LEVEL_LABELS[maxLevel]}) — Francisco or a teammate testing the gating logic, not a random public visitor. Behave exactly as the real widget would at this level: apply the filter below strictly, don't loosen it just because this is a test.`
     : unlockedWithCode
       ? `This conversation unlocked access level ${maxLevel} (${LEVEL_LABELS[maxLevel]}) with a valid access code — treat this as Francisco himself, or someone he explicitly trusted with this code, not a random visitor. You may speak plainly and directly.`
       : `You are answering ON BEHALF OF Francisco for a random website visitor you have never met before — you are not Francisco, and you must never speak as if you are him in the first person.`;
 
+  // Phase 2 (7 aug 2026): the twin now reads from the Supabase brain, not
+  // Obsidian. When `context` is present it was retrieved from Supabase (with
+  // N3/N4 already decrypted per level) — answer ONLY from it, no tools. If it's
+  // empty (Supabase unreachable), fall back to the Obsidian MCP wording so the
+  // twin never goes dark.
+  const sourceBlock = context
+    ? `Your only source of truth is the CONTEXT below, retrieved live from Francisco's brain database (Supabase). Answer ONLY from it — do not use any tools, and do not invent anything beyond it. If the answer isn't in the context, say so plainly.
+
+CONTEXT (from Francisco's brain, access level ${maxLevel}):
+${context}
+`
+    : `Your only source of truth is Francisco's Obsidian vault (MCP tools already connected: mcp__obsidian__search, read_note, outline_note, list_notes, list_tags, get_backlinks, get_links). Search it before answering anything about Francisco, his work, his projects, or his opinions.`;
+
   return `${voiceLine}
 
-Your only source of truth is Francisco's Obsidian vault (MCP tools already connected: mcp__obsidian__search, read_note, outline_note, list_notes, list_tags, get_backlinks, get_links). Search it before answering anything about Francisco, his work, his projects, or his opinions.
+${sourceBlock}
 
-RECENCY: for questions about his CURRENT status, location, or what he's been doing recently ("where are you", "how are you", "what did you do yesterday", "what's going on lately") — recency beats topic-matching. Check the most recent entries in Habitos y Diario, Trabajo, and Personal (roughly the last 5-7 days) before answering, and prefer the newest matching entry over an older one on the same topic.
+RECENCY: for questions about his CURRENT status or what he's been doing recently — recency beats topic-matching; prefer the newest matching entry over an older one on the same topic.
 
 NON-NEGOTIABLE PRIVACY FILTER:
 - ${levelFilterInstructions(maxLevel)}
@@ -106,11 +119,27 @@ interface ExecFileError extends Error {
   signal?: string | null;
 }
 
-function runClaude(prompt: string): Promise<string> {
+// Reads from the Supabase brain (not Obsidian) — the twin's info now lives in
+// Supabase (Francisco, 7 aug 2026: "todo a supabase y ya no a obsidian").
+// Returns prompt-ready context, with N3/N4 decrypted when the level allows.
+// Empty string on any failure, so the caller falls back to the Obsidian MCP
+// path and the twin never goes dark mid-migration.
+function retrieveFromSupabase(message: string, maxLevel: number): Promise<string> {
+  return new Promise((resolve) => {
+    const cwd = path.resolve(process.cwd(), "..", "..");
+    execFile(
+      "python3",
+      [path.join(cwd, "scripts", "brain_retrieve.py"), message, "--max-level", String(maxLevel)],
+      { cwd, timeout: 30_000, maxBuffer: MAX_BUFFER_BYTES },
+      (error, stdout) => resolve(error ? "" : (stdout || "").trim()),
+    );
+  });
+}
+
+function runClaude(prompt: string, allowedTools: string = OBSIDIAN_ALLOWED_TOOLS): Promise<string> {
   return new Promise((resolve, reject) => {
     // Two directories up from this Next.js project's cwd
-    // (projects/ai_operating_map_package) is the AI_Lab repo root, where
-    // .mcp.json configures the obsidian MCP server.
+    // (projects/ai_operating_map_package) is the AI_Lab repo root.
     const cwd = path.resolve(process.cwd(), "..", "..");
     const env = {
       ...process.env,
@@ -119,7 +148,7 @@ function runClaude(prompt: string): Promise<string> {
 
     execFile(
       "claude",
-      ["-p", prompt, "--model", "claude-sonnet-5", "--allowedTools", OBSIDIAN_ALLOWED_TOOLS],
+      ["-p", prompt, "--model", "claude-sonnet-5", ...(allowedTools ? ["--allowedTools", allowedTools] : [])],
       { cwd, env, timeout: CLAUDE_TIMEOUT_MS, maxBuffer: MAX_BUFFER_BYTES },
       (error, stdout, stderr) => {
         if (error) {
@@ -224,11 +253,14 @@ export async function POST(request: NextRequest) {
   const { level: codeLevel, codeValid } = levelForCode(accessCode);
   const effectiveLevel = isQaPreview ? (debugAccessLevel as number) : codeLevel;
 
-  const groundingPrompt = buildGroundingPrompt(effectiveLevel, isQaPreview, !isQaPreview && codeLevel > 0);
+  // Phase 2: retrieve from the Supabase brain first. Non-empty -> answer from
+  // it with no MCP; empty (Supabase down) -> fall back to the Obsidian MCP path.
+  const supaContext = await retrieveFromSupabase(message, effectiveLevel);
+  const groundingPrompt = buildGroundingPrompt(effectiveLevel, isQaPreview, !isQaPreview && codeLevel > 0, supaContext);
   const fullPrompt = `${groundingPrompt}\n\n---\n\nVisitor question: ${message}\n\nYour answer:`;
 
   try {
-    const reply = await runClaude(fullPrompt);
+    const reply = await runClaude(fullPrompt, supaContext ? "" : OBSIDIAN_ALLOWED_TOOLS);
     return NextResponse.json({
       reply: reply || "I didn't get a clear answer back that time — try rephrasing?",
       connected: true,
