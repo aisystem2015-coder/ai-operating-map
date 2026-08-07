@@ -28,6 +28,13 @@ const sections = [
       { href: "/ai-map", label: "Interactive Map" },
     ],
   },
+  {
+    title: "Francisco",
+    links: [
+      { href: "/profile", label: "Profile" },
+      { href: "/book", label: "Book office hours" },
+    ],
+  },
 ];
 
 export default function Footer() {
