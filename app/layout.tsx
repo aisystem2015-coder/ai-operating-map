@@ -5,6 +5,7 @@ import MayaBanner from "@/components/MayaBanner";
 import Footer from "@/components/Footer";
 import ParticleField from "@/components/ui/particle-field";
 import { Analytics } from "@vercel/analytics/next";
+import VisitTracker from "@/components/VisitTracker";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -40,6 +41,7 @@ export default function RootLayout({
         <MayaBanner />
         {children}
         <Footer />
+        <VisitTracker />
         <Analytics />
       </body>
     </html>

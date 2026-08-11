@@ -253,6 +253,18 @@ export async function POST(request: NextRequest) {
   const { level: codeLevel, codeValid } = levelForCode(accessCode);
   const effectiveLevel = isQaPreview ? (debugAccessLevel as number) : codeLevel;
 
+  // Log the question to Supabase for the HOTB (fire-and-forget).
+  fetch("https://zgznqcopbgkfphubucpw.supabase.co/rest/v1/twin_questions", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      apikey: "sb_publishable_bbSN-nNr0_t4bK-YP6QOCg_uNEsfOfe",
+      authorization: "Bearer sb_publishable_bbSN-nNr0_t4bK-YP6QOCg_uNEsfOfe",
+      prefer: "return=minimal",
+    },
+    body: JSON.stringify({ question: message.slice(0, 500), level: effectiveLevel, surface: "website" }),
+  }).catch(() => {});
+
   // Phase 2: retrieve from the Supabase brain first. Non-empty -> answer from
   // it with no MCP; empty (Supabase down) -> fall back to the Obsidian MCP path.
   const supaContext = await retrieveFromSupabase(message, effectiveLevel);
