@@ -246,14 +246,8 @@ export async function POST(request: NextRequest) {
   // the real accessCode mechanism below.
   const isQaPreview = request.headers.get("x-dt-qa") === "1" && debugAccessLevel !== null;
 
-  if (process.env.VERCEL) {
-    return proxyToMacMini(message, accessCode);
-  }
-
-  const { level: codeLevel, codeValid } = levelForCode(accessCode);
-  const effectiveLevel = isQaPreview ? (debugAccessLevel as number) : codeLevel;
-
-  // Log the question to Supabase for the HOTB (fire-and-forget).
+  // Log the question to Supabase for the HOTB (fire-and-forget) — BEFORE the
+  // Vercel proxy branch, so website questions are logged in production too.
   fetch("https://zgznqcopbgkfphubucpw.supabase.co/rest/v1/twin_questions", {
     method: "POST",
     headers: {
@@ -262,8 +256,15 @@ export async function POST(request: NextRequest) {
       authorization: "Bearer sb_publishable_bbSN-nNr0_t4bK-YP6QOCg_uNEsfOfe",
       prefer: "return=minimal",
     },
-    body: JSON.stringify({ question: message.slice(0, 500), level: effectiveLevel, surface: "website" }),
+    body: JSON.stringify({ question: message.slice(0, 500), level: 0, surface: "website" }),
   }).catch(() => {});
+
+  if (process.env.VERCEL) {
+    return proxyToMacMini(message, accessCode);
+  }
+
+  const { level: codeLevel, codeValid } = levelForCode(accessCode);
+  const effectiveLevel = isQaPreview ? (debugAccessLevel as number) : codeLevel;
 
   // Phase 2: retrieve from the Supabase brain first. Non-empty -> answer from
   // it with no MCP; empty (Supabase down) -> fall back to the Obsidian MCP path.
