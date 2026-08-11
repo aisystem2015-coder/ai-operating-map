@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 // with HTTP Basic Auth. Everything else on the site stays public.
 // Password comes from HOTB_PASSWORD env var on Vercel; falls back to a default
 // Francisco should change. User can be anything; password is what matters.
-const HOTB_PASSWORD = process.env.HOTB_PASSWORD || "fgailab2026";
+const HOTB_PASSWORD = process.env.HOTB_PASSWORD || "Sofia1975";
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
