@@ -38,13 +38,29 @@ export async function GET(_req: NextRequest) {
     const hr = (v.ts || "").slice(11, 13);
     if (hr) byHour[hr] = (byHour[hr] || 0) + 1;
   }
+  // question frequency by day + by surface (Meet 21: Francisco wants a
+  // question-frequency analytics view on twin usage)
+  const qByDay: Record<string, number> = {};
+  const qBySurface: Record<string, number> = {};
+  const visitsByDay: Record<string, number> = {};
+  for (const x of questions) {
+    const d = (x.ts || "").slice(0, 10);
+    if (d) qByDay[d] = (qByDay[d] || 0) + 1;
+    if (x.surface) qBySurface[x.surface] = (qBySurface[x.surface] || 0) + 1;
+  }
+  for (const v of visits) {
+    const d = (v.ts || "").slice(0, 10);
+    if (d) visitsByDay[d] = (visitsByDay[d] || 0) + 1;
+  }
   return NextResponse.json({
     updated: new Date().toISOString(),
     visits_total: visits.length,
     visits_recent: visits.slice(0, 25),
     by_country: byCountry, by_city: byCity, by_path: byPath, by_hour: byHour,
+    visits_by_day: visitsByDay,
     questions_total: questions.length,
     questions_recent: questions,
+    q_by_day: qByDay, q_by_surface: qBySurface,
     ops, // live systems/devices/connections state, pushed by the Mac mini every ~2 min
   });
 }

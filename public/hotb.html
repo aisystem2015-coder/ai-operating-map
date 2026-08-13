@@ -196,6 +196,7 @@ select,.search{background:var(--panel);border:1px solid var(--line);border-radiu
         </div>
         <div>
           <div class="panel"><div class="ph"><h3>By hour (UTC)</h3></div><div id="vhour"></div></div>
+          <div class="panel"><div class="ph"><h3>Visits per day</h3></div><div id="vbyday"></div></div>
           <div class="panel"><div class="ph"><h3>Recent visits</h3></div><div id="vrecent"></div></div>
         </div>
       </div>
@@ -204,6 +205,10 @@ select,.search{background:var(--panel);border:1px solid var(--line);border-radiu
     <section class="view" id="v-twinlog">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h3 style="font-size:14px">Questions asked to the twin (chat box)</h3><button class="btn" data-refresh="twinlog" onclick="loadHotbData('twinlog')">↻ Refresh</button></div>
       <div class="kpis" id="twkpis"></div>
+      <div class="cols">
+        <div><div class="panel"><div class="ph"><h3>Questions per day</h3></div><div id="qbyday"></div></div></div>
+        <div><div class="panel"><div class="ph"><h3>By surface</h3></div><div id="qbysurface"></div></div></div>
+      </div>
       <div class="panel"><div class="ph"><h3>Recent questions</h3></div><div id="twrecent"></div></div>
     </section>
 
@@ -277,6 +282,7 @@ function visitorsTab(){
   const countries=Object.keys(h.by_country||{}).length, cities=Object.keys(h.by_city||{}).length;
   document.getElementById("viskpis").innerHTML=[["Visits","👁",tot],["Countries","🌍",countries],["Cities","🏙",cities],["Pages","📄",Object.keys(h.by_path||{}).length]].map(x=>`<div class="kpi"><div class="lab"><span class="dot">${x[1]}</span>${x[0]}</div><div class="n" style="font-size:22px">${x[2]}</div></div>`).join("");
   bars(h.by_country,"vcountry");bars(h.by_path,"vpath");bars(h.by_hour,"vhour");
+  if(document.getElementById("vbyday"))bars(h.visits_by_day,"vbyday");
   const rec=h.visits_recent||[];
   document.getElementById("vrecent").innerHTML=rec.length?rec.map(v=>`<div class="qrow">${esc(v.city||'?')}, ${esc(v.country||'?')} · <b>${esc(v.path||'/')}</b><div class="qm">${(v.ts||'').slice(0,16).replace('T',' ')} UTC · ${esc(v.ip||'')}</div></div>`).join(""):'<div style="color:var(--faint);font-size:12px;padding:8px">No visits logged yet — starts as soon as people hit the site.</div>';
 }
@@ -284,6 +290,7 @@ function twinlogTab(){
   const h=HOTB||{}; const q=h.questions_recent||[];
   document.getElementById("twkpis").innerHTML=[["Questions","💬",h.questions_total||0],["From website","🌐",q.filter(x=>x.surface==='website').length],["From apps","📱",q.filter(x=>x.surface==='twin-mcp').length]].map(x=>`<div class="kpi"><div class="lab"><span class="dot">${x[1]}</span>${x[0]}</div><div class="n" style="font-size:22px">${x[2]}</div></div>`).join("");
   document.getElementById("twrecent").innerHTML=q.length?q.map(x=>`<div class="qrow">"${esc((x.question||'').slice(0,160))}"<div class="qm">${(x.ts||'').slice(0,16).replace('T',' ')} UTC · level ${x.level} · ${esc(x.surface||'')}</div></div>`).join(""):'<div style="color:var(--faint);font-size:12px;padding:8px">No questions logged yet — appears as soon as someone asks the twin.</div>';
+  bars(h.q_by_day,"qbyday");bars(h.q_by_surface,"qbysurface");
 }
 function swotTab(){for(const[k,id] of [["strengths","sw-s"],["weaknesses","sw-w"],["opportunities","sw-o"],["threats","sw-t"]])document.getElementById(id).innerHTML=(SWOT[k]||[]).map(x=>`<li>${esc(x)}</li>`).join("");}
 function contingencyTab(){document.getElementById("contingency").innerHTML=Object.entries(CONTINGENCY).map(([n,p])=>`<div class="cont"><span class="cn">${esc(n)}</span><span class="cp">${esc(p)}</span></div>`).join("");}
