@@ -171,8 +171,10 @@ select,.search{background:var(--panel);border:1px solid var(--line);border-radiu
 
     <section class="view" id="v-systems">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h3 style="font-size:14px">All systems status</h3><button class="btn" data-refresh="systems" onclick="loadHotbData('systems')">↻ Refresh</button></div>
+      <div id="freshness" style="font-size:11px;color:var(--faint);margin-bottom:10px"></div>
       <div class="sysgrid" id="systems"></div>
-      <div class="panel" style="margin-top:16px"><div class="ph"><h3>Contingency plans — if a system goes down</h3></div><div id="contingency"></div></div>
+      <div class="panel" style="margin-top:16px"><div class="ph"><h3>🔧 Auto-recovery log — what the watchdog fixed by itself</h3><span class="link">every 60s</span></div><div id="events"></div></div>
+      <div class="panel"><div class="ph"><h3>Contingency plans — if a system goes down</h3></div><div id="contingency"></div></div>
     </section>
 
     <section class="view" id="v-swot">
@@ -334,7 +336,14 @@ function syssummary(){document.getElementById("syssummary").innerHTML=SYSTEMS.sy
 function brainstats(){const t=SYSTEMS.stats;document.getElementById("brainstats").innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div><div class="n" style="font-size:22px">${t.supabase_notes}</div><div class="sub">notes en Supabase</div></div><div><div class="n" style="font-size:22px">${t.thoughts}</div><div class="sub">con thoughts</div></div><div><div class="n" style="font-size:22px">${t.meetings}</div><div class="sub">meets</div></div><div><div class="n" style="font-size:22px">${ACTS.length}</div><div class="sub">acciones</div></div></div>`;}
 function alertsTab(){document.getElementById("alerts").innerHTML=BN.sort((a,b)=>({alta:0,media:1,baja:2}[a.sev]-{alta:0,media:1,baja:2}[b.sev])).map(b=>`<div class="alert ${b.sev}"><div class="sv"></div><div style="flex:1"><span class="badge">${b.sev}</span> <span class="area">· ${esc(b.area)}</span><div class="a" style="margin-top:5px">${esc(b.what)}</div><div class="why"><b>Por qué:</b> ${esc(b.why)}</div></div></div>`).join("");}
 function archTab(){document.getElementById("archflow").innerHTML=ARCH.map(f=>`<div class="fstep"><div class="fic">${f.ic}</div><div><div class="ft">${esc(f.t)}</div><div class="fd">${esc(f.d)}</div><span class="fw">compute: ${esc(f.where)}</span></div></div>`).join("");}
-function systemsTab(){const g={};SYSTEMS.systems.forEach(s=>{(g[s.grp]=g[s.grp]||[]).push(s);});document.getElementById("systems").innerHTML=Object.entries(g).map(([grp,items])=>`<div class="syscard"><h4>${esc(grp)}</h4>${items.map(x=>`<div class="sysrow"><span class="led ${x.ok?'ok':'no'}"></span>${esc(x.name)}<span class="s ${x.ok?'ok':'no'}">${x.ok?'ONLINE':'OFF'}</span></div>`).join("")}</div>`).join("");}
+function systemsTab(){const g={};SYSTEMS.systems.forEach(s=>{(g[s.grp]=g[s.grp]||[]).push(s);});document.getElementById("systems").innerHTML=Object.entries(g).map(([grp,items])=>`<div class="syscard"><h4>${esc(grp)}</h4>${items.map(x=>`<div class="sysrow"><span class="led ${x.ok?'ok':'no'}"></span>${esc(x.name)}<span class="s ${x.ok?'ok':'no'}">${x.ok?'ONLINE':'OFF'}</span></div>`).join("")}</div>`).join("");
+  // freshness + auto-recovery events
+  const fr=document.getElementById("freshness");
+  if(fr&&LIVE&&LIVE.updated){const m=Math.max(0,Math.round((Date.now()-new Date(LIVE.updated))/60000));fr.textContent="● live — self-check every 60s · last update "+(m<1?"just now":m+" min ago");}
+  const ev=document.getElementById("events");
+  if(ev){const evs=(LIVE&&LIVE.events)||[];
+    ev.innerHTML=evs.length?evs.slice().reverse().map(e=>`<div class="cont"><span class="cn">${(e.ts||'').slice(11,16)} ${esc(e.system)}</span><span class="cp">${e.resolved?'✅':'⏳'} ${esc(e.problem)} → <b>${esc(e.action)}</b></span></div>`).join(""):'<div style="color:var(--faint);font-size:12px;padding:8px">No incidents — everything has been running clean. The watchdog auto-fixes and logs here.</div>';}
+}
 function keysTab(){document.getElementById("keycount").textContent=KEYS.length+" services · "+KEYS.filter(k=>k.set).length+" connecteds";document.getElementById("keys").innerHTML=KEYS.map(k=>`<tr><td class="svc">${esc(k.name)}</td><td class="key">${esc(k.value)||'—'}</td><td style="color:var(--muted)">${esc(k.purpose)}</td><td><span class="st ${k.set?'ok':'no'}">${k.set?'connected':'missing'}</span></td></tr>`).join("");}
 function webTab(){const t=SYSTEMS.stats;document.getElementById("webkpis").innerHTML=[["Visits","👁",t.web_visits_known.split(" ")[0]],["Pages","📄","17"],["Status","●","Live"],["Deploy","⚡","auto"]].map(x=>`<div class="kpi"><div class="lab"><span class="dot">${x[1]}</span>${x[0]}</div><div class="n" style="font-size:22px">${x[2]}</div></div>`).join("");
   document.getElementById("webinfo").innerHTML=`<div style="font-size:12.5px;line-height:1.9"><div>🔗 URL: <b>${t.web_url}</b></div><div>📈 Visits conocidas: <b>${t.web_visits_known}</b> · 40% profesionales de ops</div><div>🧩 Home, Profile, Book, The Tech, Market Reality, What Works, Digital Twins, How to Prompt, Resources…</div><div style="color:var(--muted);margin-top:6px">Para tráfico EN VIVO (quién/de dónde/cuántos): conectar Vercel Analytics.</div></div>`;}
@@ -397,5 +406,5 @@ document.getElementById("stamp").textContent=DATE;fillMeetFilter();renderAll();
 refreshLive();                       // on load (systems/state)
 loadHotbData();                      // on load (visitors + twin questions from Supabase)
 setInterval(()=>refreshLive(),30*60*1000);
-setInterval(()=>loadHotbData(),5*60*1000);   // visitor/twin data every 5 min
+setInterval(()=>loadHotbData(),45*1000);   // live data every 45s (fast device on/off reflection)
 </script></body></html>
