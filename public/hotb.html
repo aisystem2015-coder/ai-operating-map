@@ -233,7 +233,7 @@ select,.search{background:var(--panel);border:1px solid var(--line);border-radiu
     <section class="view" id="v-tracker">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
         <div style="font-size:12px;color:var(--muted)">Tap a status to change it · changes are undoable</div>
-        <div style="display:flex;gap:6px"><button class="btn" onclick="undo()">↶ Undo</button><button class="btn" onclick="redo()">↷ Redo</button></div>
+        <div style="display:flex;gap:6px"><button class="btn" onclick="undo()">↶ Undo</button><button class="btn" onclick="redo()">↷ Redo</button><button class="btn" style="background:var(--accent);color:#fff;border-color:transparent" onclick="saveChanges()">💾 Save</button><span id="savemsg" style="font-size:11px;color:var(--green)"></span></div>
       </div>
       <div class="filters">
         <select id="fMeet"><option value="all">All meets</option></select>
@@ -383,6 +383,19 @@ function procTab(){
   document.getElementById("blockers").innerHTML=BLOCKERS.sort((a,b)=>({alta:0,media:1,baja:2}[a.sev]-{alta:0,media:1,baja:2}[b.sev])).map(b=>`<div class="alert ${b.sev}"><div class="sv"></div><div style="flex:1"><div class="a">${esc(b.cap)}</div><div class="why">🚧 blocked by: ${esc(b.blocked)}</div><div class="why" style="color:var(--green)">✅ unblocks with: ${esc(b.unblock)} <b>(${esc(b.who)})</b></div></div></div>`).join("");
   document.getElementById("deps").innerHTML=DEPS.map(d=>`<div class="init"><div class="ico">🔗</div><div class="info"><div class="t">${esc(d.cap)}</div><div class="d" style="display:flex;gap:4px;flex-wrap:wrap;margin-top:4px">needs: ${d.dep.map(x=>'<span class="chip p">'+esc(x)+'</span>').join('')}</div></div></div>`).join("");
 }
+
+async function saveChanges(){
+  const rows=Object.entries(ov()).map(([id,o])=>({id,status:o.status,note:o.note}));
+  const el=document.getElementById("savemsg");
+  if(!rows.length){if(el)el.textContent="nothing to save";return;}
+  if(el)el.textContent="saving…";
+  try{
+    const r=await fetch("/api/hotb-save",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({changes:rows})});
+    const d=await r.json();
+    if(el)el.textContent=d.ok?("✓ saved "+d.saved+" change(s) — synced to the brain"):"save failed";
+  }catch(e){if(el)el.textContent="save failed (offline?)";}
+}
+
 function renderAll(){document.getElementById("undo").disabled=!S.undo.length;document.getElementById("redo").disabled=!S.redo.length;banner();kpiCards();pipe();progress();initiatives();responsibilities();syssummary();brainstats();alertsTab();archTab();systemsTab();connTab();procTab();keysTab();webTab();swotTab();contingencyTab();visitorsTab();twinlogTab();tracker();}
 function go(v){document.querySelectorAll(".view").forEach(x=>x.classList.toggle("on",x.id==="v-"+v));document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));}
 document.querySelectorAll("#nav button").forEach(b=>b.onclick=()=>go(b.dataset.v));
