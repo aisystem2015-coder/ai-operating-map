@@ -105,12 +105,28 @@ export function useTwinChat(options?: { isReturning?: boolean }) {
         const headers: Record<string, string> = { "Content-Type": "application/json" };
         if (typeof debugAccessLevel === "number") headers["x-dt-qa"] = "1";
 
-        const res = await fetch("/api/twin-chat", {
-          method: "POST",
-          headers,
-          body: JSON.stringify({ message: text, debugAccessLevel, accessCode }),
-        });
-        const data = await res.json().catch(() => null);
+        // Cloud-first for public visitors (no access code): the fully-cloud
+        // twin answers from Supabase + Groq with zero Mac-mini dependency. Only
+        // fall back to the Mac-backed /api/twin-chat when a code unlocks deeper
+        // levels, or if the cloud twin isn't configured/available.
+        const publicVisitor = !accessCode && typeof debugAccessLevel !== "number";
+        let data: { reply?: string; effectiveLevel?: number; needsKey?: boolean } | null = null;
+        if (publicVisitor) {
+          const cloud = await fetch("/api/twin-cloud", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: text }),
+          }).then((r) => r.json()).catch(() => null);
+          if (cloud && cloud.reply && !cloud.needsKey) data = cloud;
+        }
+        if (!data) {
+          const res = await fetch("/api/twin-chat", {
+            method: "POST",
+            headers,
+            body: JSON.stringify({ message: text, debugAccessLevel, accessCode }),
+          });
+          data = await res.json().catch(() => null);
+        }
         const reply: string =
           data?.reply ??
           "Something went wrong reaching the twin just now — mind trying again in a moment?";
