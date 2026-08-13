@@ -20,13 +20,19 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "AI Operating Map · 2026",
+  metadataBase: new URL("https://aioperatingmappackage.vercel.app"),
+  title: {
+    default: "AI Operating Map · 2026",
+    template: "%s · AI Operating Map",
+  },
   description: "A complete reference for operations professionals navigating AI in 2026 — model landscape, agent architecture, and what actually works in production.",
   openGraph: {
     title: "AI Operating Map · 2026",
     description: "From model landscape to agent architecture to production results. Built for operators, not engineers.",
     type: "website",
+    siteName: "AI Operating Map",
   },
+  twitter: { card: "summary_large_image" },
 };
 
 export default function RootLayout({
