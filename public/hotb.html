@@ -231,6 +231,10 @@ select,.search{background:var(--panel);border:1px solid var(--line);border-radiu
     </section>
 
     <section class="view" id="v-tracker">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div style="font-size:12px;color:var(--muted)">Tap a status to change it · changes are undoable</div>
+        <div style="display:flex;gap:6px"><button class="btn" onclick="undo()">↶ Undo</button><button class="btn" onclick="redo()">↷ Redo</button></div>
+      </div>
       <div class="filters">
         <select id="fMeet"><option value="all">All meets</option></select>
         <select id="fStatus"><option value="all">All statuses</option><option value="open">Open</option><option value="New">Pending</option><option value="WIP">In progress</option><option value="Closed">Completed</option><option value="Parked">Parked</option></select>
