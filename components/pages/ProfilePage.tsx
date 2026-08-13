@@ -94,6 +94,15 @@ const experience = [
   },
 ];
 
+const impact = [
+  { n: "10×", label: "Event attendance", sub: "grew ESN Breda weekly events from ~40 to 100+" },
+  { n: "$50K", label: "Annual budget owned", sub: "up from €5K/year — a $25K year-end gala" },
+  { n: "~900", label: "Employees reached", sub: "the Logitech org my T-Shape work served" },
+  { n: "~200/mo", label: "Users on the platform I built", sub: "the internal T-Shape site, ground-up" },
+  { n: "4 roles", label: "In 3.5 years at Logitech", sub: "comms → enablement → ecommerce → AI" },
+  { n: "Since 2022", label: "Bringing AI into daily work", sub: "before it was the default" },
+];
+
 const built = [
   {
     title: "AI Operating Map",
@@ -185,6 +194,28 @@ export default function ProfilePage() {
               </div>
             </div>
           </div>
+
+          {/* Impact — by the numbers */}
+          <Section title="Impact — by the numbers" kicker="Track record, quantified">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {impact.map((m, i) => (
+                <motion.div
+                  key={m.label}
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-60px" }}
+                  transition={{ duration: 0.4, delay: i * 0.05 }}
+                  className="rounded-2xl border border-black/5 bg-white shadow-sm p-5"
+                >
+                  <div className="text-3xl md:text-4xl font-heading font-bold text-accent tracking-tight">
+                    {m.n}
+                  </div>
+                  <div className="text-sm font-semibold text-foreground mt-1">{m.label}</div>
+                  <div className="text-xs text-secondary mt-1 leading-relaxed">{m.sub}</div>
+                </motion.div>
+              ))}
+            </div>
+          </Section>
 
           {/* What I've built */}
           <Section title="What I've built" kicker="Selected work">
