@@ -33,26 +33,63 @@ const experience = [
     when: "2026 — now",
     points: [
       "A fully autonomous, always-on AI workforce running on a Mac mini — agents that operate the machine, not just answer questions.",
-      "A private digital twin: a grounded model of one person that answers from a single source of truth, with tiered access controls.",
-      "Grounded auto-responder bots and a personal-activity algorithm, each shipped end-to-end against real data.",
+      "A private digital twin: a grounded model of one person that answers from a single source of truth, with tiered, encrypted access controls, reachable from web, ChatGPT, Grok and phone.",
+      "A cloud brain (Supabase + vector search), grounded auto-responder bots, and a live control dashboard — each shipped end-to-end against real data.",
     ],
   },
   {
-    role: "AI platform builder & internal AI lead",
+    role: "AI projects & thesis",
     org: "Logitech",
-    when: "~3.5 years",
+    when: "2025 — 2026",
     points: [
-      "Built an internal AI platform himself rather than waiting for one — the work that led to everything above.",
-      "Drove AI adoption across an operations organisation: teaching teams to treat AI as the reasoning layer inside their systems, not a product bolted on top.",
-      "Ran his thesis on project scoping end-to-end with AI, tracing every decision back to its source.",
+      "Six months driving AI initiatives across the operations org — the work behind this site's \"what works today\" thinking.",
+      "Represented the team at the World AI Summit (Amsterdam) and an AI workshop in San Francisco, bringing the frontier back into daily operations.",
+      "Thesis on project scoping, run end-to-end with AI, tracing every decision back to its source.",
     ],
   },
   {
-    role: "Earlier — operations & events",
-    org: "Pre-Logitech",
+    role: "Ecommerce supply-chain specialist, Europe",
+    org: "Logitech",
+    when: "2025",
+    points: [
+      "Owned ecommerce supply-chain forecasting for Europe, improving forecast accuracy and leaving every stakeholder satisfied on handover.",
+      "Stepped into a senior role mid-stream and turned initial friction into trust.",
+    ],
+  },
+  {
+    role: "Learning enablement & COO communications",
+    org: "Logitech",
+    when: "~2.8 years",
+    points: [
+      "Covered a senior manager's maternity leave for nearly three years — learning enablement plus communications for the COO's org.",
+    ],
+  },
+  {
+    role: "T-Shape communications — internal platform & brand",
+    org: "Logitech",
+    when: "first year",
+    points: [
+      "Built the T-Shape internal site (Wix) — ~200 monthly users of a ~900-person org — plus the brand book, brochure, and a refreshed logo (Illustrator).",
+      "Migrated the newsletter to a trackable platform and ran the analytics reporting behind it.",
+    ],
+  },
+  {
+    role: "Events Manager",
+    org: "ESN Breda (Netherlands)",
+    when: "2021 — 2023",
+    points: [
+      "Led a team of 7–8 and grew the annual budget from €5,000 to $50,000.",
+      "Turned weekly events from ~40 to 100+ attendees; parties of 300+; a year-end gala on a $25,000 budget.",
+      "Negotiated bar and club partnerships end to end — branding, pricing, and staffing — and self-designed the merchandising.",
+    ],
+  },
+  {
+    role: "Education",
+    org: "Bolivia → Spain → Netherlands",
     when: "",
     points: [
-      "An events and operations background that shaped how he thinks about running things: logistics, coordination, and a low tolerance for anything that has to be done by hand twice.",
+      "International Business, University of Applied Sciences Breda, with a graphic-design minor (Fontys) — brand guidebooks for three real clients.",
+      "A sales vocational program in Spain (Flying Tiger internship) before Breda.",
     ],
   },
 ];
@@ -124,10 +161,11 @@ export default function ProfilePage() {
                 I build autonomous AI that works inside real operations.
               </p>
               <p className="text-lg text-secondary max-w-2xl leading-relaxed">
-                Not demos — systems that run. I spent three and a half years making AI
-                the reasoning layer inside an operations org, then built my own AI lab
-                to take it further: a private digital twin, an always-on agent workforce,
-                and the tools around them.
+                Not demos — systems that run. From events management in the Netherlands to
+                three and a half years across four roles at Logitech, I&apos;ve brought AI into
+                every corner of my work since 2022 — then built my own AI lab to take it
+                further: a private digital twin, an always-on agent workforce, and the tools
+                around them.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <Link
