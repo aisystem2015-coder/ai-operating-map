@@ -20,10 +20,12 @@ async function q(table: string, params: string) {
 }
 
 export async function GET(_req: NextRequest) {
-  const [visits, questions] = await Promise.all([
+  const [visits, questions, opsRows] = await Promise.all([
     q("web_visits", "select=ts,path,country,city,region,ip&order=ts.desc&limit=100"),
     q("twin_questions", "select=ts,question,level,surface&order=ts.desc&limit=50"),
+    q("ops_state", "select=updated,state&id=eq.1"),
   ]);
+  const ops = Array.isArray(opsRows) && opsRows[0] ? opsRows[0].state : null;
   // aggregate for the dashboard
   const byCountry: Record<string, number> = {};
   const byCity: Record<string, number> = {};
@@ -43,5 +45,6 @@ export async function GET(_req: NextRequest) {
     by_country: byCountry, by_city: byCity, by_path: byPath, by_hour: byHour,
     questions_total: questions.length,
     questions_recent: questions,
+    ops, // live systems/devices/connections state, pushed by the Mac mini every ~2 min
   });
 }
