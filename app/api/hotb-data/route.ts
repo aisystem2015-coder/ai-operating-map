@@ -20,7 +20,7 @@ async function q(table: string, params: string) {
 }
 
 export async function GET(_req: NextRequest) {
-  const [visits, questions, opsRows, trackerRows] = await Promise.all([
+  const [visits, questions, opsRows, trackerRows, actionRows] = await Promise.all([
     q("web_visits", "select=ts,path,country,city,region,ip&order=ts.desc&limit=100"),
     q("twin_questions", "select=ts,question,level,surface&order=ts.desc&limit=50"),
     q("ops_state", "select=updated,state&id=eq.1"),
@@ -30,6 +30,11 @@ export async function GET(_req: NextRequest) {
     // same saved state on EVERY device / incognito session — not just the
     // browser that made the edit. (Meet 22: Francisco's persistence bug.)
     q("tracker_updates", "select=action_id,status,note,id&order=id.desc&limit=5000"),
+    // The FULL action list, mirrored live from Airtable by
+    // scripts/sync_actions_to_supabase.py (run in the post-meeting ritual).
+    // This replaces the static array that used to be baked into hotb.html and
+    // went stale — it was stuck at Meet 20 while Airtable had through Meet 22.
+    q("action_tracker", "select=action_id,action,status,pri,who,type,note,meet,meetdate&limit=1000"),
   ]);
   const ops = Array.isArray(opsRows) && opsRows[0] ? opsRows[0].state : null;
   // dedupe: rows arrive newest-first, so the first time we see an action_id is
@@ -40,6 +45,13 @@ export async function GET(_req: NextRequest) {
     if (!aid || tracker[aid]) continue;
     tracker[aid] = { status: r.status ?? null, note: r.note ?? null };
   }
+  // Full action list, shaped to what the dashboard renders ({id, action, ...}).
+  const actions = (Array.isArray(actionRows) ? actionRows : []).map(
+    (r: { action_id: string; action: string; status: string; pri: string; who: string; type: string; note: string; meet: string; meetdate: string }) => ({
+      id: r.action_id, action: r.action, status: r.status, pri: r.pri,
+      who: r.who, type: r.type, note: r.note, meet: r.meet, meetdate: r.meetdate,
+    }),
+  );
   // aggregate for the dashboard
   const byCountry: Record<string, number> = {};
   const byCity: Record<string, number> = {};
@@ -76,6 +88,7 @@ export async function GET(_req: NextRequest) {
     questions_recent: questions,
     q_by_day: qByDay, q_by_surface: qBySurface,
     tracker, // {action_id: {status, note}} — shared Action Tracker state for all devices
+    actions, // full action list, live-mirrored from Airtable (never stale)
     ops, // live systems/devices/connections state, pushed by the Mac mini every ~2 min
   });
 }
