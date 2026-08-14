@@ -73,8 +73,8 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 .syscard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 15px;box-shadow:var(--shadow)}
 .syscard h4{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:10px}
 .sysrow{display:flex;align-items:center;gap:9px;padding:7px 0;font-size:12.5px;border-top:1px solid var(--line)}.sysrow:first-of-type{border-top:none}
-.led{width:9px;height:9px;border-radius:50%;flex-shrink:0}.led.ok{background:var(--green);box-shadow:0 0 0 3px rgba(34,165,101,.16)}.led.no{background:var(--red);box-shadow:0 0 0 3px rgba(229,72,77,.16)}
-.sysrow .s{margin-left:auto;font-size:10.5px;font-weight:700}.sysrow .s.ok{color:var(--green)}.sysrow .s.no{color:var(--red)}
+.led{width:9px;height:9px;border-radius:50%;flex-shrink:0}.led.ok{background:var(--green);box-shadow:0 0 0 3px rgba(34,165,101,.16)}.led.no{background:var(--red);box-shadow:0 0 0 3px rgba(229,72,77,.16)}.led.unk{background:#9a9a9a;box-shadow:0 0 0 3px rgba(154,154,154,.16)}
+.sysrow .s{margin-left:auto;font-size:10.5px;font-weight:700}.sysrow .s.ok{color:var(--green)}.sysrow .s.no{color:var(--red)}.sysrow .s.unk{color:#9a9a9a}
 .ktable{width:100%;border-collapse:collapse}.ktable th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--faint);padding:8px 10px;border-bottom:1px solid var(--line)}
 .ktable td{padding:9px 10px;border-bottom:1px solid var(--line);font-size:12.5px;vertical-align:top}.ktable td.svc{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;font-weight:600}.ktable td.key{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--muted)}
 .st{font-size:10.5px;font-weight:700;padding:2px 9px;border-radius:99px;white-space:nowrap}.st.ok{background:rgba(34,165,101,.13);color:var(--green)}.st.no{background:rgba(229,72,77,.12);color:var(--red)}
@@ -368,14 +368,16 @@ function progress(){ // closed actions per meet (by meetdate)
   const openByDate={};ACTS.forEach(a=>{if(a.meetdate){openByDate[a.meetdate]=(openByDate[a.meetdate]||0)+(isOpen(a)?1:0);}});
   const opend=dates.map(d=>openByDate[d]||0);
   document.getElementById("progress").innerHTML=lineChart([{name:"Completed (acum.)",color:"var(--green)",data:cumd},{name:"Open por meet",color:"var(--accent)",data:opend}],dates);}
-function syssummary(){document.getElementById("syssummary").innerHTML=SYSTEMS.systems.slice(0,6).map(x=>`<div class="sysrow"><span class="led ${x.ok?'ok':'no'}"></span>${esc(x.name)}<span class="s ${x.ok?'ok':'no'}">${x.ok?'OK':'CAÍDO'}</span></div>`).join("");}
+function syssummary(){const u=isStale();document.getElementById("syssummary").innerHTML=SYSTEMS.systems.slice(0,6).map(x=>`<div class="sysrow"><span class="led ${u?'unk':(x.ok?'ok':'no')}"></span>${esc(x.name)}<span class="s ${u?'unk':(x.ok?'ok':'no')}">${u?'SIN DATO':(x.ok?'OK':'CAÍDO')}</span></div>`).join("");}
 function brainstats(){const t=SYSTEMS.stats;document.getElementById("brainstats").innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div><div class="n" style="font-size:22px">${t.supabase_notes}</div><div class="sub">notes en Supabase</div></div><div><div class="n" style="font-size:22px">${t.thoughts}</div><div class="sub">con thoughts</div></div><div><div class="n" style="font-size:22px">${t.meetings}</div><div class="sub">meets</div></div><div><div class="n" style="font-size:22px">${ACTS.length}</div><div class="sub">acciones</div></div></div>`;}
 function alertsTab(){document.getElementById("alerts").innerHTML=BN.sort((a,b)=>({alta:0,media:1,baja:2}[a.sev]-{alta:0,media:1,baja:2}[b.sev])).map(b=>`<div class="alert ${b.sev}"><div class="sv"></div><div style="flex:1"><span class="badge">${b.sev}</span> <span class="area">· ${esc(b.area)}</span><div class="a" style="margin-top:5px">${esc(b.what)}</div><div class="why"><b>Por qué:</b> ${esc(b.why)}</div></div></div>`).join("");}
 function archTab(){document.getElementById("archflow").innerHTML=ARCH.map(f=>`<div class="fstep"><div class="fic">${f.ic}</div><div><div class="ft">${esc(f.t)}</div><div class="fd">${esc(f.d)}</div><span class="fw">compute: ${esc(f.where)}</span></div></div>`).join("");}
-function systemsTab(){const g={};SYSTEMS.systems.forEach(s=>{(g[s.grp]=g[s.grp]||[]).push(s);});document.getElementById("systems").innerHTML=Object.entries(g).map(([grp,items])=>`<div class="syscard"><h4>${esc(grp)}</h4>${items.map(x=>`<div class="sysrow"><span class="led ${x.ok?'ok':'no'}"></span>${esc(x.name)}<span class="s ${x.ok?'ok':'no'}">${x.ok?'ONLINE':'OFF'}</span></div>`).join("")}</div>`).join("");
+function systemsTab(){const u=isStale();const g={};SYSTEMS.systems.forEach(s=>{(g[s.grp]=g[s.grp]||[]).push(s);});document.getElementById("systems").innerHTML=Object.entries(g).map(([grp,items])=>`<div class="syscard"><h4>${esc(grp)}</h4>${items.map(x=>`<div class="sysrow"><span class="led ${u?'unk':(x.ok?'ok':'no')}"></span>${esc(x.name)}<span class="s ${u?'unk':(x.ok?'ok':'no')}">${u?'SIN DATO':(x.ok?'ONLINE':'OFF')}</span></div>`).join("")}</div>`).join("");
   // freshness + auto-recovery events
   const fr=document.getElementById("freshness");
-  if(fr&&LIVE&&LIVE.updated){const m=Math.max(0,Math.round((Date.now()-new Date(LIVE.updated))/60000));fr.textContent="● live — self-check every 60s · last update "+(m<1?"just now":m+" min ago");}
+  if(fr){fr.textContent=u?("⚠️ sin señal del Mac mini — último reporte "+ageText()+"; los estados de abajo NO son confiables")
+                        :("● live — self-check every 60s · last update "+ageText());
+         fr.style.color=u?"var(--red)":"";}
   const ev=document.getElementById("events");
   if(ev){const evs=(LIVE&&LIVE.events)||[];
     ev.innerHTML=evs.length?evs.slice().reverse().map(e=>`<div class="cont"><span class="cn">${(e.ts||'').slice(11,16)} ${esc(e.system)}</span><span class="cp">${e.resolved?'✅':'⏳'} ${esc(e.problem)} → <b>${esc(e.action)}</b></span></div>`).join(""):'<div style="color:var(--faint);font-size:12px;padding:8px">No incidents — everything has been running clean. The watchdog auto-fixes and logs here.</div>';}
@@ -444,15 +446,34 @@ async function refreshLive(section){
     if(section)flash(section);
   }catch(e){ const el=document.getElementById("livestamp"); if(el)el.textContent="(sin datos en vivo — corré scripts/ops_snapshot.py)"; }
 }
+// ---- FRESHNESS GATE ----------------------------------------------------
+// The Mac mini pushes ops_state every ~60s. If that stops, the dashboard used
+// to keep rendering the LAST snapshot as green "All systems go" — which is how
+// the twin sat dead for 21h (13 aug 15:32 -> 14 aug) with the HOTB showing
+// everything fine. A frozen snapshot IS an outage: the reporter itself is dead.
+// So anything older than STALE_MIN is shown as "sin señal", never as OK.
+const STALE_MIN=10;
+function liveAgeMin(){ if(!LIVE||!LIVE.updated)return null; const m=(Date.now()-new Date(LIVE.updated))/60000; return isNaN(m)?null:Math.max(0,Math.round(m)); }
+function isStale(){ const m=liveAgeMin(); return m===null||m>STALE_MIN; }
+function ageText(){ const m=liveAgeMin(); if(m===null)return "nunca";
+  if(m<1)return "hace segundos"; if(m<60)return "hace "+m+" min";
+  const h=Math.floor(m/60); if(h<24)return "hace "+h+" h "+(m%60)+" min";
+  return "hace "+Math.floor(h/24)+" d "+(h%24)+" h"; }
+
 function liveBanner(){
-  const el=document.getElementById("livebar"); if(!el||!LIVE)return;
-  const t=new Date(LIVE.updated); const mins=Math.round((Date.now()-t)/60000);
+  const el=document.getElementById("livebar"); if(!el)return;
+  const stale=isStale();
+  if(stale){
+    el.className="banner"; el.style.background="rgba(229,72,77,.08)"; el.style.borderColor="rgba(229,72,77,.3)";
+    el.innerHTML=`<span class="bi">🔴</span><div><b>Sin señal del Mac mini — último reporte ${ageText()}</b> — el panel NO puede confirmar que los sistemas estén arriba. El twin puede estar caído. Arreglo: en el Mac, Terminal → <code>bash ~/Desktop/AI_Lab/scripts/twin_recover.sh</code></div><button class="btn" style="margin-left:auto" onclick="refreshLive()">↻ Reintentar</button>`;
+    return;
+  }
   const ok=LIVE.all_ok;
   el.className="banner"; el.style.background=ok?"":"rgba(229,72,77,.08)"; el.style.borderColor=ok?"":"rgba(229,72,77,.3)";
-  el.innerHTML=`<span class="bi">${ok?'🟢':'🔴'}</span><div><b>${ok?'All systems go':'Attention: '+LIVE.problems.length+' problem(s)'}</b> ${ok?'':'— '+LIVE.problems.join(' · ')} <span style="color:var(--faint);font-size:11px">· updated ${mins} min</span></div><button class="btn" style="margin-left:auto" onclick="refreshLive()">↻ Refresh todo</button>`;
+  el.innerHTML=`<span class="bi">${ok?'🟢':'🔴'}</span><div><b>${ok?'All systems go':'Attention: '+LIVE.problems.length+' problem(s)'}</b> ${ok?'':'— '+LIVE.problems.join(' · ')} <span style="color:var(--faint);font-size:11px">· updated ${ageText()}</span></div><button class="btn" style="margin-left:auto" onclick="refreshLive()">↻ Refresh todo</button>`;
 }
 function flash(id){const s=document.querySelector('[data-refresh="'+id+'"]');if(s){s.textContent="✓";setTimeout(()=>s.textContent="↻",900);}}
-document.getElementById("stamp").textContent=DATE;fillMeetFilter();renderAll();
+document.getElementById("stamp").textContent=DATE;fillMeetFilter();renderAll();liveBanner();
 refreshLive();                       // on load (systems/state)
 loadHotbData();                      // on load (visitors + twin questions from Supabase)
 setInterval(()=>refreshLive(),30*60*1000);
