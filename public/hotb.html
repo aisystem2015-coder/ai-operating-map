@@ -330,8 +330,11 @@ const st=a=>(ov()[a.id]&&ov()[a.id].status)||a.status,note=a=>(ov()[a.id]&&ov()[
 const isOpen=a=>{const s=st(a);return s==="New"||s==="WIP";};
 function save(){localStorage.setItem(LS,JSON.stringify(S));}
 function change(id,p){const pr=JSON.parse(JSON.stringify(ov()[id]||{}));S.undo.push({id,prev:pr});if(S.undo.length>200)S.undo.shift();S.redo=[];ov()[id]=Object.assign(ov()[id]||{},p);if(!ov()[id].status&&!ov()[id].note)delete ov()[id];(S.pending=S.pending||{})[id]=1;save();renderAll();}
-function undo(){if(!S.undo.length)return;const u=S.undo.pop();S.redo.push({id:u.id,prev:JSON.parse(JSON.stringify(ov()[u.id]||{}))});if(Object.keys(u.prev).length)ov()[u.id]=u.prev;else delete ov()[u.id];save();renderAll();}
-function redo(){if(!S.redo.length)return;const r=S.redo.pop();S.undo.push({id:r.id,prev:JSON.parse(JSON.stringify(ov()[r.id]||{}))});if(Object.keys(r.prev).length)ov()[r.id]=r.prev;else delete ov()[r.id];save();renderAll();}
+// undo/redo mark the id pending too — an undo is itself an edit that has to reach
+// the shared DB. Before, they mutated ov() without touching S.pending and only got
+// pushed because save() uploaded the whole merged map.
+function undo(){if(!S.undo.length)return;const u=S.undo.pop();S.redo.push({id:u.id,prev:JSON.parse(JSON.stringify(ov()[u.id]||{}))});if(Object.keys(u.prev).length)ov()[u.id]=u.prev;else delete ov()[u.id];(S.pending=S.pending||{})[u.id]=1;save();renderAll();}
+function redo(){if(!S.redo.length)return;const r=S.redo.pop();S.undo.push({id:r.id,prev:JSON.parse(JSON.stringify(ov()[r.id]||{}))});if(Object.keys(r.prev).length)ov()[r.id]=r.prev;else delete ov()[r.id];(S.pending=S.pending||{})[r.id]=1;save();renderAll();}
 const PRI={P1:0,P2:1,P3:2};
 function spark(id,c){let p=[];for(let i=0;i<16;i++)p.push(20-Math.round(14*Math.abs(Math.sin(i*.6+id))));return `<svg class="spark" viewBox="0 0 105 26" preserveAspectRatio="none"><polyline fill="none" stroke="${c}" stroke-width="2" points="${p.map((y,i)=>i*7+","+y).join(" ")}"/></svg>`;}
 function lineChart(series,labels){ // series=[{name,color,data[]}]
@@ -412,7 +415,12 @@ function procTab(){
 }
 
 async function saveChanges(){
-  const rows=Object.entries(ov()).map(([id,o])=>({id,status:o.status,note:o.note}));
+  // Only push ids actually edited locally since the last save. ov() is the MERGED
+  // map (server state + local edits), so sending all of it re-uploaded every known
+  // override on every save — inflating the count ("saved 16" after 3 edits) and,
+  // worse, overwriting newer values other devices had written since this browser
+  // last synced. S.pending is the real changeset.
+  const rows=Object.keys(S.pending||{}).map(id=>{const o=ov()[id]||{};return{id,status:o.status,note:o.note};});
   const el=document.getElementById("savemsg");
   if(!rows.length){if(el)el.textContent="nothing to save";return;}
   if(el)el.textContent="saving…";

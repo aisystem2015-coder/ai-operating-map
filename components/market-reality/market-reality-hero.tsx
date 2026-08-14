@@ -104,7 +104,7 @@ export default function MarketRealityHero() {
             </p>
             
             <p className="text-sm text-neutral-500 mb-8">
-              Source: AI World Summit 2025 & cited industry research
+              Source: AI World Summit 2025 & cited industry research · Updated with Ai4 2026 data below
             </p>
             
             {/* Hidden fact below source text */}
