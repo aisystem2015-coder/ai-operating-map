@@ -49,11 +49,11 @@
  * of that full-circle scroll-driven explorer.
  */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CATEGORICAL, NEUTRAL } from "../charts/tokens";
 
-type LayerId = "llm" | "assistant" | "agent" | "agentic" | "digital-twin";
+export type LayerId = "llm" | "assistant" | "agent" | "agentic" | "digital-twin";
 
 interface Layer {
   id: LayerId;
@@ -115,9 +115,28 @@ const LAYERS: Layer[] = [
   },
 ];
 
-export default function RainbowLayers() {
+export default function RainbowLayers({
+  onLayerChange,
+}: {
+  /** Fires with the active layer id on mount and on every change, so the page
+      can render that layer's full detail section below the diagram. */
+  onLayerChange?: (id: LayerId) => void;
+} = {}) {
   const [activeIndex, setActiveIndex] = useState(0);
   const activeLayer = LAYERS[activeIndex];
+
+  // Deep-link: /what-works#agent (etc.) opens that layer on load, so a
+  // mega-menu click lands on the right layer already selected.
+  useEffect(() => {
+    const hash = typeof window !== "undefined" ? window.location.hash.replace("#", "") : "";
+    const idx = LAYERS.findIndex((l) => l.id === hash);
+    if (idx >= 0) setActiveIndex(idx);
+  }, []);
+
+  // Report the active layer up to the page (for the detail panel below).
+  useEffect(() => {
+    onLayerChange?.(LAYERS[activeIndex].id);
+  }, [activeIndex, onLayerChange]);
 
   const advance = () => setActiveIndex((i) => (i + 1) % LAYERS.length);
 

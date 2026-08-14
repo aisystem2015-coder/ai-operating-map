@@ -1,21 +1,32 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
+import { AnimatePresence, motion } from "framer-motion";
 import Navigation from "../Navigation";
 import SectionReveal from "../learning/SectionReveal";
-import RainbowLayers from "../rainbow/rainbow-layers";
+import RainbowLayers, { type LayerId } from "../rainbow/rainbow-layers";
+import LLMsSection from "../what-works/llms-section";
+import AssistantsSection from "../what-works/assistants-section";
+import AgentsSection from "../what-works/agents-section";
+import AgentPatternsSection from "../what-works/agent-patterns-section";
+import AgenticWorkforce from "../what-works/agentic-workforce";
+import VerticalAIPitch from "../market-reality/vertical-ai-pitch";
+import VerticalDeploymentsSection from "../what-works/vertical-deployments-section";
+import DigitalTwinTeaser from "../digital-twin/digital-twin-teaser";
 
 export default function WhatWorksPage() {
+  // Which layer the rainbow currently has selected — drives the detail panel.
+  const [layer, setLayer] = useState<LayerId>("llm");
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
 
       <main>
-        {/* Section 1: What Works Today — the rainbow stack (moved here from the
-            Digital Twins page in Meet 22; it replaces the old concentric-rings
-            explorer Francisco found confusing — "un círculo dentro de otro
-            círculo... no funciona bien"). Click-driven half-arc, never a full
-            circle. */}
+        {/* Section 1: the rainbow stack (Meet 22 — replaces the old
+            concentric-rings explorer). Click-driven half-arc, never a full
+            circle. Clicking a layer reveals its full breakdown below. */}
         <section id="top" className="py-32 px-6 lg:px-8 bg-white/40 scroll-mt-8">
           <div className="max-w-5xl mx-auto space-y-10">
             <SectionReveal>
@@ -29,15 +40,59 @@ export default function WhatWorksPage() {
                 <p className="text-lg text-secondary leading-relaxed">
                   Everything real sits on one reasoning core and builds outward — from a
                   model you talk to, to agents that act, to a private twin of you.
-                  Click through the stack, layer by layer.
+                  Click a layer to see the full breakdown below.
                 </p>
               </div>
             </SectionReveal>
-            <RainbowLayers />
+
+            <RainbowLayers onLayerChange={setLayer} />
           </div>
         </section>
 
-        {/* Section 1.5: Vertical AI teaser */}
+        {/* Per-layer deep dive — restored Meet 22: each rainbow layer opens its
+            full section (diagrams + explanation) here, exactly like the old
+            explorer did. The content components were never deleted, just
+            unmounted when the diagram was swapped. */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={layer}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.28, ease: "easeOut" }}
+          >
+            {layer === "llm" && <LLMsSection />}
+            {layer === "assistant" && <AssistantsSection />}
+            {layer === "agent" && (
+              <>
+                <AgentsSection />
+                <section className="py-20 px-6 lg:px-8 bg-white/30">
+                  <div className="max-w-6xl mx-auto">
+                    <AgentPatternsSection />
+                  </div>
+                </section>
+              </>
+            )}
+            {layer === "agentic" && (
+              <section className="py-20 px-6 lg:px-8">
+                <div className="max-w-7xl mx-auto space-y-16">
+                  <AgenticWorkforce />
+                  <VerticalAIPitch />
+                  <VerticalDeploymentsSection />
+                </div>
+              </section>
+            )}
+            {layer === "digital-twin" && (
+              <section className="py-20 px-6 lg:px-8">
+                <div className="max-w-5xl mx-auto">
+                  <DigitalTwinTeaser />
+                </div>
+              </section>
+            )}
+          </motion.div>
+        </AnimatePresence>
+
+        {/* Vertical AI teaser */}
         <section className="py-12 px-6 lg:px-8">
           <div className="max-w-6xl mx-auto">
             <SectionReveal>
@@ -89,4 +144,3 @@ export default function WhatWorksPage() {
     </div>
   );
 }
-
