@@ -11,7 +11,7 @@ The core argument: "AI is not a product. It is the reasoning layer inside your s
 
 The app teaches:
 - The Tech: how AI actually works (Transformers + GPUs + Vector DBs)
-- Market Reality: 95% of GenAI pilots fail to scale — data and mindset are the blockers
+- Market Reality: why AI stalls — data and mindset are the blockers. Note: the page led on "95% of GenAI pilots fail" for a year; an Ai4 2026 section now corrects that figure (~75% of pilots against a hard ROI test) and reframes the 2026 failure as post-deployment rollback. The 95% claim still appears in the Home hero and Resources — left in place on purpose while Francisco reworks positioning.
 - What Works: LLMs as a reasoning layer, surrounding systems create compound value
 - AI Mindset: five-layer architecture (Inputs, Reasoning, Orchestration, Tools/Data, Outcomes)
 - Execution Checklist: how to act with clarity before committing budgets
