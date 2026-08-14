@@ -20,12 +20,26 @@ async function q(table: string, params: string) {
 }
 
 export async function GET(_req: NextRequest) {
-  const [visits, questions, opsRows] = await Promise.all([
+  const [visits, questions, opsRows, trackerRows] = await Promise.all([
     q("web_visits", "select=ts,path,country,city,region,ip&order=ts.desc&limit=100"),
     q("twin_questions", "select=ts,question,level,surface&order=ts.desc&limit=50"),
     q("ops_state", "select=updated,state&id=eq.1"),
+    // The Action Tracker's shared state. Every HOTB "Save" appends a row to
+    // tracker_updates; the current status/note for an action is simply its
+    // newest row. Resolve latest-per-action_id here so the dashboard shows the
+    // same saved state on EVERY device / incognito session — not just the
+    // browser that made the edit. (Meet 22: Francisco's persistence bug.)
+    q("tracker_updates", "select=action_id,status,note,id&order=id.desc&limit=5000"),
   ]);
   const ops = Array.isArray(opsRows) && opsRows[0] ? opsRows[0].state : null;
+  // dedupe: rows arrive newest-first, so the first time we see an action_id is
+  // its latest state. Skip anything already superseded by a newer row.
+  const tracker: Record<string, { status: string | null; note: string | null }> = {};
+  for (const r of Array.isArray(trackerRows) ? trackerRows : []) {
+    const aid = r && r.action_id;
+    if (!aid || tracker[aid]) continue;
+    tracker[aid] = { status: r.status ?? null, note: r.note ?? null };
+  }
   // aggregate for the dashboard
   const byCountry: Record<string, number> = {};
   const byCity: Record<string, number> = {};
@@ -61,6 +75,7 @@ export async function GET(_req: NextRequest) {
     questions_total: questions.length,
     questions_recent: questions,
     q_by_day: qByDay, q_by_surface: qBySurface,
+    tracker, // {action_id: {status, note}} — shared Action Tracker state for all devices
     ops, // live systems/devices/connections state, pushed by the Mac mini every ~2 min
   });
 }

@@ -203,7 +203,7 @@ export default function Home() {
                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                     AI Operating Map
                   </span>
-                  <span className="text-xs text-secondary font-medium">Updated July 2026</span>
+                  <span className="text-xs text-secondary font-medium">Updated August 2026</span>
                 </div>
 
                 <div className="space-y-5 max-w-3xl">

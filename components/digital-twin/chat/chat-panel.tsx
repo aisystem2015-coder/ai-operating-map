@@ -4,7 +4,7 @@
  * Embedded chat panel for the Digital Twins section, ported from
  * digital_twin_site/components/chat/chat-panel.tsx and re-skinned from
  * the standalone site's indigo/sky/amber palette to this site's
- * emerald-only system (components/charts/tokens.ts CATEGORICAL[0] /
+ * indigo-only system (components/charts/tokens.ts CATEGORICAL[0] /
  * #1BC4A6) per the merge brief. Adds the access-level QA selector
  * (job 2) inline above the input.
  */

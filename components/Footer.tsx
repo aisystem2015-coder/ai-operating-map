@@ -10,6 +10,7 @@ const sections = [
       { href: "/origins", label: "The Tech" },
       { href: "/market-reality", label: "Market Reality" },
       { href: "/what-works", label: "What Works Today" },
+      { href: "/what-works/digital-twins", label: "Digital Twins" },
       { href: "/ai-mindset", label: "AI Mindset" },
     ],
   },
@@ -81,7 +82,7 @@ export default function Footer() {
           <p className="text-xs text-secondary/50">© 2026 Francisco Guevara · AI Operating Map</p>
           <div className="flex items-center gap-1.5 text-xs text-secondary/40">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            Updated July 2026
+            Updated August 2026
           </div>
         </div>
       </div>

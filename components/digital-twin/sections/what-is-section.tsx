@@ -3,7 +3,7 @@
 /**
  * "What is a Digital Twin" — content ported from digital_twin_site's
  * /que-es page (2026-07-27 merge), re-skinned from indigo/sky/amber/rose
- * to this site's emerald-only system, and with the 4-maturity-levels
+ * to this site's sky-only system, and with the 4-maturity-levels
  * diagram (previously a Spanish-labeled PNG, dt_diagram_2_niveles.png)
  * rebuilt as a real component instead of an image.
  */
@@ -99,7 +99,7 @@ export default function WhatIsSection() {
     <section id="dt-explore" className="scroll-mt-32 space-y-16">
       <SectionReveal>
         <div className="text-center max-w-3xl mx-auto space-y-3">
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">In plain English</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-700">In plain English</p>
           <h2 className="text-3xl md:text-4xl font-heading font-bold text-foreground leading-tight">
             What is a digital twin, really?
           </h2>
@@ -108,8 +108,8 @@ export default function WhatIsSection() {
 
       {/* Core definition */}
       <SectionReveal>
-        <div className="rounded-3xl bg-emerald-50 border border-emerald-100 p-8 lg:p-12 space-y-5">
-          <Quote className="h-8 w-8 text-emerald-700" />
+        <div className="rounded-3xl bg-sky-50 border border-sky-100 p-8 lg:p-12 space-y-5">
+          <Quote className="h-8 w-8 text-sky-700" />
           <p className="text-lg leading-relaxed text-foreground">
             Imagine buying a new fridge. It comes with an instruction manual — how the temperature settings
             work, how to fix the ice maker, what that one blinking light means. Now imagine two repair
@@ -129,7 +129,7 @@ export default function WhatIsSection() {
       <SectionReveal>
         <div className="space-y-8">
           <div className="text-center max-w-2xl mx-auto space-y-2">
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-700">
               The one thing that actually matters
             </p>
             <h3 className="text-2xl md:text-3xl font-heading font-bold text-foreground">
@@ -173,7 +173,7 @@ export default function WhatIsSection() {
       <SectionReveal>
         <div className="space-y-8">
           <div className="text-center max-w-2xl mx-auto space-y-2">
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">Real, not abstract</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-700">Real, not abstract</p>
             <h3 className="text-2xl md:text-3xl font-heading font-bold text-foreground">What it&apos;s actually good for</h3>
           </div>
           <div className="grid sm:grid-cols-2 gap-5">
@@ -187,8 +187,8 @@ export default function WhatIsSection() {
                 className="rounded-2xl border border-black/5 bg-white p-6 space-y-3 shadow-sm"
                 whileHover={reduceMotion ? undefined : { y: -4, boxShadow: "0 14px 28px -10px rgba(15,23,42,0.16)" }}
               >
-                <div className="h-10 w-10 rounded-xl bg-emerald-50 flex items-center justify-center">
-                  <b.icon className="h-5 w-5 text-emerald-700" />
+                <div className="h-10 w-10 rounded-xl bg-sky-50 flex items-center justify-center">
+                  <b.icon className="h-5 w-5 text-sky-700" />
                 </div>
                 <h4 className="text-base font-semibold text-foreground">{b.title}</h4>
                 <p className="text-sm leading-relaxed text-secondary">{b.desc}</p>
@@ -202,7 +202,7 @@ export default function WhatIsSection() {
       <SectionReveal>
         <div className="space-y-6">
           <div className="text-center max-w-2xl mx-auto space-y-2">
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-700">
               The maturity framework
             </p>
             <h3 className="text-2xl md:text-3xl font-heading font-bold text-foreground">
@@ -230,7 +230,7 @@ export default function WhatIsSection() {
               </div>
             ))}
           </div>
-          <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-center text-sm text-emerald-900">
+          <div className="rounded-2xl border border-sky-200 bg-sky-50 px-5 py-4 text-center text-sm text-sky-900">
             This project&apos;s own twin sits today between <strong>Descriptive</strong> and{" "}
             <strong>Predictive</strong>. The long-term goal is reaching Prescriptive.
           </div>

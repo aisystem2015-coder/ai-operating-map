@@ -3,8 +3,10 @@
 /**
  * The "rainbow" diagram (Meet 16, 2026-07-21): LLMs at the core, wrapped by
  * Assistants, then Agents, then Agentic Systems, then Digital Twins —
- * drawn as a half circle that completes into a full circle as you click
- * through it.
+ * drawn as a half circle (a rainbow arc) that fills in, layer by layer, as
+ * you click through it. Meet 22 (2026-08-14): it must STAY a half circle at
+ * every step and never close into a full circle — and it lives on the
+ * What Works Today page, not the Digital Twins page.
  *
  * Rules taken directly from the transcript:
  * - Click only. No scroll wiring, at all. The What Works page's concentric
@@ -115,7 +117,6 @@ const LAYERS: Layer[] = [
 
 export default function RainbowLayers() {
   const [activeIndex, setActiveIndex] = useState(0);
-  const isFull = activeIndex === LAYERS.length - 1;
   const activeLayer = LAYERS[activeIndex];
 
   const advance = () => setActiveIndex((i) => (i + 1) % LAYERS.length);
@@ -134,18 +135,20 @@ export default function RainbowLayers() {
           LLMs → Assistants → Agents → Agentic Systems → Digital Twins
         </h3>
         <p className="text-secondary leading-relaxed">
-          Click the core to build up the stack, layer by layer, until it completes into a full circle.
+          Click the core to build up the stack, layer by layer — a rainbow that fills in, arc by arc.
         </p>
       </div>
 
       <div className="flex flex-col lg:flex-row items-center gap-10">
-        {/* Diagram — a true half circle by default (cropped via
-            preserveAspectRatio="slice", not a CSS aspect-ratio guess),
-            completing into a full circle once every layer is revealed. */}
+        {/* Diagram — ALWAYS a true half circle / rainbow arc (cropped via
+            preserveAspectRatio="slice", not a CSS aspect-ratio guess). Meet 22:
+            Francisco does NOT want it to close into a full circle on the last
+            layer ("el arco iris... se vuelve un círculo entero. Hay que
+            mantenerlo como un arco iris"). It stays a rainbow at every step —
+            the layers just fill in, arc by arc. */}
         <div className="relative w-full max-w-md mx-auto lg:mx-0">
           <motion.div
-            animate={{ paddingBottom: isFull ? "100%" : "50%" }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            style={{ paddingBottom: "50%" }}
             className="relative w-full overflow-hidden"
           >
             <button

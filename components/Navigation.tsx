@@ -37,6 +37,7 @@ const whatWorksMegaMenu = [
 const allNav = [
   ...primaryNav.slice(0, 3),
   { href: "/what-works", label: "What Works Today" },
+  { href: "/what-works/digital-twins", label: "Digital Twin" },
   ...primaryNav.slice(3),
   ...moreNav,
 ];
@@ -144,6 +145,21 @@ export default function Navigation() {
                   </div>
                 )}
               </div>
+
+              {/* Direct top-level Digital Twin link — Meet 22: Francisco
+                  couldn't find it inside the What Works mega-menu, so it gets
+                  its own findable entry, marked with the fingerprint icon. */}
+              <Link
+                href="/what-works/digital-twins"
+                className={`flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 ${
+                  pathname === "/what-works/digital-twins"
+                    ? "text-accent bg-accent/10"
+                    : "text-secondary hover:text-foreground hover:bg-black/5 hover:shadow-[0_0_0_1px_rgba(27,196,166,0.25)]"
+                }`}
+              >
+                <Fingerprint size={14} strokeWidth={1.75} />
+                Digital Twin
+              </Link>
 
               {primaryNav.slice(3).map((item) => (
                 <Link

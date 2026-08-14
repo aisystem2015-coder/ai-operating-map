@@ -23,7 +23,7 @@ export default function DigitalTwinTeaser() {
       transition={{ duration: 0.4 }}
       className="rounded-3xl border border-black/5 bg-white shadow-sm p-8 md:p-10 text-center space-y-5"
     >
-      <div className="mx-auto h-12 w-12 rounded-2xl bg-emerald-900 flex items-center justify-center">
+      <div className="mx-auto h-12 w-12 rounded-2xl bg-indigo-900 flex items-center justify-center">
         <Fingerprint className="h-6 w-6 text-white" strokeWidth={1.75} />
       </div>
       <h3 className="text-2xl md:text-3xl font-heading font-bold text-foreground">
@@ -38,7 +38,7 @@ export default function DigitalTwinTeaser() {
       <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
         <Link
           href="/what-works/digital-twins"
-          className="min-h-[44px] cursor-pointer inline-flex items-center gap-2 rounded-xl bg-emerald-900 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:brightness-110 transition focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+          className="min-h-[44px] cursor-pointer inline-flex items-center gap-2 rounded-xl bg-indigo-900 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:brightness-110 transition focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
         >
           Explore Digital Twins
           <ArrowRight className="h-4 w-4" />

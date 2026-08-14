@@ -51,7 +51,7 @@ export default function ChatSection() {
         >
           <div className="text-center max-w-2xl mx-auto space-y-3">
             <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-white/80">
-              <MessageCircle className="h-3.5 w-3.5 text-emerald-300" />
+              <MessageCircle className="h-3.5 w-3.5 text-indigo-300" />
               Live and working right now
             </span>
             <h2 className="text-3xl md:text-4xl font-heading font-bold text-white leading-tight">
@@ -66,7 +66,7 @@ export default function ChatSection() {
               <motion.p
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="inline-flex items-center gap-2 rounded-full bg-white/10 border border-white/15 px-3.5 py-1.5 text-xs text-emerald-200"
+                className="inline-flex items-center gap-2 rounded-full bg-white/10 border border-white/15 px-3.5 py-1.5 text-xs text-indigo-200"
               >
                 <History className="h-3.5 w-3.5" />
                 This browser has been here before — skipping the intro. (That&apos;s all this remembers: a

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Navigation from "../Navigation";
 import SectionReveal from "../learning/SectionReveal";
-import WhatWorksExplorer from "../what-works/what-works-explorer";
+import RainbowLayers from "../rainbow/rainbow-layers";
 
 export default function WhatWorksPage() {
   return (
@@ -11,10 +11,29 @@ export default function WhatWorksPage() {
       <Navigation />
 
       <main>
-        {/* Section 1: What Works Today — interactive 4-stage explorer */}
+        {/* Section 1: What Works Today — the rainbow stack (moved here from the
+            Digital Twins page in Meet 22; it replaces the old concentric-rings
+            explorer Francisco found confusing — "un círculo dentro de otro
+            círculo... no funciona bien"). Click-driven half-arc, never a full
+            circle. */}
         <section id="top" className="py-32 px-6 lg:px-8 bg-white/40 scroll-mt-8">
-          <div className="max-w-7xl mx-auto">
-            <WhatWorksExplorer />
+          <div className="max-w-5xl mx-auto space-y-10">
+            <SectionReveal>
+              <div className="max-w-3xl space-y-3">
+                <p className="text-sm font-semibold uppercase tracking-[0.22em] text-secondary">
+                  What works today
+                </p>
+                <h1 className="text-4xl md:text-5xl font-heading font-bold tracking-tight text-foreground leading-tight">
+                  The patterns that actually scale
+                </h1>
+                <p className="text-lg text-secondary leading-relaxed">
+                  Everything real sits on one reasoning core and builds outward — from a
+                  model you talk to, to agents that act, to a private twin of you.
+                  Click through the stack, layer by layer.
+                </p>
+              </div>
+            </SectionReveal>
+            <RainbowLayers />
           </div>
         </section>
 

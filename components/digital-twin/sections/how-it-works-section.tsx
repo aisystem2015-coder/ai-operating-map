@@ -83,7 +83,7 @@ export default function HowItWorksSection() {
     <section className="scroll-mt-32 space-y-16">
       <SectionReveal>
         <div className="text-center max-w-2xl mx-auto space-y-2">
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">Under the hood</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-rose-700">Under the hood</p>
           <h2 className="text-3xl md:text-4xl font-heading font-bold text-foreground leading-tight">How it works, step by step</h2>
           <p className="text-secondary leading-relaxed">
             The same 4 steps power a digital twin whether it&apos;s personal, a factory&apos;s, or a
@@ -100,7 +100,7 @@ export default function HowItWorksSection() {
       <SectionReveal>
         <div className="space-y-6">
           <div className="text-center max-w-2xl mx-auto space-y-2">
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">What feeds it</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-rose-700">What feeds it</p>
             <h3 className="text-2xl md:text-3xl font-heading font-bold text-foreground">What data sources actually feed a digital twin</h3>
           </div>
           <div className="grid md:grid-cols-2 gap-5">
@@ -110,8 +110,8 @@ export default function HowItWorksSection() {
                 className="rounded-2xl bg-white p-6 space-y-3 border border-black/5 shadow-sm"
                 whileHover={reduceMotion ? undefined : { y: -4, boxShadow: "0 14px 28px -10px rgba(15,23,42,0.16)" }}
               >
-                <div className="h-10 w-10 rounded-xl bg-emerald-50 flex items-center justify-center">
-                  <ing.icon className="h-5 w-5 text-emerald-700" />
+                <div className="h-10 w-10 rounded-xl bg-rose-50 flex items-center justify-center">
+                  <ing.icon className="h-5 w-5 text-rose-700" />
                 </div>
                 <p className="text-xs font-semibold uppercase tracking-wide text-secondary">{ing.subtitle}</p>
                 <h4 className="text-base font-semibold text-foreground">{ing.title}</h4>
@@ -126,7 +126,7 @@ export default function HowItWorksSection() {
       <SectionReveal>
         <div className="space-y-6">
           <div className="text-center max-w-2xl mx-auto space-y-2">
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">Grounding, applied to privacy</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-rose-700">Grounding, applied to privacy</p>
             <h3 className="text-2xl md:text-3xl font-heading font-bold text-foreground">How privacy and access levels work</h3>
             <p className="text-secondary leading-relaxed">
               The live chat below only answers from notes tagged public or shareable — private and
@@ -150,7 +150,7 @@ export default function HowItWorksSection() {
       <SectionReveal>
         <div className="space-y-8">
           <div className="text-center max-w-2xl mx-auto space-y-2">
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">The actual product pitch</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-rose-700">The actual product pitch</p>
             <h3 className="text-2xl md:text-3xl font-heading font-bold text-foreground">How to build your own — step by step</h3>
             <p className="text-secondary leading-relaxed">No code, no engineering degree. Just a habit, a tool, and some patience — in that order.</p>
           </div>
@@ -177,14 +177,14 @@ export default function HowItWorksSection() {
       <SectionReveal>
         <div className="space-y-6">
           <div className="text-center max-w-2xl mx-auto space-y-2">
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">Where this is going</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-rose-700">Where this is going</p>
             <h3 className="text-2xl md:text-3xl font-heading font-bold text-foreground">Future extensions — ideas, not commitments</h3>
           </div>
           <div className="grid sm:grid-cols-2 gap-5">
             {roadmap.map((item) => (
               <div key={item.title} className="rounded-2xl bg-white p-6 flex gap-4 border border-black/5 shadow-sm">
-                <div className="h-10 w-10 shrink-0 rounded-xl bg-emerald-50 flex items-center justify-center">
-                  <item.icon className="h-5 w-5 text-emerald-700" />
+                <div className="h-10 w-10 shrink-0 rounded-xl bg-rose-50 flex items-center justify-center">
+                  <item.icon className="h-5 w-5 text-rose-700" />
                 </div>
                 <div className="space-y-1.5">
                   <h4 className="text-base font-semibold text-foreground">{item.title}</h4>

@@ -263,6 +263,20 @@ let HOTB=null;
 async function loadHotbData(section){
   try{
     const r=await fetch("/api/hotb-data",{cache:"no-store"}); if(!r.ok)throw 0; HOTB=await r.json();
+    // SHARED Action Tracker state from Supabase — this is what makes a saved
+    // status/note show up on every device and in incognito, not just the browser
+    // that made the edit. Server is the base; local edits not yet Saved (pending)
+    // stay on top so they survive a refresh until pushed.
+    if(HOTB.tracker){
+      const srv=HOTB.tracker,oldOv=S.ov||{},pend=S.pending||{},merged={};
+      for(const k in srv){const v=srv[k]||{},o={};if(v.status)o.status=v.status;if(v.note)o.note=v.note;if(o.status||o.note)merged[k]=o;}
+      for(const k in pend){if(oldOv[k])merged[k]=oldOv[k];}
+      if(JSON.stringify(merged)!==JSON.stringify(oldOv)){
+        S.ov=merged;save();
+        const typing=document.activeElement&&document.activeElement.tagName==="TEXTAREA";
+        if(!typing){banner();kpiCards();responsibilities();progress();tracker();}
+      }
+    }
     // live systems/devices/connections state, pushed by the Mac mini every ~2 min
     if(HOTB.ops){
       const o=HOTB.ops;
@@ -299,12 +313,13 @@ function twinlogTab(){
 function swotTab(){for(const[k,id] of [["strengths","sw-s"],["weaknesses","sw-w"],["opportunities","sw-o"],["threats","sw-t"]])document.getElementById(id).innerHTML=(SWOT[k]||[]).map(x=>`<li>${esc(x)}</li>`).join("");}
 function contingencyTab(){document.getElementById("contingency").innerHTML=Object.entries(CONTINGENCY).map(([n,p])=>`<div class="cont"><span class="cn">${esc(n)}</span><span class="cp">${esc(p)}</span></div>`).join("");}
 const LABEL={New:"Pending",WIP:"In progress",Closed:"Done",Parked:"Parked"},OWN={Francisco:"Francisco",Maya:"Maya",Claude:"Claude",Both:"Ambos"};
-let S=JSON.parse(localStorage.getItem(LS)||'{"ov":{},"undo":[],"redo":[]}');
+let S=JSON.parse(localStorage.getItem(LS)||'{"ov":{},"undo":[],"redo":[],"pending":{}}');
+if(!S.pending)S.pending={}; // ids edited locally but not yet pushed to the shared DB
 const ov=()=>S.ov,esc=s=>(s||"").replace(/[&<>]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[m]));
 const st=a=>(ov()[a.id]&&ov()[a.id].status)||a.status,note=a=>(ov()[a.id]&&ov()[a.id].note)||"";
 const isOpen=a=>{const s=st(a);return s==="New"||s==="WIP";};
 function save(){localStorage.setItem(LS,JSON.stringify(S));}
-function change(id,p){const pr=JSON.parse(JSON.stringify(ov()[id]||{}));S.undo.push({id,prev:pr});if(S.undo.length>200)S.undo.shift();S.redo=[];ov()[id]=Object.assign(ov()[id]||{},p);if(!ov()[id].status&&!ov()[id].note)delete ov()[id];save();renderAll();}
+function change(id,p){const pr=JSON.parse(JSON.stringify(ov()[id]||{}));S.undo.push({id,prev:pr});if(S.undo.length>200)S.undo.shift();S.redo=[];ov()[id]=Object.assign(ov()[id]||{},p);if(!ov()[id].status&&!ov()[id].note)delete ov()[id];(S.pending=S.pending||{})[id]=1;save();renderAll();}
 function undo(){if(!S.undo.length)return;const u=S.undo.pop();S.redo.push({id:u.id,prev:JSON.parse(JSON.stringify(ov()[u.id]||{}))});if(Object.keys(u.prev).length)ov()[u.id]=u.prev;else delete ov()[u.id];save();renderAll();}
 function redo(){if(!S.redo.length)return;const r=S.redo.pop();S.undo.push({id:r.id,prev:JSON.parse(JSON.stringify(ov()[r.id]||{}))});if(Object.keys(r.prev).length)ov()[r.id]=r.prev;else delete ov()[r.id];save();renderAll();}
 const PRI={P1:0,P2:1,P3:2};
@@ -392,7 +407,8 @@ async function saveChanges(){
   try{
     const r=await fetch("/api/hotb-save",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({changes:rows})});
     const d=await r.json();
-    if(el)el.textContent=d.ok?("✓ saved "+d.saved+" change(s) — synced to the brain"):"save failed";
+    if(d.ok){S.pending={};save();}            // pushed to the shared DB — no longer "local only"
+    if(el)el.textContent=d.ok?("✓ saved "+d.saved+" change(s) — synced to every device"):"save failed";
   }catch(e){if(el)el.textContent="save failed (offline?)";}
 }
 
@@ -402,7 +418,7 @@ document.querySelectorAll("#nav button").forEach(b=>b.onclick=()=>go(b.dataset.v
 ["fMeet","fStatus","fOwner"].forEach(id=>document.getElementById(id).onchange=tracker);document.getElementById("q").oninput=tracker;
 document.getElementById("undo").onclick=undo;document.getElementById("redo").onclick=redo;
 document.getElementById("export").onclick=()=>{const rows=Object.entries(ov()).map(([id,o])=>({id,...o}));const b=new Blob([JSON.stringify({exported:new Date().toISOString(),changes:rows},null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="ops_changes_"+DATE+".json";a.click();};
-document.getElementById("reset").onclick=()=>{if(confirm("¿Descartar cambios locales?")){S={ov:{},undo:[],redo:[]};save();renderAll();}};
+document.getElementById("reset").onclick=()=>{if(confirm("¿Descartar cambios locales?")){S={ov:{},undo:[],redo:[],pending:{}};save();loadHotbData();renderAll();}};
 // ---- LIVE refresh: fetch ops_state.json (per-section buttons + 30-min auto) ----
 let LIVE=null;
 async function refreshLive(section){

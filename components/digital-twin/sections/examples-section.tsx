@@ -86,7 +86,7 @@ export default function ExamplesSection() {
     <section className="scroll-mt-32 space-y-14">
       <SectionReveal>
         <div className="text-center max-w-2xl mx-auto space-y-2">
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">Real cases, today</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-amber-700">Real cases, today</p>
           <h2 className="text-3xl md:text-4xl font-heading font-bold text-foreground leading-tight">
             Digital twins that already exist
           </h2>
@@ -125,8 +125,8 @@ export default function ExamplesSection() {
           <div className="grid sm:grid-cols-2 gap-5">
             {categoryTwins.map((c) => (
               <div key={c.title} className="rounded-2xl bg-white p-6 space-y-3 border border-black/5 shadow-sm">
-                <div className="h-10 w-10 rounded-xl bg-emerald-50 flex items-center justify-center">
-                  <c.icon className="h-5 w-5 text-emerald-700" />
+                <div className="h-10 w-10 rounded-xl bg-amber-50 flex items-center justify-center">
+                  <c.icon className="h-5 w-5 text-amber-700" />
                 </div>
                 <h4 className="text-base font-semibold text-foreground">{c.title}</h4>
                 <p className="text-sm leading-relaxed text-secondary">{c.desc}</p>
@@ -138,8 +138,8 @@ export default function ExamplesSection() {
           <div className="grid sm:grid-cols-2 gap-5">
             {domainTwins.map((d) => (
               <div key={d.title} className="rounded-2xl bg-white p-6 space-y-3 border border-black/5 shadow-sm">
-                <div className="h-10 w-10 rounded-xl bg-emerald-50 flex items-center justify-center">
-                  <d.icon className="h-5 w-5 text-emerald-700" />
+                <div className="h-10 w-10 rounded-xl bg-amber-50 flex items-center justify-center">
+                  <d.icon className="h-5 w-5 text-amber-700" />
                 </div>
                 <h4 className="text-base font-semibold text-foreground">{d.title}</h4>
                 <p className="text-sm leading-relaxed text-secondary">{d.desc}</p>

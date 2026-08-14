@@ -51,7 +51,7 @@ export default function HardwareSection() {
     <section className="scroll-mt-32 space-y-16">
       <SectionReveal>
         <div className="text-center max-w-3xl mx-auto space-y-3">
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">The physical layer</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-700">The physical layer</p>
           <h2 className="text-3xl md:text-4xl font-heading font-bold text-foreground leading-tight">
             A digital twin has to run somewhere
           </h2>
@@ -65,7 +65,7 @@ export default function HardwareSection() {
 
       {/* Why this is everywhere */}
       <SectionReveal>
-        <div className="rounded-3xl bg-gradient-to-br from-amber-50 to-emerald-50 border border-amber-200/50 p-8 lg:p-12 space-y-4">
+        <div className="rounded-3xl bg-gradient-to-br from-amber-50 to-sky-50 border border-amber-200/50 p-8 lg:p-12 space-y-4">
           <span className="inline-flex items-center gap-2 rounded-full bg-amber-100 text-amber-900 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.16em]">
             <Flame className="h-3.5 w-3.5" />
             Why this is everywhere right now
@@ -89,7 +89,7 @@ export default function HardwareSection() {
       <SectionReveal>
         <div className="space-y-6">
           <div className="text-center max-w-2xl mx-auto space-y-2">
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">NVIDIA — the chips</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-700">NVIDIA — the chips</p>
             <h3 className="text-2xl md:text-3xl font-heading font-bold text-foreground">Chips &amp; racks</h3>
           </div>
           <div className="grid md:grid-cols-2 gap-5">
@@ -115,7 +115,7 @@ export default function HardwareSection() {
       <SectionReveal>
         <div className="space-y-6">
           <div className="text-center max-w-2xl mx-auto space-y-2">
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">What it takes to run</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-700">What it takes to run</p>
             <h3 className="text-2xl md:text-3xl font-heading font-bold text-foreground">Power, cooling &amp; market scale</h3>
           </div>
           <div className="grid sm:grid-cols-3 gap-5">
@@ -135,8 +135,8 @@ export default function HardwareSection() {
 
       {/* AMD — new, additive */}
       <SectionReveal>
-        <div className="rounded-3xl bg-emerald-950 text-white p-8 lg:p-12 space-y-3">
-          <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-emerald-200">
+        <div className="rounded-3xl bg-sky-950 text-white p-8 lg:p-12 space-y-3">
+          <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-sky-200">
             <Gauge className="h-3.5 w-3.5" />
             The second major player
           </span>
@@ -181,7 +181,7 @@ export default function HardwareSection() {
       <SectionReveal>
         <div className="space-y-6">
           <div className="text-center max-w-2xl mx-auto space-y-2">
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">AMD&apos;s own framing</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-700">AMD&apos;s own framing</p>
             <h3 className="text-2xl md:text-3xl font-heading font-bold text-foreground">Agent productivity tiers</h3>
             <p className="text-secondary leading-relaxed">
               AMD said explicitly they&apos;re building hardware for the top of this ramp, not the bottom —
@@ -202,7 +202,7 @@ export default function HardwareSection() {
       <SectionReveal>
         <div className="space-y-6">
           <div className="text-center max-w-2xl mx-auto space-y-2">
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">Market research, Jul 2026</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-700">Market research, Jul 2026</p>
             <h3 className="text-2xl md:text-3xl font-heading font-bold text-foreground">Who&apos;s winning the compute war</h3>
             <p className="text-secondary leading-relaxed">
               Zooming out from any one vendor&apos;s keynote: the market is quietly splitting into three
@@ -235,7 +235,7 @@ export default function HardwareSection() {
       <SectionReveal>
         <div className="space-y-6">
           <div className="text-center max-w-2xl mx-auto space-y-2">
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">Ties directly into this section</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-700">Ties directly into this section</p>
             <h3 className="text-2xl md:text-3xl font-heading font-bold text-foreground">Personal AI hardware</h3>
             <p className="text-secondary leading-relaxed">
               This is the hardware layer a personal digital twin like the one on this page could eventually
@@ -282,35 +282,35 @@ export default function HardwareSection() {
       {/* Where this is heading — Francisco's own read, clearly attributed */}
       <SectionReveal>
         <div className="rounded-3xl border border-black/5 bg-white p-8 lg:p-12 space-y-5">
-          <span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 text-emerald-800 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.16em]">
+          <span className="inline-flex items-center gap-2 rounded-full bg-sky-50 text-sky-800 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.16em]">
             <Compass className="h-3.5 w-3.5" />
             Francisco&apos;s own read — not established fact
           </span>
           <h3 className="text-2xl md:text-3xl font-heading font-bold text-foreground">Where this is heading</h3>
           <ol className="space-y-4">
             <li className="flex gap-3">
-              <span className="shrink-0 h-7 w-7 rounded-full bg-emerald-100 text-emerald-800 text-sm font-semibold flex items-center justify-center">1</span>
+              <span className="shrink-0 h-7 w-7 rounded-full bg-sky-100 text-sky-800 text-sm font-semibold flex items-center justify-center">1</span>
               <p className="text-sm leading-relaxed text-secondary">
                 Compute becomes distributed — desk-side supercomputers like Halo, possibly evolving into a
                 home-hosted-compute business model.
               </p>
             </li>
             <li className="flex gap-3">
-              <span className="shrink-0 h-7 w-7 rounded-full bg-emerald-100 text-emerald-800 text-sm font-semibold flex items-center justify-center">2</span>
+              <span className="shrink-0 h-7 w-7 rounded-full bg-sky-100 text-sky-800 text-sm font-semibold flex items-center justify-center">2</span>
               <p className="text-sm leading-relaxed text-secondary">
                 Frontier models drift toward open source, or a &ldquo;subscription-for-patents&rdquo; model —
                 pay for the model license and separately for the compute it runs on.
               </p>
             </li>
             <li className="flex gap-3">
-              <span className="shrink-0 h-7 w-7 rounded-full bg-emerald-100 text-emerald-800 text-sm font-semibold flex items-center justify-center">3</span>
+              <span className="shrink-0 h-7 w-7 rounded-full bg-sky-100 text-sky-800 text-sm font-semibold flex items-center justify-center">3</span>
               <p className="text-sm leading-relaxed text-secondary">
                 New services emerge specifically around training and running small language models (SLMs) on
                 a company&apos;s own private data.
               </p>
             </li>
             <li className="flex gap-3">
-              <span className="shrink-0 h-7 w-7 rounded-full bg-emerald-100 text-emerald-800 text-sm font-semibold flex items-center justify-center">4</span>
+              <span className="shrink-0 h-7 w-7 rounded-full bg-sky-100 text-sky-800 text-sm font-semibold flex items-center justify-center">4</span>
               <p className="text-sm leading-relaxed text-secondary">
                 <Scale className="inline h-3.5 w-3.5 mb-0.5 mr-1" />
                 Regulation gets real — AMD, OpenAI, and others sent a joint letter to the White House the
