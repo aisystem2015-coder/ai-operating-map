@@ -30,7 +30,9 @@ export default function DigitalTwinHeroSection() {
         aria-hidden
       />
       <div className="relative isolate z-0">
-        <InteractiveGlow />
+        {/* Indigo-family glow so it harmonizes with the indigo hero (Meet 22
+            palette restore) instead of the default teal/blue/violet. */}
+        <InteractiveGlow colors={["#6366F1", "#4F46E5", "#818CF8"]} />
       </div>
 
       <div className="relative z-10 max-w-4xl mx-auto px-6 lg:px-8 text-center space-y-6">
