@@ -22,20 +22,62 @@ const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 const MODEL = "llama-3.3-70b-versatile";
 const MAX = 500;
 
-async function retrieve(q: string) {
-  // public-safe: access_level is null/0/1 only. keyword ILIKE over content.
-  const url = `${SUPABASE_URL}/rest/v1/vault_notes?select=title,folder,content,access_level`
-    + `&or=(access_level.is.null,access_level.lte.1)`
-    + `&content=ilike.*${encodeURIComponent(q.slice(0, 40))}*&limit=5`;
+// Same bug as scripts/brain_retrieve.py had, found 14 aug 2026: this used to
+// match the FIRST 40 CHARACTERS OF THE QUESTION as one literal substring
+// (`content.ilike.*cuál es la última entrada de mi diar*`). No note on earth
+// contains that, so retrieval returned nothing for every real question and the
+// model answered from its own prompt. Now: OR across the meaningful words.
+const STOP = new Set(("a al algo como con cual cuales cuando de del desde donde el ella ellos en entre "
+  + "era es esa ese eso esta este esto fue ha hace hasta hay la las le les lo los mas me mi mis mucho muy "
+  + "para pero por porque que quien se ser si sin sobre solo son su sus tambien te tiene todo tu tus un una "
+  + "uno unos ya about all and any are as at be been but by can did do does for from get give had has have "
+  + "how its just like me most my not of on or our out show some tell that the their them then there these "
+  + "they this to up us was we what when where which who why will with you your").split(" "));
+const RECENCY = new Set(["ultimo", "ultima", "ultimos", "ultimas", "reciente", "recientes", "hoy", "ayer",
+  "nuevo", "nueva", "latest", "last", "recent", "today", "yesterday", "newest"]);
+const fold = (w: string) => w.normalize("NFD").replace(/[̀-ͯ]/g, "");
+
+function terms(q: string) {
+  const out: string[] = [];
+  for (const w of (q.toLowerCase().match(/[0-9a-zà-ÿñ]{3,}/g) || [])) {
+    const f = fold(w);
+    if (STOP.has(f) || RECENCY.has(f)) continue;
+    for (const form of f !== w ? [w, f] : [w]) if (!out.includes(form)) out.push(form);
+  }
+  return out.slice(0, 6);
+}
+const wantsRecency = (q: string) =>
+  (q.toLowerCase().match(/[0-9a-zà-ÿñ]{3,}/g) || []).some((w) => RECENCY.has(fold(w)));
+
+async function get(url: string) {
   try {
     const r = await fetch(url, { headers: { apikey: SUPABASE_ANON, authorization: `Bearer ${SUPABASE_ANON}` }, cache: "no-store" });
-    if (!r.ok) return "";
-    const rows = await r.json();
-    return (rows || []).map((n: { title: string; content: string }) =>
-      `### ${n.title}\n${(n.content || "").replace(/^---\n[\s\S]*?\n---\n/, "").slice(0, 1600)}`).join("\n\n").slice(0, 9000);
-  } catch {
-    return "";
+    return r.ok ? await r.json() : null;
+  } catch { return null; }
+}
+
+function render(rows: { title: string; content: string; updated_at?: string }[]) {
+  return (rows || []).map((n) =>
+    `### ${n.title}${n.updated_at ? ` (${n.updated_at.slice(0, 10)})` : ""}\n`
+    + (n.content || "").replace(/^---\n[\s\S]*?\n---\n/, "").slice(0, 1600)).join("\n\n").slice(0, 9000);
+}
+
+async function retrieve(q: string) {
+  // public-safe: access_level null/0/1 only. This endpoint must never touch N2-4.
+  const pub = "or(access_level.is.null,access_level.lte.1)";
+  const sel = `${SUPABASE_URL}/rest/v1/vault_notes?select=title,folder,content,access_level,updated_at`;
+  const ts = terms(q);
+  const order = wantsRecency(q) ? "updated_at.desc" : "char_count.desc";
+
+  if (ts.length) {
+    const any = ts.flatMap((t) => [`content.ilike.*${t}*`, `title.ilike.*${t}*`]).join(",");
+    const rows = await get(`${sel}&and=(${pub},or(${any}))&order=${order}&limit=5`);
+    if (rows && rows.length) return render(rows);
   }
+  // Nothing matched (or a pure "what's the latest" question): newest public
+  // notes beat an empty context, which is what made the twin improvise.
+  const recent = await get(`${sel}&and=(${pub})&order=updated_at.desc&limit=3`);
+  return recent && recent.length ? render(recent) : "";
 }
 
 export async function POST(req: NextRequest) {
