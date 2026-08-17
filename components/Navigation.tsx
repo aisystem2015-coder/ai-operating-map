@@ -64,6 +64,10 @@ export default function Navigation() {
 
   const isMoreActive = moreNav.some((item) => item.href === pathname);
   const isWhatWorksActive = pathname === "/what-works" || pathname.startsWith("/what-works/");
+  // Two-door model (Meet 23): are we on the "AI Operating Map" side or the
+  // "Francisco" side? Drives which top tab reads as active.
+  const MAP_PREFIXES = ["/origins", "/market-reality", "/ai-mindset", "/execution-checklist", "/how-to-prompt", "/ai-now-2026", "/resources", "/ai-map", "/what-works", "/vertical-ai"];
+  const isMapActive = MAP_PREFIXES.some((p) => pathname === p || pathname.startsWith(p + "/"));
 
   return (
     <>
@@ -81,24 +85,20 @@ export default function Navigation() {
               className="flex items-center gap-2 hover:opacity-70 transition-opacity focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 rounded"
             >
               <FGMark size={24} />
-              <span className="text-sm font-medium text-foreground">AI Operating Map</span>
+              <span className="text-sm font-semibold text-foreground">Francisco Guevara</span>
             </Link>
 
             {/* Desktop nav */}
             <div className="hidden md:flex items-center gap-0.5">
-              {primaryNav.slice(0, 3).map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 ${
-                    pathname === item.href
-                      ? "text-accent bg-accent/10"
-                      : "text-secondary hover:text-foreground hover:bg-black/5 hover:shadow-[0_0_0_1px_rgba(27,196,166,0.25)]"
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              ))}
+              {/* Two doors (Meet 23): Francisco | AI Operating Map. */}
+              <Link
+                href="/"
+                className={`px-3.5 py-2 text-sm font-semibold rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 ${
+                  !isMapActive ? "text-accent bg-accent/10" : "text-secondary hover:text-foreground hover:bg-black/5"
+                }`}
+              >
+                Francisco
+              </Link>
 
               {/* "What Works Today" mega-menu — Logitech.com reference
                   model. Hover (desktop) or click opens a 4-card panel:
@@ -111,13 +111,13 @@ export default function Navigation() {
                 <Link
                   href="/what-works"
                   onClick={() => setWhatWorksOpen(false)}
-                  className={`flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 ${
-                    isWhatWorksActive
+                  className={`flex items-center gap-1 px-3.5 py-2 text-sm font-semibold rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 ${
+                    isMapActive
                       ? "text-accent bg-accent/10"
-                      : "text-secondary hover:text-foreground hover:bg-black/5 hover:shadow-[0_0_0_1px_rgba(27,196,166,0.25)]"
+                      : "text-secondary hover:text-foreground hover:bg-black/5"
                   }`}
                 >
-                  What Works Today
+                  AI Operating Map
                   <ChevronDown
                     size={14}
                     className={`transition-transform duration-200 ${whatWorksOpen ? "rotate-180" : ""}`}
@@ -146,34 +146,15 @@ export default function Navigation() {
                 )}
               </div>
 
-              {/* Direct top-level Digital Twin link — Meet 22: Francisco
-                  couldn't find it inside the What Works mega-menu, so it gets
-                  its own findable entry, marked with the fingerprint icon. */}
+              {/* The digital twin — the flagship. Kept prominent as an accent
+                  entry so it's always one click away (Meet 22/23). */}
               <Link
                 href="/what-works/digital-twins"
-                className={`flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 ${
-                  pathname === "/what-works/digital-twins"
-                    ? "text-accent bg-accent/10"
-                    : "text-secondary hover:text-foreground hover:bg-black/5 hover:shadow-[0_0_0_1px_rgba(27,196,166,0.25)]"
-                }`}
+                className="flex items-center gap-1.5 px-3.5 py-2 text-sm font-semibold rounded-lg text-accent hover:bg-accent/10 transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
               >
-                <Fingerprint size={14} strokeWidth={1.75} />
+                <Fingerprint size={14} strokeWidth={2} />
                 Digital Twin
               </Link>
-
-              {primaryNav.slice(3).map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 ${
-                    pathname === item.href
-                      ? "text-accent bg-accent/10"
-                      : "text-secondary hover:text-foreground hover:bg-black/5 hover:shadow-[0_0_0_1px_rgba(27,196,166,0.25)]"
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              ))}
 
               {/* More dropdown */}
               <div className="relative">

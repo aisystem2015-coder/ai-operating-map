@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Inter, Manrope } from "next/font/google";
 import MayaBanner from "@/components/MayaBanner";
+import AppShell from "@/components/AppShell";
 import Footer from "@/components/Footer";
 import ParticleField from "@/components/ui/particle-field";
 import { Analytics } from "@vercel/analytics/next";
@@ -45,7 +46,7 @@ export default function RootLayout({
       <body className={`${inter.variable} ${manrope.variable} pt-10`}>
         <ParticleField />
         <MayaBanner />
-        {children}
+        <AppShell>{children}</AppShell>
         <Footer />
         <VisitTracker />
         <Analytics />
