@@ -14,7 +14,7 @@ export default function FGMark({ className = "", size = 24 }: FGMarkProps) {
       className={className}
     >
       {/* Simple geometric monogram - F and G combined */}
-      <rect width="24" height="24" rx="4" fill="#4D9DFB" />
+      <rect width="24" height="24" rx="4" fill="#0a1838" />
       <path
         d="M7 6h6v2H9v3h4v2H9v4H7V6z"
         fill="white"

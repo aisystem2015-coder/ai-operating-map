@@ -199,21 +199,19 @@ export default function Home() {
 
               <div className="relative px-8 py-14 lg:px-14 lg:py-20 space-y-10">
                 <div className="flex items-center gap-3 flex-wrap">
-                  <span className="inline-flex items-center gap-2 rounded-full bg-emerald-100 border border-emerald-200 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    AI Operating Map
+                  <span className="inline-flex items-center gap-2 rounded-full bg-accent/10 border border-accent/20 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+                    <span className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
+                    Francisco Guevara
                   </span>
-                  <span className="text-xs text-secondary font-medium">Updated August 2026</span>
+                  <span className="text-xs text-secondary font-medium">Business Architect for the AI Era</span>
                 </div>
 
                 <div className="space-y-5 max-w-3xl">
                   <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold leading-[1.1] text-foreground">
-                    AI is not a product.<br />
-                    <AnimatedGradientText className="font-bold">It is the reasoning layer</AnimatedGradientText><br />
-                    inside your system.
+                    I design the <AnimatedGradientText className="font-bold">clear systems</AnimatedGradientText> that make AI actually work inside real organizations.
                   </h1>
                   <p className="text-lg text-secondary leading-relaxed max-w-2xl">
-                    A complete reference for operations professionals navigating AI in 2026 — from model landscape to agent architecture to production results.
+                    Not a coder, not a data scientist, not a consultant — someone who understands how organizations work, how people decide, and how AI supports real work, and connects all three. The market calls it AI Ops. Below is the proof: the AI Operating Map.
                   </p>
                 </div>
 
@@ -235,11 +233,11 @@ export default function Home() {
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                  <Link href="/ai-mindset" className="inline-flex items-center gap-2 justify-center rounded-xl bg-emerald-500 hover:bg-emerald-400 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-500/30 transition">
-                    Start with the AI Mindset <ArrowRight size={16} />
+                  <Link href="/what-works/digital-twins" className="inline-flex items-center gap-2 justify-center rounded-xl bg-accent hover:brightness-110 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-accent/30 transition">
+                    Talk to my digital twin <ArrowRight size={16} />
                   </Link>
-                  <Link href="/execution-checklist" className="inline-flex items-center gap-2 justify-center rounded-xl border border-black/10 bg-white hover:bg-slate-50 px-6 py-3 text-sm font-semibold text-foreground shadow-sm transition">
-                    Execution Checklist <ChevronRight size={16} />
+                  <Link href="/what-works" className="inline-flex items-center gap-2 justify-center rounded-xl border border-black/10 bg-white hover:bg-slate-50 px-6 py-3 text-sm font-semibold text-foreground shadow-sm transition">
+                    See the AI Operating Map <ChevronRight size={16} />
                   </Link>
                 </div>
               </div>

@@ -8,11 +8,15 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      // Francisco's canonical personal-brand palette (Brand Manual 2026-08-14).
+      // Retired: #1BC4A6 (old AI Operating Map teal), #6366f1 (generic-AI indigo).
+      // "Business Architect for the AI Era" — deep navy ink + signal blue.
       colors: {
-        background: "#F4F3F5",
-        foreground: "#111111",
-        secondary: "#4B4B4B",
-        accent: "#1BC4A6",
+        background: "#fafaf7", // paper — off-white page ground
+        foreground: "#0a1838", // ink — primary text, headings, logo
+        secondary: "#2a3654", // ink_soft — secondary text
+        accent: "#2563eb", // signal_blue — links, buttons, eyebrows
+        warm: "#d4956a", // editorial accent, used sparingly
         card: "rgba(255, 255, 255, 0.9)",
       },
       fontFamily: {

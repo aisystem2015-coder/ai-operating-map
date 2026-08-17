@@ -4,10 +4,12 @@
  * via the dataviz skill's validate_palette.js — never reorder these slots.
  */
 
+// Francisco brand palette (2026-08-14): signal blue is the brand/primary color;
+// retired the old emerald #1BC4A6. Slots kept distinct + legible on the paper ground.
 export const CATEGORICAL = [
-  "#1BC4A6", // 1 emerald — brand / primary series
-  "#2563EB", // 2 blue
-  "#D97706", // 3 amber
+  "#2563EB", // 1 signal blue — brand / primary series
+  "#0a1838", // 2 ink navy
+  "#D4956A", // 3 warm (editorial accent)
   "#7C3AED", // 4 violet
   "#E11D48", // 5 rose
 ] as const;
@@ -17,34 +19,34 @@ export const NEUTRAL = "#94A3B8";
 
 // Fixed, never reused as a series color.
 export const STATUS = {
-  good: "#1BC4A6",
-  warning: "#D97706",
-  critical: "#E11D48",
+  good: "#22C55E",
+  warning: "#F59E0B",
+  critical: "#F87171",
 } as const;
 
-// Single-hue emerald ramp, light -> dark, for magnitude/maturity scales.
+// Single-hue blue ramp, light -> dark, for magnitude/maturity scales.
 export const SEQUENTIAL_EMERALD = [
-  "#D9F5EF",
-  "#9FE3D5",
-  "#4FCBB4",
-  "#1BC4A6",
-  "#0E7A68",
+  "#dbeafe",
+  "#93b4fb",
+  "#3b82f6",
+  "#2563eb",
+  "#1e3a8a",
 ] as const;
 
 // Two-series comparison (expectation vs. actual, before vs. after).
 export const COMPARISON = {
-  baseline: "#2563EB", // expected / before
-  actual: "#1BC4A6", // actual / after — brand color wins the "real" value
+  baseline: "#0a1838", // expected / before — ink navy
+  actual: "#2563EB", // actual / after — brand signal blue wins the "real" value
 } as const;
 
 export const CHROME = {
   surface: "#FFFFFF",
-  page: "#F4F3F5",
-  gridline: "#E4E2E0", // one step off the page background
-  axis: "#C9C7C3",
-  textPrimary: "#111111",
-  textSecondary: "#4B4B4B",
-  textMuted: "#8A8886",
+  page: "#fafaf7",
+  gridline: "#e5e7eb", // one step off the page background
+  axis: "#c9c7c3",
+  textPrimary: "#0a1838",
+  textSecondary: "#2a3654",
+  textMuted: "#6b7280",
 } as const;
 
 // Mark specs shared by every chart in this folder.
