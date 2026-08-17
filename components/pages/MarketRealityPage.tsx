@@ -3,6 +3,7 @@
 import Navigation from "../Navigation";
 import MarketRealityHero from "../market-reality/market-reality-hero";
 import Ai4Update2026 from "../market-reality/ai4-2026-update";
+import The2026Economics from "../market-reality/the-2026-economics";
 import WhyThisMatters from "../market-reality/why-this-matters";
 import CredibilityStory from "../market-reality/credibility-story";
 import ExpectationMismatch from "../market-reality/expectation-mismatch";
@@ -23,6 +24,11 @@ export default function MarketRealityPage() {
             leads with and carries this year's rollback/cost data. Sits directly under
             the hook so the page cannot be read as a year out of date. */}
         <Ai4Update2026 />
+
+        {/* A3) NEW (Aug 2026): the current economics in beautiful data blocks —
+            fresh agent adoption / ROI / inference-cost numbers so the page reads
+            up to the minute. */}
+        <The2026Economics />
 
         {/* B) One short "why this matters" explanation: demo vs production ("can vs does") */}
         <WhyThisMatters />
