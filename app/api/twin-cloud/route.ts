@@ -61,28 +61,55 @@ async function get(url: string) {
   } catch { return null; }
 }
 
-function render(rows: { title: string; content: string; updated_at?: string }[]) {
+// Extract the RELEVANT window of a note around the first matching term, instead
+// of always the first 1600 chars — a huge log's opening is never the answer.
+function snippet(content: string, ts: string[]) {
+  const body = (content || "").replace(/^---\n[\s\S]*?\n---\n/, "").trim();
+  const low = body.toLowerCase();
+  let pos = -1;
+  for (const t of ts) { const i = low.indexOf(t); if (i >= 0 && (pos < 0 || i < pos)) pos = i; }
+  if (pos < 0) return body.slice(0, 1200);
+  const start = Math.max(0, pos - 200);
+  return (start > 0 ? "…" : "") + body.slice(start, start + 1400);
+}
+
+function render(rows: { title: string; content: string; updated_at?: string }[], ts: string[]) {
   return (rows || []).map((n) =>
-    `### ${n.title}${n.updated_at ? ` (${n.updated_at.slice(0, 10)})` : ""}\n`
-    + (n.content || "").replace(/^---\n[\s\S]*?\n---\n/, "").slice(0, 1600)).join("\n\n").slice(0, 9000);
+    `### ${n.title}${n.updated_at ? ` (${n.updated_at.slice(0, 10)})` : ""}\n` + snippet(n.content, ts)
+  ).join("\n\n").slice(0, 9000);
 }
 
 async function retrieve(q: string) {
   // public-safe: access_level null/0/1 only. This endpoint must never touch N2-4.
   const pub = "or(access_level.is.null,access_level.lte.1)";
-  const sel = `${SUPABASE_URL}/rest/v1/vault_notes?select=title,folder,content,access_level,updated_at`;
+  // Skip mega-notes (activity logs, full meeting transcripts of 200k+ chars):
+  // they contain every keyword yet describe nothing, so ordering by size used
+  // to surface pure noise. Focused notes are where the actual answers live.
+  const cap = "char_count.lt.40000";
+  const sel = `${SUPABASE_URL}/rest/v1/vault_notes?select=title,folder,content,access_level,updated_at,char_count`;
   const ts = terms(q);
-  const order = wantsRecency(q) ? "updated_at.desc" : "char_count.desc";
+  // FOCUSED notes first (char_count ascending), not the biggest dump.
+  const order = wantsRecency(q) ? "updated_at.desc" : "char_count.asc";
 
   if (ts.length) {
-    const any = ts.flatMap((t) => [`content.ilike.*${t}*`, `title.ilike.*${t}*`]).join(",");
-    const rows = await get(`${sel}&and=(${pub},or(${any}))&order=${order}&limit=5`);
-    if (rows && rows.length) return render(rows);
+    // Title matches are the most specific — take them first (no size cap: a
+    // title match is on-topic even if the note is long).
+    const titleAny = ts.map((t) => `title.ilike.*${t}*`).join(",");
+    const byTitle = (await get(`${sel}&and=(${pub},or(${titleAny}))&order=${order}&limit=4`)) || [];
+    // Then content matches from focused notes only.
+    const anyMatch = ts.flatMap((t) => [`content.ilike.*${t}*`, `title.ilike.*${t}*`]).join(",");
+    const byContent = (await get(`${sel}&and=(${pub},${cap},or(${anyMatch}))&order=${order}&limit=6`)) || [];
+    const seen = new Set<string>();
+    const merged: { title: string; content: string; updated_at?: string }[] = [];
+    for (const r of [...byTitle, ...byContent]) {
+      if (r && r.title && !seen.has(r.title)) { seen.add(r.title); merged.push(r); }
+    }
+    if (merged.length) return render(merged.slice(0, 5), ts);
   }
-  // Nothing matched (or a pure "what's the latest" question): newest public
-  // notes beat an empty context, which is what made the twin improvise.
-  const recent = await get(`${sel}&and=(${pub})&order=updated_at.desc&limit=3`);
-  return recent && recent.length ? render(recent) : "";
+  // Nothing matched (or a pure "what's the latest" question): newest focused
+  // public notes beat an empty context, which is what made the twin improvise.
+  const recent = await get(`${sel}&and=(${pub},${cap})&order=updated_at.desc&limit=3`);
+  return recent && recent.length ? render(recent, ts) : "";
 }
 
 export async function POST(req: NextRequest) {
