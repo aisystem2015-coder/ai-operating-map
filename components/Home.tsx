@@ -12,6 +12,7 @@ import SlopeChart from "./charts/SlopeChart";
 import { CATEGORICAL } from "./charts/tokens";
 import { BENCHMARKS_2026, OPERATIONS_IMPACT } from "@/data/ai-now-2026";
 import { NeuroNoise } from "@/components/ui/neuro-noise";
+import VoxelTopographyGrid from "@/components/ui/voxel-topography-grid";
 import {
   Zap, Brain, Network, Bot, TrendingUp, Shield, Eye,
   Layers, Target, Globe, CheckCircle, XCircle, AlertTriangle,
@@ -180,63 +181,52 @@ export default function Home() {
               transition={{ duration: 0.6, ease: "easeOut" }}
               className="relative overflow-hidden rounded-3xl border border-blue-100 shadow-xl"
             >
-              {/* Ambient shader background — same NeuroNoise treatment as the
-                  closing CTA, so the page opens and closes on the same
-                  animated "system" motif instead of a flat gradient. Replaces
-                  the old static gradient + grid-texture + blur blobs, which
-                  would otherwise fight the shader's own movement. */}
-              <NeuroNoise
-                className="pointer-events-none absolute inset-0 -z-10 h-full w-full"
-                colorFront="#0E7A68"
-                colorMid="#9FE3D5"
-                colorBack="#F4F3F5"
-                brightness={0.45}
-                contrast={0.35}
-                speed={0.3}
-                scale={1.4}
-              />
-              <div className="pointer-events-none absolute inset-0 -z-10 bg-white/60" aria-hidden />
+              {/* Interactive isometric terrain — the hero is a dark, cinematic
+                  band (Apple-tone) with a voxel topography that ripples toward
+                  the cursor. The rest of the page stays light. */}
+              <VoxelTopographyGrid fill primaryColor="#2563eb" wireColor="rgba(96,140,240,0.35)" bgColor="#060a17" />
+              {/* Scrim so the copy stays legible over the moving terrain. */}
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#060a17] via-[#060a17]/70 to-[#060a17]/30" aria-hidden />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#060a17]/85 via-transparent to-transparent" aria-hidden />
 
-              <div className="relative px-8 py-14 lg:px-14 lg:py-20 space-y-10">
+              <div className="relative px-8 py-16 lg:px-14 lg:py-24 space-y-10">
                 <div className="flex items-center gap-3 flex-wrap">
-                  <span className="inline-flex items-center gap-2 rounded-full bg-accent/10 border border-accent/20 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-accent">
-                    <span className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
+                  <span className="inline-flex items-center gap-2 rounded-full bg-white/10 border border-white/15 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-white backdrop-blur-sm">
+                    <span className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-pulse" />
                     Francisco Guevara
                   </span>
-                  <span className="text-xs text-secondary font-medium">Business Architect for the AI Era</span>
+                  <span className="text-xs text-white/60 font-medium">Business Architect for the AI Era</span>
                 </div>
 
                 <div className="space-y-5 max-w-3xl">
-                  <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold leading-[1.1] text-foreground">
+                  <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold leading-[1.1] text-white">
                     I design the <AnimatedGradientText className="font-bold">clear systems</AnimatedGradientText> that make AI actually work inside real organizations.
                   </h1>
-                  <p className="text-lg text-secondary leading-relaxed max-w-2xl">
+                  <p className="text-lg text-white/70 leading-relaxed max-w-2xl">
                     Not a coder, not a data scientist, not a consultant — someone who understands how organizations work, how people decide, and how AI supports real work, and connects all three. The market calls it AI Ops. Below is the proof: the AI Operating Map.
                   </p>
                 </div>
 
-                {/* Stats row */}
+                {/* Stats row — light-on-dark glass tiles */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {[
                     { stat: "95%", label: "of GenAI pilots fail to scale" },
                     { stat: "300+", label: "MCP connectors available" },
                     { stat: "5–10×", label: "leverage for AI operators" },
-                    { stat: "2026", label: "the year agents went to production" },
-                  ].map((s, i) => (
-                    <StatTile
-                      key={s.stat}
-                      label={s.label}
-                      value={s.stat}
-                      accentColor={CATEGORICAL[i % CATEGORICAL.length]}
-                    />
+                    { stat: "2026", label: "agents went to production" },
+                  ].map((s) => (
+                    <div key={s.stat} className="hover-glow rounded-xl border border-white/10 bg-white/[0.06] px-4 py-3 backdrop-blur-sm">
+                      <div className="text-2xl font-heading font-bold text-white tabular-nums">{s.stat}</div>
+                      <div className="text-[11.5px] text-white/55 leading-snug mt-0.5">{s.label}</div>
+                    </div>
                   ))}
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                  <Link href="/what-works/digital-twins" className="inline-flex items-center gap-2 justify-center rounded-xl bg-accent hover:brightness-110 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-accent/30 transition">
+                  <Link href="/what-works/digital-twins" className="cta-press inline-flex items-center gap-2 justify-center rounded-xl bg-accent hover:brightness-110 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-accent/40 transition">
                     Talk to my digital twin <ArrowRight size={16} />
                   </Link>
-                  <Link href="/what-works" className="inline-flex items-center gap-2 justify-center rounded-xl border border-black/10 bg-white hover:bg-slate-50 px-6 py-3 text-sm font-semibold text-foreground shadow-sm transition">
+                  <Link href="/what-works" className="cta-press inline-flex items-center gap-2 justify-center rounded-xl border border-white/20 bg-white/5 hover:bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur-sm transition">
                     See the AI Operating Map <ChevronRight size={16} />
                   </Link>
                 </div>
