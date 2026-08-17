@@ -93,8 +93,8 @@ export default function Navigation() {
               {/* Two doors (Meet 23): Francisco | AI Operating Map. */}
               <Link
                 href="/"
-                className={`px-3.5 py-2 text-sm font-semibold rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 ${
-                  !isMapActive ? "text-accent bg-accent/10" : "text-secondary hover:text-foreground hover:bg-black/5"
+                className={`tab-glow px-3.5 py-2 text-sm font-semibold rounded-lg focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 ${
+                  !isMapActive ? "text-accent bg-accent/10" : "text-secondary"
                 }`}
               >
                 Francisco
@@ -111,10 +111,10 @@ export default function Navigation() {
                 <Link
                   href="/what-works"
                   onClick={() => setWhatWorksOpen(false)}
-                  className={`flex items-center gap-1 px-3.5 py-2 text-sm font-semibold rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 ${
+                  className={`tab-glow flex items-center gap-1 px-3.5 py-2 text-sm font-semibold rounded-lg focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 ${
                     isMapActive
                       ? "text-accent bg-accent/10"
-                      : "text-secondary hover:text-foreground hover:bg-black/5"
+                      : "text-secondary"
                   }`}
                 >
                   AI Operating Map
@@ -150,7 +150,7 @@ export default function Navigation() {
                   entry so it's always one click away (Meet 22/23). */}
               <Link
                 href="/what-works/digital-twins"
-                className="flex items-center gap-1.5 px-3.5 py-2 text-sm font-semibold rounded-lg text-accent hover:bg-accent/10 transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+                className="tab-glow flex items-center gap-1.5 px-3.5 py-2 text-sm font-semibold rounded-lg text-accent focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
               >
                 <Fingerprint size={14} strokeWidth={2} />
                 Digital Twin

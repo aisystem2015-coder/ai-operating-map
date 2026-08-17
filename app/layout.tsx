@@ -3,6 +3,7 @@ import "./globals.css";
 import { Inter, Manrope } from "next/font/google";
 import MayaBanner from "@/components/MayaBanner";
 import AppShell from "@/components/AppShell";
+import CursorAccent from "@/components/CursorAccent";
 import Footer from "@/components/Footer";
 import ParticleField from "@/components/ui/particle-field";
 import { Analytics } from "@vercel/analytics/next";
@@ -44,6 +45,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} ${manrope.variable} pt-10`}>
+        <CursorAccent />
         <ParticleField />
         <MayaBanner />
         <AppShell>{children}</AppShell>

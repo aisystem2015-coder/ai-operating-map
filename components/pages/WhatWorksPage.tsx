@@ -34,7 +34,7 @@ export default function WhatWorksPage() {
                 <p className="text-sm font-semibold uppercase tracking-[0.22em] text-secondary">
                   What works today
                 </p>
-                <h1 className="text-4xl md:text-5xl font-heading font-bold tracking-tight text-foreground leading-tight">
+                <h1 className="title-hover text-4xl md:text-5xl font-heading font-bold tracking-tight text-foreground leading-tight">
                   The patterns that actually scale
                 </h1>
                 <p className="text-lg text-secondary leading-relaxed">

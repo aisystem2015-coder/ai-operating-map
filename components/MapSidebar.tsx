@@ -57,10 +57,10 @@ export default function MapSidebar() {
                 key={it.href}
                 href={it.href}
                 aria-current={active ? "page" : undefined}
-                className={`group flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+                className={`tab-glow group flex items-center gap-3 rounded-lg px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
                   active
                     ? "bg-accent/10 text-accent font-semibold"
-                    : "text-secondary hover:text-foreground hover:bg-black/[0.04]"
+                    : "text-secondary"
                 }`}
               >
                 <Icon size={16} strokeWidth={1.9} className={active ? "text-accent" : "text-secondary/70 group-hover:text-foreground"} />
