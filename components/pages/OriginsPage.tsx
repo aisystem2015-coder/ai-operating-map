@@ -1,6 +1,7 @@
 "use client";
 
 import React, { Fragment } from "react";
+import { BorderBeam } from "@/components/ui/border-beam";
 import Image from "next/image";
 import Navigation from "../Navigation";
 import SectionReveal from "../learning/SectionReveal";
@@ -9,7 +10,8 @@ import AIOriginsHero from "../ai-origins/ai-origins-hero";
 import HistoricalArc from "../ai-origins/historical-arc";
 
 const BrainAmnesiaVisual = () => (
-  <div className="hover-glow rounded-3xl border border-black/5 bg-white shadow-xl shadow-rose-100/50 p-4">
+  <div className="hover-glow relative overflow-hidden rounded-3xl border border-black/5 bg-white shadow-xl shadow-blue-100/50 p-4">
+    <BorderBeam size={190} duration={14} borderWidth={1.4} colorFrom="#2563eb" colorTo="#d4956a" />
     <div className="rounded-2xl overflow-hidden bg-gradient-to-br from-white via-rose-50 to-white border border-rose-100">
       <Image
         src="/ai-origins/genius-amnesia.png"

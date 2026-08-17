@@ -206,7 +206,7 @@ function MaturityBoard() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.2 }}
-            className="rounded-2xl border border-black/5 bg-white shadow-sm p-6 space-y-4"
+            className="hover-glow relative overflow-hidden rounded-2xl border border-black/5 bg-white shadow-sm p-6 space-y-4"
           >
             <div className="flex items-center gap-3">
               <span
