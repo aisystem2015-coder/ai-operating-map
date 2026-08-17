@@ -19,7 +19,12 @@ export const dynamic = "force-dynamic";
 const SUPABASE_URL = "https://zgznqcopbgkfphubucpw.supabase.co";
 const SUPABASE_ANON = "sb_publishable_bbSN-nNr0_t4bK-YP6QOCg_uNEsfOfe";
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
-const MODEL = "llama-3.3-70b-versatile";
+// 17 aug 2026: Groq decommissioned llama-3.3-70b-versatile ("model does not
+// exist"), which silently broke every cloud-twin answer. gpt-oss-120b is the
+// current strongest general chat model on Groq. NOTE: gpt-oss models spend
+// reasoning tokens separately, so max_tokens must be generous or content comes
+// back empty.
+const MODEL = "openai/gpt-oss-120b";
 const MAX = 500;
 
 // Same bug as scripts/brain_retrieve.py had, found 14 aug 2026: this used to
@@ -113,7 +118,7 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify({
         model: MODEL,
         messages: [{ role: "system", content: system }, { role: "user", content: message }],
-        max_tokens: 500, temperature: 0.4,
+        max_tokens: 900, temperature: 0.4,
       }),
     });
     const d = await r.json();
