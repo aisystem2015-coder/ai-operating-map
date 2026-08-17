@@ -25,6 +25,9 @@ const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 // reasoning tokens separately, so max_tokens must be generous or content comes
 // back empty.
 const MODEL = "openai/gpt-oss-120b";
+// Second model on a different Groq capacity bucket — used if the primary
+// rate-limits or returns empty, so the public twin never goes dark under load.
+const FALLBACK_MODEL = "openai/gpt-oss-20b";
 const MAX = 500;
 
 // Same bug as scripts/brain_retrieve.py had, found 14 aug 2026: this used to
@@ -144,37 +147,32 @@ export async function POST(req: NextRequest) {
   // "I didn't get a clear answer" bug, which was intermittent per question).
   // Fix: a generous budget AND one retry with an even larger budget, so an
   // occasional over-long reasoning pass can't take the twin down.
-  const dbg: Record<string, unknown>[] = [];
-  async function ask(maxTokens: number): Promise<string> {
+  async function ask(model: string, maxTokens: number): Promise<string> {
     const r = await fetch(GROQ_URL, {
       method: "POST",
       headers: { "content-type": "application/json", authorization: `Bearer ${key}` },
       body: JSON.stringify({
-        model: MODEL,
+        model,
         messages: [{ role: "system", content: system }, { role: "user", content: message }],
         max_tokens: maxTokens, temperature: 0.4,
       }),
     });
     const d = await r.json();
-    const choice = d?.choices?.[0];
-    dbg.push({
-      maxTokens, status: r.status, finish: choice?.finish_reason,
-      contentLen: (choice?.message?.content || "").length,
-      reasoningTok: d?.usage?.completion_tokens_details?.reasoning_tokens,
-      err: d?.error?.message,
-    });
-    return choice?.message?.content?.trim() || "";
+    return d?.choices?.[0]?.message?.content?.trim() || "";
   }
 
   try {
-    let reply = await ask(2000);
-    if (!reply) reply = await ask(4000); // retry once with more headroom
-    const body: Record<string, unknown> = {
+    // Model-level redundancy so the twin NEVER goes dark: if the primary model
+    // rate-limits or returns empty (gpt-oss spends reasoning tokens separately,
+    // so content can come back empty), fall back to a second Groq model on a
+    // different capacity bucket. Both share the same key.
+    let reply = await ask(MODEL, 2500);
+    if (!reply) reply = await ask(FALLBACK_MODEL, 2500);
+    if (!reply) reply = await ask(MODEL, 5000); // last try, extra headroom
+    return NextResponse.json({
       reply: reply || "I'm Francisco's digital twin — ask me about his work, background, or what he's building right now.",
       connected: true,
-    };
-    if (new URL(req.url).searchParams.get("debug") === "1") body.debug = { dbg, ctxLen: context.length };
-    return NextResponse.json(body);
+    });
   } catch {
     return NextResponse.json({ reply: "Something went wrong reaching the cloud twin — try again.", connected: false });
   }
