@@ -39,11 +39,15 @@ const config: Config = {
           from: { backgroundPosition: "200% 0" },
           to: { backgroundPosition: "-50% 0" },
         },
+        "border-beam": {
+          "100%": { "offset-distance": "100%" },
+        },
       },
       animation: {
         marquee: "marquee var(--duration) linear infinite",
         "marquee-vertical": "marquee-vertical var(--duration) linear infinite",
         "shimmer-slide": "shimmer-slide 2.5s ease-in-out infinite",
+        "border-beam": "border-beam calc(var(--duration)*1s) infinite linear",
       },
     },
   },

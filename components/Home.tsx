@@ -13,6 +13,7 @@ import { CATEGORICAL } from "./charts/tokens";
 import { BENCHMARKS_2026, OPERATIONS_IMPACT } from "@/data/ai-now-2026";
 import { NeuroNoise } from "@/components/ui/neuro-noise";
 import VoxelTopographyGrid from "@/components/ui/voxel-topography-grid";
+import { BorderBeam } from "@/components/ui/border-beam";
 import {
   Zap, Brain, Network, Bot, TrendingUp, Shield, Eye,
   Layers, Target, Globe, CheckCircle, XCircle, AlertTriangle,
@@ -215,10 +216,11 @@ export default function Home() {
                     { stat: "300+", label: "MCP connectors available" },
                     { stat: "5–10×", label: "leverage for AI operators" },
                     { stat: "2026", label: "agents went to production" },
-                  ].map((s) => (
-                    <div key={s.stat} className="hover-glow rounded-xl border border-white/10 bg-white/[0.06] px-4 py-3 backdrop-blur-sm">
+                  ].map((s, i) => (
+                    <div key={s.stat} className="hover-glow relative overflow-hidden rounded-xl border border-white/10 bg-white/[0.06] px-4 py-3 backdrop-blur-sm">
                       <div className="text-2xl font-heading font-bold text-white tabular-nums">{s.stat}</div>
                       <div className="text-[11.5px] text-white/55 leading-snug mt-0.5">{s.label}</div>
+                      <BorderBeam size={90} duration={9} delay={i * 2.2} borderWidth={1.4} colorFrom="#2563eb" colorTo="#93b4fb" />
                     </div>
                   ))}
                 </div>
