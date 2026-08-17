@@ -5,6 +5,7 @@ import Navigation from "../Navigation";
 import InteractiveGlow from "../ui/interactive-glow";
 import RankedBarChart from "../charts/RankedBarChart";
 import SlopeChart from "../charts/SlopeChart";
+import { StatGrid, BarList } from "../ui/data-blocks";
 import { CATEGORICAL } from "../charts/tokens";
 import {
   MAJOR_SHIFTS_2026,
@@ -43,6 +44,34 @@ export default function AINow2026Page() {
                   Not the hype. Not the demos. The operational reality of AI in July 2026 — what works, what&apos;s changed, what&apos;s next, and what it means for operations professionals.
                 </p>
               </div>
+            </div>
+          </motion.section>
+
+          {/* At a glance — beautiful data blocks (visual companions to the text) */}
+          <motion.section {...fade} className="space-y-8">
+            <div className="space-y-2">
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-secondary">At a glance</p>
+              <h2 className="title-hover text-3xl md:text-4xl font-heading font-semibold text-foreground leading-tight">
+                The numbers behind 2026
+              </h2>
+            </div>
+            <StatGrid
+              columns={3}
+              items={[
+                { value: "15–30%", label: "Supply-chain cost ↓", hint: "AI demand signals + automated POs" },
+                { value: "40–60%", label: "Support cost ↓", hint: "70% agent deflection · 4h resolution" },
+                { value: "60%", label: "Finance close time ↓", hint: "AI-drafted commentary, rolling forecasts" },
+                { value: "3×", label: "IT / DevOps throughput", hint: "AI triage + PR review at scale" },
+                { value: "70%", label: "Faster time-to-hire", hint: "AI-first structured screening" },
+                { value: "5×", label: "Content throughput", hint: "brand-voice generation + auto A/B" },
+              ]}
+            />
+            <div>
+              <p className="mb-3 text-sm font-semibold text-foreground">Benchmark leaps — where frontier models score in 2026</p>
+              <BarList
+                items={BENCHMARKS_2026.map((b) => ({ label: b.name, value: b.pct, display: b.score2026 }))}
+                caption="2026 frontier-model performance on public benchmarks; bar length is the midpoint of the cited range."
+              />
             </div>
           </motion.section>
 
