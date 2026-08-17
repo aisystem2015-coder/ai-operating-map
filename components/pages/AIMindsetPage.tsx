@@ -1,6 +1,7 @@
 "use client";
 
 import Navigation from "../Navigation";
+import { BorderBeam } from "../ui/border-beam";
 import SectionReveal from "../learning/SectionReveal";
 import { BentoGrid, BentoCard } from "../ui/bento-grid";
 import { ShimmerButton } from "../ui/shimmer-button";
@@ -645,7 +646,8 @@ export default function AIMindsetPage() {
                           use cases—lock leverage first.
                         </div>
                       </div>
-                      <div className="rounded-2xl border border-black/5 bg-slate-50 p-6 shadow-inner">
+                      <div className="hover-glow relative overflow-hidden rounded-2xl border border-black/5 bg-slate-50 p-6 shadow-inner">
+                        <BorderBeam size={160} duration={13} borderWidth={1.4} colorFrom="#2563eb" colorTo="#d4956a" />
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div className="text-sm font-semibold uppercase tracking-[0.14em] text-secondary">
                             Use Case
