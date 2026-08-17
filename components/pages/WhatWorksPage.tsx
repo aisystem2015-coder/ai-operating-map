@@ -14,6 +14,7 @@ import AgenticWorkforce from "../what-works/agentic-workforce";
 import VerticalAIPitch from "../market-reality/vertical-ai-pitch";
 import VerticalDeploymentsSection from "../what-works/vertical-deployments-section";
 import DigitalTwinTeaser from "../digital-twin/digital-twin-teaser";
+import CompoundValue from "../what-works/compound-value";
 
 export default function WhatWorksPage() {
   // Which layer the rainbow currently has selected — drives the detail panel.
@@ -48,6 +49,10 @@ export default function WhatWorksPage() {
             <RainbowLayers onLayerChange={setLayer} />
           </div>
         </section>
+
+        {/* Compound-value data block — the map's thesis in the beautiful-data
+            typology, before the per-layer deep dives. */}
+        <CompoundValue />
 
         {/* Per-layer deep dive — restored Meet 22: each rainbow layer opens its
             full section (diagrams + explanation) here, exactly like the old
