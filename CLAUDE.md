@@ -4,7 +4,7 @@ When Francisco says "Hey, find this" — this is the file you read first.
 
 ## What this is
 
-A public-facing Next.js 14 web app deployed at https://ai-operating-map.vercel.app/
+A public-facing Next.js 14 web app. LIVE (current build) at https://aioperatingmappackage.vercel.app/ — that is the project's real production alias and the ONLY one that serves the latest code. NOTE: the older, prettier link https://ai-operating-map.vercel.app/ is a STALE separate deployment stuck on a pre-2026 build (no digital-twins route, no Meet 22/23 rebrand) — never send that link. Reclaiming the `ai-operating-map` subdomain needs a Vercel dashboard action (rename this project to `ai-operating-map`, or add the domain to it).
 It is Francisco's authored work on AI systems for operations teams. 344+ visits, 40% from ops professionals.
 
 The core argument: "AI is not a product. It is the reasoning layer inside your system."
