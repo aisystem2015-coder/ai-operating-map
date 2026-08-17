@@ -192,3 +192,45 @@ html {
   .tab-glow:focus-visible { transform: none; }
   .title-hover::after { transition: none; }
 }
+
+/* ── "Machine" interactive layer (Meet 23) ─────────────────────────────────
+   Craft per emil-design-eng: transform/opacity only, strong ease-out, hover
+   gated to fine pointers, decorative mouse-tracking is intentional here. */
+
+:root { --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1); }
+
+/* Every card/box gets a spotlight that brightens where the cursor is. The
+   --mx/--my px vars are set per-element on pointermove (see CursorAccent). */
+.hover-glow { position: relative; isolation: isolate; }
+.hover-glow::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0;
+  transition: opacity 260ms ease;
+  background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(37, 99, 235, 0.16), rgba(212, 149, 106, 0.06) 45%, transparent 62%);
+}
+@media (hover: hover) and (pointer: fine) {
+  .hover-glow:hover::before { opacity: 1; }
+}
+
+/* Stronger, snappier tab glow + a moving sheen; press feedback. */
+.tab-glow { transition: transform 180ms var(--ease-out-strong), box-shadow 220ms ease, background-color 180ms ease, color 160ms ease; }
+@media (hover: hover) and (pointer: fine) {
+  .tab-glow:hover { box-shadow: 0 10px 24px -12px rgba(37, 99, 235, 0.6), 0 0 0 1px rgba(37, 99, 235, 0.18); }
+}
+.tab-glow:active { transform: translateY(0) scale(0.97); }
+
+/* Any accent CTA feels pressable. */
+a[href], button { }
+.cta-press { transition: transform 160ms var(--ease-out-strong), filter 160ms ease; }
+.cta-press:active { transform: scale(0.97); }
+
+@media (prefers-reduced-motion: reduce) {
+  .hover-glow::before { transition: none; }
+  .tab-glow:active, .cta-press:active { transform: none; }
+}

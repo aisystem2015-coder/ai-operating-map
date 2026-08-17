@@ -42,10 +42,23 @@ export default function CursorAccent() {
       el.style.background = `radial-gradient(600px circle at ${cx}px ${cy}px, rgba(37,99,235,0.10), rgba(212,149,106,0.05) 40%, transparent 62%)`;
       raf = requestAnimationFrame(paint);
     };
+    let spotEl: HTMLElement | null = null;
     const onMove = (e: PointerEvent) => {
       tx = e.clientX;
       ty = e.clientY;
       if (el.style.opacity === "0") el.style.opacity = "1";
+      // Per-card spotlight: brighten the exact spot under the cursor.
+      const target = e.target as HTMLElement | null;
+      const card = target?.closest?.(".hover-glow, .tab-glow") as HTMLElement | null;
+      if (card !== spotEl) {
+        if (spotEl) { spotEl.style.removeProperty("--mx"); spotEl.style.removeProperty("--my"); }
+        spotEl = card;
+      }
+      if (card) {
+        const r = card.getBoundingClientRect();
+        card.style.setProperty("--mx", `${e.clientX - r.left}px`);
+        card.style.setProperty("--my", `${e.clientY - r.top}px`);
+      }
     };
     // dark mode reads better with a screen blend + brighter blue
     const applyBlend = () => {
