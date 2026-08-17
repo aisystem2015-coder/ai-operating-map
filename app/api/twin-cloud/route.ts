@@ -125,8 +125,12 @@ export async function POST(req: NextRequest) {
   }
   if (!message) return NextResponse.json({ reply: "Say something and I'll take a look." });
 
+  // ?health=1 is the watchdog canary — answer normally but DON'T log it, so the
+  // twin-question analytics stay clean.
+  const isHealth = new URL(req.url).searchParams.get("health") === "1";
+
   // log the question (same table the HOTB reads)
-  fetch(`${SUPABASE_URL}/rest/v1/twin_questions`, {
+  if (!isHealth) fetch(`${SUPABASE_URL}/rest/v1/twin_questions`, {
     method: "POST",
     headers: { "content-type": "application/json", apikey: SUPABASE_ANON, authorization: `Bearer ${SUPABASE_ANON}`, prefer: "return=minimal" },
     body: JSON.stringify({ question: message, level: 0, surface: "website-cloud" }),
