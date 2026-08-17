@@ -14,6 +14,7 @@ import { BENCHMARKS_2026, OPERATIONS_IMPACT } from "@/data/ai-now-2026";
 import { NeuroNoise } from "@/components/ui/neuro-noise";
 import VoxelTopographyGrid from "@/components/ui/voxel-topography-grid";
 import { BorderBeam } from "@/components/ui/border-beam";
+import PositioningManifesto from "@/components/positioning-manifesto";
 import {
   Zap, Brain, Network, Bot, TrendingUp, Shield, Eye,
   Layers, Target, Globe, CheckCircle, XCircle, AlertTriangle,
@@ -236,6 +237,9 @@ export default function Home() {
               </div>
             </motion.div>
           </section>
+
+          {/* ── 1b. POSITIONING MANIFESTO — the category, made unmissable ── */}
+          <PositioningManifesto />
 
           {/* ── 2. SEVEN SHIFTS ── */}
           <section className="space-y-10">
