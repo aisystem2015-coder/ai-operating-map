@@ -2,7 +2,7 @@
 
 import SectionReveal from "../learning/SectionReveal";
 
-const ACTUAL_COLOR = "#1bc4a6"; // soft green from the actuals
+const ACTUAL_COLOR = "#2563eb"; // soft green from the actuals
 
 export default function GateModel() {
   return (

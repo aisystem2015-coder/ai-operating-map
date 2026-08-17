@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 
-const DEFAULT_COLORS = ["#1BC4A6", "#2563EB", "#7C3AED"];
+const DEFAULT_COLORS = ["#2563eb", "#2563EB", "#7C3AED"];
 
 /**
  * Full-bleed, mouse-reactive background. Renders 3 soft blurred blobs that

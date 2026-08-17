@@ -152,7 +152,7 @@ export default function HowToPromptPage() {
         <div className="max-w-5xl mx-auto px-6 lg:px-8 space-y-16">
           {/* Hero */}
           <section className="relative isolate overflow-hidden rounded-3xl py-10 px-2 -mx-2">
-            <InteractiveGlow colors={["#1BC4A6", "#2563EB", "#D97706"]} />
+            <InteractiveGlow colors={["#2563eb", "#2563EB", "#D97706"]} />
             <div className="relative z-10 space-y-3">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-semibold uppercase tracking-[0.14em] mb-2">
                 Training
@@ -184,7 +184,7 @@ export default function HowToPromptPage() {
                     key={item.title}
                     className="hover-glow rounded-2xl border border-black/5 bg-white/80 p-5 shadow-sm flex gap-3 items-start"
                   >
-                    <Icon className="h-5 w-5 text-emerald-600 mt-0.5 shrink-0" aria-hidden />
+                    <Icon className="h-5 w-5 text-blue-600 mt-0.5 shrink-0" aria-hidden />
                     <div className="space-y-1.5">
                       <h3 className="text-base font-semibold text-foreground">{item.title}</h3>
                       <p className="text-sm text-secondary leading-relaxed">{item.body}</p>
@@ -214,12 +214,12 @@ export default function HowToPromptPage() {
 
           {/* Do / don't */}
           <section className="grid gap-6 sm:grid-cols-2">
-            <div className="rounded-2xl border border-emerald-100 bg-emerald-50/60 p-6 space-y-4">
-              <h3 className="text-sm font-semibold uppercase tracking-[0.14em] text-emerald-700">Do</h3>
+            <div className="rounded-2xl border border-blue-100 bg-blue-50/60 p-6 space-y-4">
+              <h3 className="text-sm font-semibold uppercase tracking-[0.14em] text-blue-700">Do</h3>
               <ul className="space-y-3">
                 {DOS.map((d) => (
-                  <li key={d} className="flex gap-2.5 text-sm text-emerald-950 leading-relaxed">
-                    <Check className="h-4 w-4 mt-0.5 shrink-0 text-emerald-600" aria-hidden />
+                  <li key={d} className="flex gap-2.5 text-sm text-blue-950 leading-relaxed">
+                    <Check className="h-4 w-4 mt-0.5 shrink-0 text-blue-600" aria-hidden />
                     {d}
                   </li>
                 ))}

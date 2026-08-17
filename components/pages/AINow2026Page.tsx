@@ -30,9 +30,9 @@ export default function AINow2026Page() {
 
           {/* Hero */}
           <motion.section {...fade} className="relative isolate overflow-hidden rounded-3xl py-10 px-2 -mx-2 space-y-8">
-            <InteractiveGlow colors={["#1BC4A6", "#7C3AED", "#2563EB"]} />
+            <InteractiveGlow colors={["#2563eb", "#7C3AED", "#2563EB"]} />
             <div className="relative z-10 space-y-8">
-              <div className="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700 border border-emerald-200 shadow-sm">
+              <div className="inline-flex items-center gap-2 rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-blue-700 border border-blue-200 shadow-sm">
                 AI Today — July 2026
               </div>
               <div className="space-y-6 max-w-4xl">
@@ -215,7 +215,7 @@ export default function AINow2026Page() {
           <section>
             <div className="rounded-3xl border border-black/5 bg-gradient-to-br from-slate-900 to-slate-800 p-10 lg:p-14 text-white space-y-8">
               <div className="space-y-2">
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-400">The position to take in 2026</p>
+                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-blue-400">The position to take in 2026</p>
                 <h2 className="text-3xl md:text-4xl font-heading font-semibold leading-tight">
                   The gap between AI users and AI operators is widening.
                 </h2>
@@ -232,7 +232,7 @@ export default function AINow2026Page() {
                   </ul>
                 </div>
                 <div className="space-y-4">
-                  <h3 className="font-semibold text-emerald-400">AI operator</h3>
+                  <h3 className="font-semibold text-blue-400">AI operator</h3>
                   <ul className="space-y-2 text-slate-200 text-sm">
                     <li>Builds systems that use AI — not just uses AI</li>
                     <li>Orchestrates agents across end-to-end workflows</li>

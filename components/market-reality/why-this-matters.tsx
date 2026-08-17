@@ -49,8 +49,8 @@ export default function WhyThisMatters() {
                 className="hover-glow-flat text-center rounded-2xl border border-transparent -mx-4 -my-2 px-4 py-2"
               >
                 <div className="mb-6">
-                  <div className="w-16 h-16 mx-auto rounded-full border border-emerald-200 bg-emerald-100 flex items-center justify-center">
-                    <span className="text-xl font-heading font-semibold text-emerald-800">1</span>
+                  <div className="w-16 h-16 mx-auto rounded-full border border-blue-200 bg-blue-100 flex items-center justify-center">
+                    <span className="text-xl font-heading font-semibold text-blue-800">1</span>
                   </div>
                 </div>
                 <h4 className="text-2xl md:text-3xl font-heading font-semibold text-foreground mb-4">
@@ -70,8 +70,8 @@ export default function WhyThisMatters() {
                 className="hover-glow-flat text-center rounded-2xl border border-transparent -mx-4 -my-2 px-4 py-2"
               >
                 <div className="mb-6">
-                  <div className="w-16 h-16 mx-auto rounded-full border border-emerald-200 bg-emerald-100 flex items-center justify-center">
-                    <span className="text-xl font-heading font-semibold text-emerald-800">2</span>
+                  <div className="w-16 h-16 mx-auto rounded-full border border-blue-200 bg-blue-100 flex items-center justify-center">
+                    <span className="text-xl font-heading font-semibold text-blue-800">2</span>
                   </div>
                 </div>
                 <h4 className="text-2xl md:text-3xl font-heading font-semibold text-foreground mb-4">
@@ -91,8 +91,8 @@ export default function WhyThisMatters() {
                 className="hover-glow-flat text-center rounded-2xl border border-transparent -mx-4 -my-2 px-4 py-2"
               >
                 <div className="mb-6">
-                  <div className="w-16 h-16 mx-auto rounded-full border border-emerald-200 bg-emerald-100 flex items-center justify-center">
-                    <span className="text-xl font-heading font-semibold text-emerald-800">3</span>
+                  <div className="w-16 h-16 mx-auto rounded-full border border-blue-200 bg-blue-100 flex items-center justify-center">
+                    <span className="text-xl font-heading font-semibold text-blue-800">3</span>
                   </div>
                 </div>
                 <h4 className="text-2xl md:text-3xl font-heading font-semibold text-foreground mb-4">

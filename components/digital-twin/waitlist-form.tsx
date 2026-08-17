@@ -42,8 +42,8 @@ export default function WaitlistForm() {
         animate={{ opacity: 1, y: 0 }}
         className="flex items-center gap-3 rounded-2xl border border-white/15 bg-white/5 px-6 py-5"
       >
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-indigo-400">
-          <Check className="h-5 w-5 text-indigo-950" />
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-400">
+          <Check className="h-5 w-5 text-blue-950" />
         </span>
         <p className="text-sm text-white/90 leading-relaxed">
           Thanks, noted — we&apos;ll reach out when there&apos;s something to try. No spam, just an update
@@ -63,7 +63,7 @@ export default function WaitlistForm() {
         value={name}
         onChange={(e) => setName(e.target.value)}
         placeholder="Your name"
-        className="flex-1 min-h-[44px] rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-indigo-300"
+        className="flex-1 min-h-[44px] rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-blue-300"
       />
       <label className="sr-only" htmlFor="dt-waitlist-email">Your email</label>
       <input
@@ -73,14 +73,14 @@ export default function WaitlistForm() {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="you@email.com"
-        className="flex-1 min-h-[44px] rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-indigo-300"
+        className="flex-1 min-h-[44px] rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-blue-300"
       />
       <motion.button
         type="submit"
         disabled={status === "submitting"}
         whileHover={reduceMotion || status === "submitting" ? undefined : { scale: 1.03 }}
         whileTap={reduceMotion || status === "submitting" ? undefined : { scale: 0.97 }}
-        className="min-h-[44px] shrink-0 cursor-pointer rounded-xl bg-indigo-400 px-6 py-2.5 text-sm font-semibold text-indigo-950 shadow-sm disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-offset-2"
+        className="min-h-[44px] shrink-0 cursor-pointer rounded-xl bg-blue-400 px-6 py-2.5 text-sm font-semibold text-blue-950 shadow-sm disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-offset-2"
       >
         {status === "submitting" && <Loader2 className="h-4 w-4 animate-spin" />}
         {status === "submitting" ? "Sending…" : "Count me in"}

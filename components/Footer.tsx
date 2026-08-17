@@ -81,7 +81,7 @@ export default function Footer() {
         <div className="mt-14 pt-6 border-t border-black/5 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-xs text-secondary/50">© 2026 Francisco Guevara · AI Operating Map</p>
           <div className="flex items-center gap-1.5 text-xs text-secondary/40">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-pulse" />
             Updated August 2026
           </div>
         </div>

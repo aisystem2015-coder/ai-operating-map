@@ -4,8 +4,8 @@
  * Embedded chat panel for the Digital Twins section, ported from
  * digital_twin_site/components/chat/chat-panel.tsx and re-skinned from
  * the standalone site's indigo/sky/amber palette to this site's
- * indigo-only system (components/charts/tokens.ts CATEGORICAL[0] /
- * #1BC4A6) per the merge brief. Adds the access-level QA selector
+ * blue-only system (components/charts/tokens.ts CATEGORICAL[0] /
+ * #2563eb) per the merge brief. Adds the access-level QA selector
  * (job 2) inline above the input.
  */
 import { useEffect, useRef, useState } from "react";
@@ -13,7 +13,7 @@ import { motion } from "framer-motion";
 import { Lock, Send, Sparkles } from "lucide-react";
 import type { UseTwinChatReturn } from "./use-twin-chat";
 
-const EMERALD = "#1BC4A6";
+const EMERALD = "#2563eb";
 const EMERALD_DARK = "#0E7A68";
 
 const LEVEL_LABELS: Record<number, string> = {

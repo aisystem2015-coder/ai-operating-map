@@ -108,7 +108,7 @@ const LAYERS: Layer[] = [
     id: "digital-twin",
     name: "Digital Twins",
     blurb: "A private model of one person — your own notes, judgment, and voice, accessible from any AI you use.",
-    color: "#065F46", // deep emerald — matches the Digital Twins card on the What Works explorer
+    color: "#0a1838", // deep emerald — matches the Digital Twins card on the What Works explorer
     radius: 195,
     strokeWidth: 42,
     wash: "rgba(6, 95, 70, 0.08)",

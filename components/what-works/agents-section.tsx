@@ -306,7 +306,7 @@ export default function AgentsSection() {
                   <p className="text-sm text-secondary">Input → reasoning → memory/knowledge → schema → API → system → output.</p>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-secondary">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
                   Hover a region to see what it does.
                 </div>
               </div>
@@ -399,9 +399,9 @@ export default function AgentsSection() {
 
             <div className="grid md:grid-cols-2 gap-6">
               <div className="relative overflow-hidden rounded-2xl border border-black/5 bg-white shadow-sm p-6">
-                <div className="absolute inset-0 bg-gradient-to-br from-indigo-50 via-white to-emerald-50 opacity-70 pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-blue-50 opacity-70 pointer-events-none" />
                 <div className="relative space-y-3">
-                  <div className="inline-flex items-center gap-2 rounded-full bg-indigo-100 text-indigo-700 px-3 py-1 text-xs font-semibold">
+                  <div className="inline-flex items-center gap-2 rounded-full bg-blue-100 text-blue-700 px-3 py-1 text-xs font-semibold">
                     Waiter analogy
                   </div>
                   <p className="text-lg font-semibold text-foreground">Agents don’t click buttons—they send structured requests.</p>
@@ -425,12 +425,12 @@ export default function AgentsSection() {
               <div className="rounded-2xl border border-black/5 bg-slate-900 text-slate-100 shadow-sm p-6">
                 <div className="flex items-center justify-between mb-4">
                   <div className="text-sm font-semibold uppercase tracking-wide text-slate-300">Structured request/response</div>
-                  <span className="rounded-full bg-emerald-200/20 text-emerald-200 px-3 py-1 text-xs font-semibold">No magic in between</span>
+                  <span className="rounded-full bg-blue-200/20 text-blue-200 px-3 py-1 text-xs font-semibold">No magic in between</span>
                 </div>
                 <div className="space-y-4 text-sm font-mono leading-6">
                   <div>
                     <div className="text-slate-300 text-xs mb-1">Request</div>
-                    <pre className="bg-slate-800/80 rounded-xl p-3 overflow-x-auto text-emerald-100">
+                    <pre className="bg-slate-800/80 rounded-xl p-3 overflow-x-auto text-blue-100">
 {`{
   "action": "create_ticket",
   "inputs": {
@@ -443,7 +443,7 @@ export default function AgentsSection() {
                   </div>
                   <div>
                     <div className="text-slate-300 text-xs mb-1">Response</div>
-                    <pre className="bg-slate-800/80 rounded-xl p-3 overflow-x-auto text-emerald-100">
+                    <pre className="bg-slate-800/80 rounded-xl p-3 overflow-x-auto text-blue-100">
 {`{
   "status": "success",
   "ticketId": "JIRA-4821",

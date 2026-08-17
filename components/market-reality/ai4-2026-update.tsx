@@ -54,7 +54,7 @@ export default function Ai4Update2026() {
     >
       <div className="max-w-6xl mx-auto">
         <SectionReveal>
-          <p className="text-xs font-semibold tracking-[0.2em] text-emerald-600 uppercase mb-4">
+          <p className="text-xs font-semibold tracking-[0.2em] text-blue-600 uppercase mb-4">
             The 2026 update · Ai4, Las Vegas
           </p>
           <h2 className="text-4xl md:text-5xl font-heading font-semibold text-foreground leading-tight max-w-3xl">

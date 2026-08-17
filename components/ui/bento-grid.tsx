@@ -50,11 +50,11 @@ export function BentoCard({
       )}
     >
       <div
-        className="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full bg-emerald-100/60 blur-2xl transition-transform duration-500 group-hover:scale-125"
+        className="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full bg-blue-100/60 blur-2xl transition-transform duration-500 group-hover:scale-125"
         aria-hidden
       />
       <div className="relative flex items-center gap-3">
-        {Icon && <Icon className="h-6 w-6 text-emerald-600" />}
+        {Icon && <Icon className="h-6 w-6 text-blue-600" />}
         <h3 className="text-xl font-semibold text-foreground">{title}</h3>
       </div>
       <p className="relative text-sm text-secondary leading-relaxed">{description}</p>

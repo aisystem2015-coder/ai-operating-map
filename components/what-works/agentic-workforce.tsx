@@ -19,8 +19,8 @@ export default function AgenticWorkforce() {
 
       {/* Definition */}
       <SectionReveal delay={0.05}>
-        <div className="max-w-4xl mx-auto mb-16 rounded-3xl border border-black/5 bg-white shadow-xl shadow-emerald-100/50 p-10 space-y-5">
-          <p className="text-sm uppercase tracking-[0.2em] text-emerald-600">Agentic system defined</p>
+        <div className="max-w-4xl mx-auto mb-16 rounded-3xl border border-black/5 bg-white shadow-xl shadow-blue-100/50 p-10 space-y-5">
+          <p className="text-sm uppercase tracking-[0.2em] text-blue-600">Agentic system defined</p>
           <h3 className="text-2xl md:text-3xl font-heading font-bold text-foreground leading-tight">
             One agent executes a task. An agentic system runs a function.
           </h3>

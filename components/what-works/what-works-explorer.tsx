@@ -49,7 +49,7 @@ const stages: Array<{
     name: "Assistants",
     tagline: "A model you can talk to.",
     icon: MessageSquare,
-    bg: "bg-emerald-700",
+    bg: "bg-blue-700",
     text: "text-white",
     wash: "rgba(4, 120, 87, 0.08)",
     widthPct: 82,
@@ -60,7 +60,7 @@ const stages: Array<{
     name: "AI Agents",
     tagline: "Reasons, then acts.",
     icon: Bot,
-    bg: "bg-emerald-500",
+    bg: "bg-blue-500",
     text: "text-white",
     wash: "rgba(16, 185, 129, 0.10)",
     widthPct: 64,
@@ -71,8 +71,8 @@ const stages: Array<{
     name: "Agentic Systems",
     tagline: "A coordinated team of agents.",
     icon: Network,
-    bg: "bg-emerald-200",
-    text: "text-emerald-950",
+    bg: "bg-blue-200",
+    text: "text-blue-950",
     wash: "rgba(167, 243, 208, 0.35)",
     widthPct: 46,
   },
@@ -82,7 +82,7 @@ const stages: Array<{
     name: "Digital Twins",
     tagline: "A private model of one person.",
     icon: Fingerprint,
-    bg: "bg-emerald-900",
+    bg: "bg-blue-900",
     text: "text-white",
     tag: "New",
     wash: "rgba(6, 78, 59, 0.10)",
@@ -98,15 +98,15 @@ const washEase: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 // Literal Tailwind class strings (not computed via .replace() on stage.bg) —
 // Tailwind's JIT scanner needs the exact class text present in source to
-// generate it; a dynamically-built "text-emerald-700" from string
+// generate it; a dynamically-built "text-blue-700" from string
 // replacement never gets into the CSS bundle and silently falls back to
 // inherited/default color. Keep this in sync with each stage's `bg` above.
 const RING_TEXT_CLASS: Record<StageId, string> = {
   llm: "text-foreground",
-  assistant: "text-emerald-700",
-  agent: "text-emerald-500",
-  agentic: "text-emerald-200",
-  "digital-twin": "text-emerald-900",
+  assistant: "text-blue-700",
+  agent: "text-blue-500",
+  agentic: "text-blue-200",
+  "digital-twin": "text-blue-900",
 };
 
 const VALID_STAGE_IDS: StageId[] = ["llm", "assistant", "agent", "agentic", "digital-twin"];
@@ -237,7 +237,7 @@ export default function WhatWorksExplorer() {
                 <div className="relative z-10 h-10 w-10 shrink-0 rounded-xl bg-white/15 flex items-center justify-center">
                   <Icon size={20} className={stage.text} strokeWidth={1.75} />
                   {stage.tag && (
-                    <span className="absolute -bottom-2 -right-2 text-[10px] font-semibold uppercase tracking-wide bg-white text-emerald-700 border border-emerald-200 rounded-full px-1.5 py-0.5 shadow-sm">
+                    <span className="absolute -bottom-2 -right-2 text-[10px] font-semibold uppercase tracking-wide bg-white text-blue-700 border border-blue-200 rounded-full px-1.5 py-0.5 shadow-sm">
                       {stage.tag}
                     </span>
                   )}

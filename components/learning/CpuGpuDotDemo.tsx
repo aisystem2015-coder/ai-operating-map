@@ -87,7 +87,7 @@ export default function CpuGpuDotDemo() {
                       initial={{ scale: filled ? 0 : 1, opacity: filled ? 0 : 1 }}
                       animate={{ scale: filled ? 1 : 1, opacity: 1 }}
                       transition={{ duration: 0.12 }}
-                      className={`h-[18px] w-[18px] rounded-[4px] border ${filled ? "bg-emerald-500 border-emerald-600" : "bg-slate-100 border-slate-200"}`}
+                      className={`h-[18px] w-[18px] rounded-[4px] border ${filled ? "bg-blue-500 border-blue-600" : "bg-slate-100 border-slate-200"}`}
                     />
                   )
                 })
@@ -114,13 +114,13 @@ export default function CpuGpuDotDemo() {
         </div>
 
         {/* GPU card */}
-        <div className="rounded-2xl border border-indigo-200 bg-indigo-50/40 p-4 shadow-sm">
+        <div className="rounded-2xl border border-blue-200 bg-blue-50/40 p-4 shadow-sm">
           <div className="flex items-center justify-between text-sm font-semibold text-slate-700 mb-3">
             <span>GPU: Parallel Processing</span>
             <span>{gpuRevealed ? "rendered" : "ready"}</span>
           </div>
           <p className="text-xs text-secondary mb-3">Click once to render the detailed image instantly.</p>
-          <div className="relative rounded-xl border border-indigo-200 bg-white/80 p-3 shadow-inner flex justify-center">
+          <div className="relative rounded-xl border border-blue-200 bg-white/80 p-3 shadow-inner flex justify-center">
             <div className="grid gap-[2px]" style={{ gridTemplateColumns: "repeat(24, 10px)", gridTemplateRows: "repeat(24, 10px)" }}>
               {monaPixels.map((row, rIdx) =>
                 row.map((colorKey, cIdx) => (
@@ -135,7 +135,7 @@ export default function CpuGpuDotDemo() {
             {!gpuRevealed && (
               <button
                 onClick={() => setGpuRevealed(true)}
-                className="absolute inset-0 m-auto h-10 w-40 rounded-lg bg-indigo-600 text-white text-sm font-semibold shadow hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                className="absolute inset-0 m-auto h-10 w-40 rounded-lg bg-blue-600 text-white text-sm font-semibold shadow hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
               >
                 Compute All at Once
               </button>

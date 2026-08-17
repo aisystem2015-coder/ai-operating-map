@@ -19,7 +19,7 @@ export default function StatTile({
   detail,
   delta,
   deltaDirectionIsGood = true,
-  accentColor = "#1BC4A6",
+  accentColor = "#2563eb",
   size = "md",
 }: {
   label: string;

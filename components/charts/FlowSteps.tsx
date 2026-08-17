@@ -36,7 +36,7 @@ export default function FlowSteps({
         style={{ gridTemplateColumns: `repeat(${steps.length}, minmax(0, 1fr))` }}
       >
         {steps.map((step, i) => {
-          const color = colorByIndex ? CATEGORICAL[i % CATEGORICAL.length] : "#1BC4A6";
+          const color = colorByIndex ? CATEGORICAL[i % CATEGORICAL.length] : "#2563eb";
           const isActive = active === step.id;
           return (
             <div

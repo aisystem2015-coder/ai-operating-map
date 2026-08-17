@@ -5,7 +5,7 @@
  */
 
 // Francisco brand palette (2026-08-14): signal blue is the brand/primary color;
-// retired the old emerald #1BC4A6. Slots kept distinct + legible on the paper ground.
+// retired the old emerald #2563eb. Slots kept distinct + legible on the paper ground.
 export const CATEGORICAL = [
   "#2563EB", // 1 signal blue — brand / primary series
   "#0a1838", // 2 ink navy

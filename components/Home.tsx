@@ -39,11 +39,11 @@ const majorShifts2026 = [
 ];
 
 const colorMap: Record<string, { bg: string; text: string; border: string; badge: string }> = {
-  emerald: { bg: "bg-emerald-50", text: "text-emerald-700", border: "border-emerald-200", badge: "bg-emerald-100 text-emerald-700" },
+  emerald: { bg: "bg-blue-50", text: "text-blue-700", border: "border-blue-200", badge: "bg-blue-100 text-blue-700" },
   violet:  { bg: "bg-violet-50",  text: "text-violet-700",  border: "border-violet-200",  badge: "bg-violet-100 text-violet-700" },
   blue:    { bg: "bg-blue-50",    text: "text-blue-700",    border: "border-blue-200",    badge: "bg-blue-100 text-blue-700" },
   orange:  { bg: "bg-orange-50",  text: "text-orange-700",  border: "border-orange-200",  badge: "bg-orange-100 text-orange-700" },
-  indigo:  { bg: "bg-indigo-50",  text: "text-indigo-700",  border: "border-indigo-200",  badge: "bg-indigo-100 text-indigo-700" },
+  indigo:  { bg: "bg-blue-50",  text: "text-blue-700",  border: "border-blue-200",  badge: "bg-blue-100 text-blue-700" },
   teal:    { bg: "bg-teal-50",    text: "text-teal-700",    border: "border-teal-200",    badge: "bg-teal-100 text-teal-700" },
   pink:    { bg: "bg-pink-50",    text: "text-pink-700",    border: "border-pink-200",    badge: "bg-pink-100 text-pink-700" },
   red:     { bg: "bg-red-50",     text: "text-red-700",     border: "border-red-200",     badge: "bg-red-100 text-red-700" },
@@ -75,9 +75,9 @@ const models2026 = [
 const tierColors: Record<string, string> = {
   Frontier: "bg-yellow-100 text-yellow-800 border border-yellow-200",
   Expert: "bg-purple-100 text-purple-800 border border-purple-200",
-  Default: "bg-emerald-100 text-emerald-800 border border-emerald-200",
+  Default: "bg-blue-100 text-blue-800 border border-blue-200",
   Fast: "bg-blue-100 text-blue-800 border border-blue-200",
-  Reasoning: "bg-indigo-100 text-indigo-800 border border-indigo-200",
+  Reasoning: "bg-blue-100 text-blue-800 border border-blue-200",
   Open: "bg-teal-100 text-teal-800 border border-teal-200",
 };
 
@@ -178,7 +178,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
-              className="relative overflow-hidden rounded-3xl border border-emerald-100 shadow-xl"
+              className="relative overflow-hidden rounded-3xl border border-blue-100 shadow-xl"
             >
               {/* Ambient shader background — same NeuroNoise treatment as the
                   closing CTA, so the page opens and closes on the same
@@ -395,17 +395,17 @@ export default function Home() {
               </div>
 
               {/* Vertical */}
-              <div className="rounded-2xl border border-emerald-200 bg-gradient-to-br from-emerald-50/80 to-white p-8 space-y-5 shadow-sm">
+              <div className="rounded-2xl border border-blue-200 bg-gradient-to-br from-blue-50/80 to-white p-8 space-y-5 shadow-sm">
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-xl bg-emerald-100 border border-emerald-200 flex items-center justify-center">
-                    <Target size={20} className="text-emerald-700" />
+                  <div className="h-10 w-10 rounded-xl bg-blue-100 border border-blue-200 flex items-center justify-center">
+                    <Target size={20} className="text-blue-700" />
                   </div>
                   <h3 className="text-xl font-heading font-semibold text-foreground">Vertical AI System</h3>
                 </div>
                 <ul className="space-y-3">
                   {verticalTraits.map((t) => (
                     <li key={t} className="flex items-start gap-3">
-                      <CheckCircle size={16} className="text-emerald-500 mt-0.5 flex-shrink-0" />
+                      <CheckCircle size={16} className="text-blue-500 mt-0.5 flex-shrink-0" />
                       <span className="text-sm text-foreground">{t}</span>
                     </li>
                   ))}
@@ -490,13 +490,13 @@ export default function Home() {
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.06 }}
-                    className="group rounded-2xl border border-black/5 bg-white p-6 shadow-sm space-y-4 hover:border-emerald-200 hover:shadow-md transition-all"
+                    className="group rounded-2xl border border-black/5 bg-white p-6 shadow-sm space-y-4 hover:border-blue-200 hover:shadow-md transition-all"
                   >
                     <div className="flex items-start justify-between">
-                      <div className="h-10 w-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center group-hover:bg-emerald-100 transition-colors">
-                        <Icon size={20} className="text-emerald-600" />
+                      <div className="h-10 w-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center group-hover:bg-blue-100 transition-colors">
+                        <Icon size={20} className="text-blue-600" />
                       </div>
-                      <span className="text-3xl font-heading font-black text-emerald-100 group-hover:text-emerald-200 transition-colors leading-none">{step.n}</span>
+                      <span className="text-3xl font-heading font-black text-blue-100 group-hover:text-blue-200 transition-colors leading-none">{step.n}</span>
                     </div>
                     <h3 className="text-sm font-semibold text-foreground">{step.title}</h3>
                     <p className="text-sm text-secondary leading-relaxed">{step.desc}</p>
@@ -524,7 +524,7 @@ export default function Home() {
           </motion.div>
 
           {/* ── 9. WHAT WORKS TODAY ── */}
-          <motion.div {...fadeIn} className="rounded-3xl border border-black/5 bg-gradient-to-br from-emerald-50/40 to-white p-10 shadow-sm space-y-6">
+          <motion.div {...fadeIn} className="rounded-3xl border border-black/5 bg-gradient-to-br from-blue-50/40 to-white p-10 shadow-sm space-y-6">
             <div className="space-y-3">
               <SectionBadge label="What Works Today" color="emerald" />
               <h2 className="text-3xl md:text-4xl font-heading font-bold leading-tight">
@@ -540,9 +540,9 @@ export default function Home() {
             >
               {[
                 { name: "LLMs", year: "2022", icon: Cpu, bg: "bg-foreground", text: "text-white" },
-                { name: "Assistants", year: "2022", icon: MessageSquare, bg: "bg-emerald-700", text: "text-white" },
-                { name: "AI Agents", year: "2023", icon: Bot, bg: "bg-emerald-500", text: "text-white" },
-                { name: "Agentic Systems", year: "2024", icon: Network, bg: "bg-emerald-200", text: "text-emerald-950" },
+                { name: "Assistants", year: "2022", icon: MessageSquare, bg: "bg-blue-700", text: "text-white" },
+                { name: "AI Agents", year: "2023", icon: Bot, bg: "bg-blue-500", text: "text-white" },
+                { name: "Agentic Systems", year: "2024", icon: Network, bg: "bg-blue-200", text: "text-blue-950" },
               ].map((s) => {
                 const Icon = s.icon;
                 return (
@@ -702,7 +702,7 @@ export default function Home() {
                       <span className="text-secondary">{f.cause}</span>
                     </div>
                     <div>
-                      <span className="text-xs font-semibold uppercase tracking-wide text-emerald-700">Fix: </span>
+                      <span className="text-xs font-semibold uppercase tracking-wide text-blue-700">Fix: </span>
                       <span className="text-foreground">{f.fix}</span>
                     </div>
                   </div>
@@ -805,7 +805,7 @@ export default function Home() {
               style={{ background: "linear-gradient(135deg, #ecfdf5 0%, #ffffff 55%, #f5f3ff 100%)" }}
             >
               <div className="pointer-events-none absolute inset-0 opacity-[0.4]" aria-hidden style={{ backgroundImage: "radial-gradient(circle at 1px 1px, rgba(16,24,40,0.06) 1px, transparent 0)", backgroundSize: "28px 28px" }} />
-              <div className="pointer-events-none absolute top-0 right-0 w-80 h-80 rounded-full bg-emerald-300/20 blur-3xl" aria-hidden />
+              <div className="pointer-events-none absolute top-0 right-0 w-80 h-80 rounded-full bg-blue-300/20 blur-3xl" aria-hidden />
               <div className="pointer-events-none absolute bottom-0 left-0 w-64 h-64 rounded-full bg-violet-300/20 blur-3xl" aria-hidden />
               <div className="relative space-y-2">
                 <SectionBadge label="The position to take in 2026" color="emerald" />
@@ -829,17 +829,17 @@ export default function Home() {
                     ))}
                   </ul>
                 </div>
-                <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 space-y-4">
+                <div className="rounded-2xl border border-blue-200 bg-blue-50 p-6 space-y-4">
                   <div className="flex items-center gap-3">
-                    <div className="h-9 w-9 rounded-xl bg-emerald-100 border border-emerald-200 flex items-center justify-center">
-                      <Sparkles size={18} className="text-emerald-700" />
+                    <div className="h-9 w-9 rounded-xl bg-blue-100 border border-blue-200 flex items-center justify-center">
+                      <Sparkles size={18} className="text-blue-700" />
                     </div>
-                    <h3 className="font-semibold text-emerald-700">AI operator</h3>
+                    <h3 className="font-semibold text-blue-700">AI operator</h3>
                   </div>
                   <ul className="space-y-2 text-sm">
                     {["Builds systems that use AI — not just uses AI", "Orchestrates agents across end-to-end workflows", "Domain knowledge stored, indexed, and queryable", "Proprietary data and systems create competitive moat", "Leverage gains: 5–10× and compounding"].map((item) => (
                       <li key={item} className="flex items-start gap-2 text-foreground">
-                        <CheckCircle size={14} className="text-emerald-600 mt-0.5 flex-shrink-0" />{item}
+                        <CheckCircle size={14} className="text-blue-600 mt-0.5 flex-shrink-0" />{item}
                       </li>
                     ))}
                   </ul>
@@ -904,7 +904,7 @@ export default function Home() {
           <section>
             <motion.div
               {...fadeIn}
-              className="relative isolate overflow-hidden rounded-3xl border border-emerald-200 p-10 lg:p-14 shadow-sm space-y-6"
+              className="relative isolate overflow-hidden rounded-3xl border border-blue-200 p-10 lg:p-14 shadow-sm space-y-6"
             >
               {/* Ambient shader background — this is the one section on the page
                   with no flat/gradient fill of its own, so it doubles as a
@@ -923,10 +923,10 @@ export default function Home() {
               <div className="pointer-events-none absolute inset-0 -z-10 bg-white/55" aria-hidden />
 
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-xl bg-emerald-100 border border-emerald-200 flex items-center justify-center">
-                  <Rocket size={20} className="text-emerald-700" />
+                <div className="h-10 w-10 rounded-xl bg-blue-100 border border-blue-200 flex items-center justify-center">
+                  <Rocket size={20} className="text-blue-700" />
                 </div>
-                <span className="text-sm font-semibold uppercase tracking-wide text-emerald-700">Understanding comes before execution</span>
+                <span className="text-sm font-semibold uppercase tracking-wide text-blue-700">Understanding comes before execution</span>
               </div>
               <h2 className="text-3xl md:text-4xl font-heading font-bold leading-tight text-foreground">
                 Acting without a system view creates fragility.<br />Acting with one creates leverage.

@@ -16,7 +16,7 @@ export function ShimmerButton({
   children,
   className,
   href,
-  background = "#059669", // emerald-600, matches existing CTA buttons
+  background = "#059669", // blue-600, matches existing CTA buttons
   ...props
 }: {
   children: React.ReactNode;
@@ -34,7 +34,7 @@ export function ShimmerButton({
         backgroundSize: "250% 100%",
       }}
       className={cn(
-        "group inline-flex w-fit items-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold text-white shadow-sm transition-[background-position,filter] duration-700 hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 animate-shimmer-slide",
+        "group inline-flex w-fit items-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold text-white shadow-sm transition-[background-position,filter] duration-700 hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 animate-shimmer-slide",
         className,
       )}
       {...props}

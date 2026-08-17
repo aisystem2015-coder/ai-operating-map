@@ -45,8 +45,8 @@ export default function AssistantsSection() {
         </SectionReveal>
 
         <SectionReveal delay={0.05}>
-          <div className="rounded-3xl border border-black/5 bg-white shadow-xl shadow-emerald-100/50 p-10 space-y-5">
-            <p className="text-sm uppercase tracking-[0.2em] text-emerald-600">Assistant defined</p>
+          <div className="rounded-3xl border border-black/5 bg-white shadow-xl shadow-blue-100/50 p-10 space-y-5">
+            <p className="text-sm uppercase tracking-[0.2em] text-blue-600">Assistant defined</p>
             <h3 className="text-3xl md:text-4xl font-heading font-bold text-foreground leading-tight">
               What turns a model into an assistant
             </h3>
@@ -63,8 +63,8 @@ export default function AssistantsSection() {
           <div className="grid sm:grid-cols-2 gap-5">
             {traits.map((t) => (
               <div key={t.title} className="hover-glow rounded-2xl border border-black/5 bg-white p-6 shadow-sm space-y-3">
-                <div className="h-8 w-8 rounded-lg bg-emerald-100 flex items-center justify-center">
-                  <span className="h-3 w-3 rounded-full bg-emerald-500" />
+                <div className="h-8 w-8 rounded-lg bg-blue-100 flex items-center justify-center">
+                  <span className="h-3 w-3 rounded-full bg-blue-500" />
                 </div>
                 <h3 className="text-base font-semibold text-foreground">{t.title}</h3>
                 <p className="text-sm text-secondary leading-relaxed">{t.desc}</p>

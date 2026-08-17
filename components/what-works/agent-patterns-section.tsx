@@ -133,7 +133,7 @@ export default function AgentPatternsSection() {
               className="rounded-2xl border border-black/5 bg-white p-8 shadow-sm space-y-5"
             >
               <div className="flex items-start gap-5">
-                <div className="flex-shrink-0 h-10 w-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-sm font-bold text-emerald-700">{p.n}</div>
+                <div className="flex-shrink-0 h-10 w-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-sm font-bold text-blue-700">{p.n}</div>
                 <div className="space-y-2 flex-1">
                   <h4 className="text-xl font-heading font-semibold text-foreground">{p.name}</h4>
                   <p className="text-secondary leading-relaxed">{p.description}</p>
@@ -144,8 +144,8 @@ export default function AgentPatternsSection() {
                   <p className="text-xs font-semibold uppercase tracking-wide text-secondary">When to use</p>
                   <p className="text-sm text-foreground">{p.when}</p>
                 </div>
-                <div className="rounded-xl bg-emerald-50 border border-emerald-100 p-4 space-y-1">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">Example</p>
+                <div className="rounded-xl bg-blue-50 border border-blue-100 p-4 space-y-1">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-blue-700">Example</p>
                   <p className="text-sm text-foreground">{p.example}</p>
                 </div>
               </div>
@@ -163,7 +163,7 @@ export default function AgentPatternsSection() {
               <div key={mode.title} className="hover-glow rounded-2xl border border-black/5 bg-white p-6 shadow-sm space-y-3">
                 <h4 className="text-lg font-heading font-semibold text-foreground">{mode.title}</h4>
                 <p className="text-sm text-secondary leading-relaxed">{mode.desc}</p>
-                <p className="text-xs text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-lg px-3 py-2 leading-relaxed">{mode.example}</p>
+                <p className="text-xs text-blue-700 bg-blue-50 border border-blue-100 rounded-lg px-3 py-2 leading-relaxed">{mode.example}</p>
               </div>
             ))}
           </div>
@@ -221,7 +221,7 @@ export default function AgentPatternsSection() {
                   <p className="text-secondary leading-relaxed">{f.cause}</p>
                 </div>
                 <div className="flex items-start gap-2">
-                  <span className="text-emerald-700 font-medium w-16 flex-shrink-0">Fix:</span>
+                  <span className="text-blue-700 font-medium w-16 flex-shrink-0">Fix:</span>
                   <p className="text-foreground leading-relaxed">{f.fix}</p>
                 </div>
               </div>
@@ -259,7 +259,7 @@ export default function AgentPatternsSection() {
       </section>
 
       {/* CTA */}
-      <section className="rounded-3xl border border-black/5 bg-gradient-to-br from-white to-emerald-50/40 p-10 shadow-sm space-y-5">
+      <section className="rounded-3xl border border-black/5 bg-gradient-to-br from-white to-blue-50/40 p-10 shadow-sm space-y-5">
         <h3 className="text-3xl font-heading font-semibold text-foreground">
           Agents are not a future state. They are a design choice.
         </h3>

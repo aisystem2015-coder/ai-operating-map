@@ -114,7 +114,7 @@ export default function SystemViewCard({
           >
             System View
           </span>
-          <Sparkles className={`h-5 w-5 ${isExpanded ? "text-emerald-600" : "text-emerald-500"}`} />
+          <Sparkles className={`h-5 w-5 ${isExpanded ? "text-blue-600" : "text-blue-500"}`} />
         </div>
         <div className={`grid grid-cols-1 sm:grid-cols-5 gap-3 ${isExpanded ? "sm:gap-5" : ""}`}>
           {diagramItems.map((item) => (
@@ -148,7 +148,7 @@ export default function SystemViewCard({
               )}
               <div
                 className={`mt-3 h-1 rounded-full transition-colors duration-200 ${
-                  activeBlock === item.id ? "bg-emerald-500" : "bg-emerald-100"
+                  activeBlock === item.id ? "bg-blue-500" : "bg-blue-100"
                 }`}
               />
             </div>

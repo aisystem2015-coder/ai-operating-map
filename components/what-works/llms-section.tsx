@@ -63,8 +63,8 @@ export default function LLMsSection() {
         <div className="space-y-12 text-lg text-foreground leading-[1.8] font-light">
           {/* Definition Card */}
           <SectionReveal>
-            <div className="rounded-3xl border border-black/5 bg-white shadow-xl shadow-emerald-100/50 p-10 space-y-5">
-              <p className="text-sm uppercase tracking-[0.2em] text-emerald-600">
+            <div className="rounded-3xl border border-black/5 bg-white shadow-xl shadow-blue-100/50 p-10 space-y-5">
+              <p className="text-sm uppercase tracking-[0.2em] text-blue-600">
                 LLM defined
               </p>
               <h3 className="text-4xl md:text-5xl font-heading font-bold text-foreground leading-tight">
@@ -83,7 +83,7 @@ export default function LLMsSection() {
           {/* Mirror of the human brain */}
           <SectionReveal delay={0.04}>
             <div className="rounded-3xl border border-black/5 bg-gradient-to-br from-slate-900 to-slate-800 p-10 text-white space-y-5">
-              <p className="text-sm uppercase tracking-[0.2em] text-emerald-400">
+              <p className="text-sm uppercase tracking-[0.2em] text-blue-400">
                 Why it feels intelligent
               </p>
               <h3 className="text-2xl md:text-3xl font-heading font-semibold leading-tight">
@@ -111,13 +111,13 @@ export default function LLMsSection() {
 
           {/* SLM placeholder */}
           <SectionReveal delay={0.06}>
-            <div className="rounded-2xl border border-dashed border-emerald-300 bg-emerald-50/60 p-6 flex items-start gap-4">
+            <div className="rounded-2xl border border-dashed border-blue-300 bg-blue-50/60 p-6 flex items-start gap-4">
               <span className="text-2xl leading-none pt-0.5" aria-hidden>🧩</span>
               <div className="space-y-1">
-                <p className="text-sm font-semibold uppercase tracking-wide text-emerald-800">
+                <p className="text-sm font-semibold uppercase tracking-wide text-blue-800">
                   Placeholder — SLMs (Small Language Models)
                 </p>
-                <p className="text-sm text-emerald-900/80 leading-relaxed">
+                <p className="text-sm text-blue-900/80 leading-relaxed">
                   Smaller, distilled models that trade some general capability for speed, lower
                   cost, and the ability to run on-device or privately. Sit next to LLMs, not
                   instead of them — pick the size for the task. Full section coming.
@@ -140,27 +140,27 @@ export default function LLMsSection() {
                 </div>
                 <ul className="space-y-3 text-lg text-secondary leading-relaxed">
                   <li className="flex items-start">
-                    <span className="text-emerald-600 mr-3 font-bold">✓</span>
+                    <span className="text-blue-600 mr-3 font-bold">✓</span>
                     <span>Summarization and synthesis of text</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="text-emerald-600 mr-3 font-bold">✓</span>
+                    <span className="text-blue-600 mr-3 font-bold">✓</span>
                     <span>Translation between languages</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="text-emerald-600 mr-3 font-bold">✓</span>
+                    <span className="text-blue-600 mr-3 font-bold">✓</span>
                     <span>Classification and categorization</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="text-emerald-600 mr-3 font-bold">✓</span>
+                    <span className="text-blue-600 mr-3 font-bold">✓</span>
                     <span>Semantic search and retrieval</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="text-emerald-600 mr-3 font-bold">✓</span>
+                    <span className="text-blue-600 mr-3 font-bold">✓</span>
                     <span>Conversational interfaces</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="text-emerald-600 mr-3 font-bold">✓</span>
+                    <span className="text-blue-600 mr-3 font-bold">✓</span>
                     <span>Code generation and explanation</span>
                   </li>
                 </ul>
@@ -211,7 +211,7 @@ export default function LLMsSection() {
                   <span
                     className={`px-3 py-2 rounded-xl border text-sm md:text-base ${
                       isTokenFocus
-                        ? "bg-emerald-50 border-emerald-200 text-emerald-800 shadow-emerald-100/70 shadow-sm transition-colors"
+                        ? "bg-blue-50 border-blue-200 text-blue-800 shadow-blue-100/70 shadow-sm transition-colors"
                         : "bg-foreground/5 border-black/5"
                     }`}
                   >
@@ -243,7 +243,7 @@ export default function LLMsSection() {
               ref={economicsRef}
               className={`rounded-2xl p-8 shadow-sm space-y-5 border transition-colors ${
                 isTokenFocus
-                  ? "bg-emerald-50/90 border-emerald-200 shadow-emerald-100/70"
+                  ? "bg-blue-50/90 border-blue-200 shadow-blue-100/70"
                   : "bg-white/80 border-black/5"
               }`}
             >

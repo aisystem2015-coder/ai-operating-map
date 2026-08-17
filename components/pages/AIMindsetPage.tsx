@@ -232,7 +232,7 @@ function SystemViewCard({
           >
             System View
           </span>
-          <Sparkles className={`h-5 w-5 ${isExpanded ? "text-emerald-600" : "text-emerald-500"}`} />
+          <Sparkles className={`h-5 w-5 ${isExpanded ? "text-blue-600" : "text-blue-500"}`} />
         </div>
         <div className={`grid grid-cols-1 sm:grid-cols-5 gap-3 ${isExpanded ? "sm:gap-5" : ""}`}>
           {diagramItems.map((item) => (
@@ -268,7 +268,7 @@ function SystemViewCard({
               )}
               <div
                 className={`mt-3 h-1 rounded-full transition-colors duration-200 ${
-                  activeBlock === item.id ? "bg-emerald-500" : "bg-emerald-100"
+                  activeBlock === item.id ? "bg-blue-500" : "bg-blue-100"
                 }`}
               />
             </div>
@@ -409,7 +409,7 @@ export default function AIMindsetPage() {
                   </div>
                   <div className="relative lg:ml-auto max-w-[520px]">
                     <motion.div
-                      className="absolute inset-0 bg-gradient-to-tr from-emerald-100 via-white to-emerald-50 rounded-3xl blur-3xl opacity-60"
+                      className="absolute inset-0 bg-gradient-to-tr from-blue-100 via-white to-blue-50 rounded-3xl blur-3xl opacity-60"
                       style={{ y: heroY, scale: heroScale, opacity: heroOpacity }}
                     />
                     <motion.div
@@ -432,7 +432,7 @@ export default function AIMindsetPage() {
                     <div className="flex flex-col sm:flex-row divide-y sm:divide-y-0 sm:divide-x divide-black/5">
                       {heroChips.map((chip) => (
                         <div key={chip.label} className="group relative flex-1 p-4">
-                          <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-sm font-semibold text-emerald-800">
+                          <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-sm font-semibold text-blue-800">
                             <ShieldCheck className="h-4 w-4" />
                             {chip.label}
                           </div>
@@ -445,8 +445,8 @@ export default function AIMindsetPage() {
                   </div>
                 </div>
                 <div className="mt-8">
-                  <div className="rounded-2xl border border-black/5 bg-emerald-50/60 px-5 py-4 shadow-sm">
-                    <p className="text-sm font-semibold text-emerald-900">
+                  <div className="rounded-2xl border border-black/5 bg-blue-50/60 px-5 py-4 shadow-sm">
+                    <p className="text-sm font-semibold text-blue-900">
                       LT directive: system map first or stop. Without it, every AI
                       initiative stays fragile regardless of model or tooling. Everything
                       that follows is evidence for that decision, not parallel ideas.
@@ -481,7 +481,7 @@ export default function AIMindsetPage() {
                           where data, orchestration, and ownership are weak—and leaders let
                           fragmentation persist.
                         </p>
-                        <div className="rounded-xl bg-emerald-50 border border-emerald-100 px-4 py-3 text-sm text-emerald-900">
+                        <div className="rounded-xl bg-blue-50 border border-blue-100 px-4 py-3 text-sm text-blue-900">
                           Guardrail: many AI products mainly differ in packaging. If a
                           product cannot be placed inside the system diagram with a clear
                           owner, treat it as packaging and halt the pilot.
@@ -501,8 +501,8 @@ export default function AIMindsetPage() {
                                 “AI is a chatbot or copilot I can buy off the shelf.”
                               </p>
                             </div>
-                            <div className="rounded-xl bg-emerald-50/80 p-4">
-                              <div className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">
+                            <div className="rounded-xl bg-blue-50/80 p-4">
+                              <div className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">
                                 Reality
                               </div>
                               <p className="mt-2 text-sm text-foreground">
@@ -570,7 +570,7 @@ export default function AIMindsetPage() {
                           {reduces.map((item) => (
                             <div
                               key={item.title}
-                              className="rounded-xl border border-black/5 bg-emerald-50/70 p-4"
+                              className="rounded-xl border border-black/5 bg-blue-50/70 p-4"
                             >
                               <div className="text-sm font-semibold text-foreground">
                                 {item.title}
@@ -608,7 +608,7 @@ export default function AIMindsetPage() {
                       </p>
                     </div>
                     <SystemDiagram />
-                    <div className="rounded-xl bg-emerald-50/60 border border-emerald-100 px-4 py-3 text-sm text-emerald-900">
+                    <div className="rounded-xl bg-blue-50/60 border border-blue-100 px-4 py-3 text-sm text-blue-900">
                       Mindset rule for leaders: start with a broad system map, delay
                       specialization into use cases, and lock leverage first.
                     </div>
@@ -639,7 +639,7 @@ export default function AIMindsetPage() {
                           they are reused and extended. Start broad, then specialize. Leaders
                           who stay at use-case level choose fragility.
                         </p>
-                        <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-800">
+                        <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-800">
                           <Workflow className="h-4 w-4" />
                           Practical takeaway: Start with a system map, then specialize into
                           use cases—lock leverage first.
@@ -663,8 +663,8 @@ export default function AIMindsetPage() {
                                 </div>
                                 <div className="mt-1 text-sm text-foreground">{row.left}</div>
                               </div>
-                              <div className="rounded-xl bg-white border border-emerald-100 p-3 shadow-sm">
-                                <div className="text-xs font-semibold uppercase tracking-[0.14em] text-emerald-700">
+                              <div className="rounded-xl bg-white border border-blue-100 p-3 shadow-sm">
+                                <div className="text-xs font-semibold uppercase tracking-[0.14em] text-blue-700">
                                   {row.label}
                                 </div>
                                 <div className="mt-1 text-sm text-foreground">{row.right}</div>

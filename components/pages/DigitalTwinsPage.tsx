@@ -9,7 +9,7 @@
  * its own top-level nav destination. All 5 of the former standalone
  * site's pages (home, what-is, examples & types, how it works, hardware)
  * are consolidated here as sections on one page, re-skinned from that
- * site's indigo/sky/amber/rose palette to this site's emerald-only
+ * site's indigo/sky/amber/rose palette to this site's blue-only
  * system, with the 4 flat PNG diagrams (which had Spanish text baked in)
  * rebuilt as real components.
  */

@@ -24,8 +24,8 @@ const BrainAmnesiaVisual = () => (
 );
 
 const OpenBookVisual = () => (
-  <div className="hover-glow rounded-3xl border border-black/5 bg-white shadow-lg shadow-emerald-100/60 p-4">
-    <div className="rounded-2xl overflow-hidden border border-emerald-100 bg-gradient-to-br from-white via-emerald-50 to-white">
+  <div className="hover-glow rounded-3xl border border-black/5 bg-white shadow-lg shadow-blue-100/60 p-4">
+    <div className="rounded-2xl overflow-hidden border border-blue-100 bg-gradient-to-br from-white via-blue-50 to-white">
       <Image
         src="/ai-origins/open-book-rag.png"
         alt="RAG as an open book exam"
@@ -38,7 +38,7 @@ const OpenBookVisual = () => (
 );
 
 const VectorCubeVisual = () => (
-  <div className="hover-glow rounded-2xl overflow-hidden border border-emerald-100 bg-emerald-50/40">
+  <div className="hover-glow rounded-2xl overflow-hidden border border-blue-100 bg-blue-50/40">
     <Image
       src="/ai-origins/vector-rag.png"
       alt="Vector RAG cube visual"
@@ -62,7 +62,7 @@ const SqlCalcVisual = () => (
 );
 
 const WhichOneTable = () => (
-  <div className="hover-glow rounded-2xl overflow-hidden border border-emerald-100 bg-emerald-50/30">
+  <div className="hover-glow rounded-2xl overflow-hidden border border-blue-100 bg-blue-50/30">
     <Image
       src="/ai-origins/which-one.png"
       alt="Comparison of Vector, SQL, and Graph RAG"
@@ -74,7 +74,7 @@ const WhichOneTable = () => (
 );
 
 const AgenticRagFlowVisual = () => (
-  <div className="hover-glow rounded-2xl overflow-hidden border border-emerald-100 bg-emerald-50/30">
+  <div className="hover-glow rounded-2xl overflow-hidden border border-blue-100 bg-blue-50/30">
     <Image
       src="/ai-origins/agentic-rag.png"
       alt="Agentic RAG flow routing user question to vector or SQL RAG"
@@ -86,7 +86,7 @@ const AgenticRagFlowVisual = () => (
 );
 
 const GraphRagNetworkVisual = () => (
-  <div className="hover-glow rounded-2xl overflow-hidden border border-emerald-100 bg-emerald-50/30">
+  <div className="hover-glow rounded-2xl overflow-hidden border border-blue-100 bg-blue-50/30">
     <Image
       src="/ai-origins/graph-rag.png"
       alt="Graph RAG network of connected entities"
@@ -114,7 +114,7 @@ export default function OriginsPage() {
                 <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_1px_1px,rgba(16,185,129,0.05),transparent_0)] bg-[length:26px_26px]" />
                 <div className="relative flex items-start gap-6">
                   <div className="flex items-baseline gap-2">
-                    <div className="rounded-2xl overflow-hidden border border-emerald-100 bg-emerald-50/30 shadow-sm">
+                    <div className="rounded-2xl overflow-hidden border border-blue-100 bg-blue-50/30 shadow-sm">
                       <Image
                         src="/ai-origins/ai-letters.png"
                         alt="AI letters sketch"
@@ -156,7 +156,7 @@ export default function OriginsPage() {
                       AI just rides that loop with far more math and parallelism.
                     </p>
                   </div>
-                  <div className="rounded-2xl overflow-hidden border border-emerald-100 bg-emerald-50/40">
+                  <div className="rounded-2xl overflow-hidden border border-blue-100 bg-blue-50/40">
                     <Image
                       src="/ai-origins/computer-loop.png"
                       alt="Input compute output loop sketch"
@@ -202,11 +202,11 @@ export default function OriginsPage() {
         </section>
 
         {/* Section 5: Transformers — The Missing Link */}
-        <section className="py-32 px-6 lg:px-8 bg-gradient-to-br from-emerald-50/60 via-white to-emerald-50/40">
+        <section className="py-32 px-6 lg:px-8 bg-gradient-to-br from-blue-50/60 via-white to-blue-50/40">
           <div className="max-w-6xl mx-auto space-y-10">
             <SectionReveal>
               <div className="space-y-4">
-                <p className="text-sm uppercase tracking-[0.2em] text-emerald-600">Context at once</p>
+                <p className="text-sm uppercase tracking-[0.2em] text-blue-600">Context at once</p>
                 <h2 className="text-5xl md:text-6xl font-heading font-bold text-foreground leading-tight">
                   Transformers: The bridge from ML to modern AI
                 </h2>
@@ -224,9 +224,9 @@ export default function OriginsPage() {
                 ].map((item, idx) => (
                   <div
                     key={item.title}
-                    className="hover-glow rounded-2xl border border-emerald-100 bg-white/80 shadow-lg shadow-emerald-100/40 p-6"
+                    className="hover-glow rounded-2xl border border-blue-100 bg-white/80 shadow-lg shadow-blue-100/40 p-6"
                   >
-                    <div className="text-sm font-semibold text-emerald-700 mb-3">0{idx + 1}</div>
+                    <div className="text-sm font-semibold text-blue-700 mb-3">0{idx + 1}</div>
                     <h3 className="text-xl font-heading font-semibold text-foreground mb-2">{item.title}</h3>
                     <p className="text-sm md:text-base text-secondary leading-relaxed">{item.body}</p>
                   </div>
@@ -234,7 +234,7 @@ export default function OriginsPage() {
               </div>
             </SectionReveal>
             <SectionReveal delay={0.25}>
-              <div className="rounded-3xl border border-black/5 bg-white shadow-xl shadow-emerald-100/50 p-4">
+              <div className="rounded-3xl border border-black/5 bg-white shadow-xl shadow-blue-100/50 p-4">
                 <Image
                   src="/ai-origins/transformers-parallel.png"
                   alt="Old ML sequential vs transformers parallel attention"
@@ -252,8 +252,8 @@ export default function OriginsPage() {
         <section className="py-24 px-6 lg:px-8 bg-white/50">
           <div className="max-w-6xl mx-auto">
             <SectionReveal>
-              <div className="rounded-3xl border border-black/5 bg-white shadow-xl shadow-emerald-100/50 p-10 space-y-5">
-                <p className="text-sm uppercase tracking-[0.2em] text-emerald-600">LLM defined</p>
+              <div className="rounded-3xl border border-black/5 bg-white shadow-xl shadow-blue-100/50 p-10 space-y-5">
+                <p className="text-sm uppercase tracking-[0.2em] text-blue-600">LLM defined</p>
                 <h2 className="text-4xl md:text-5xl font-heading font-bold text-foreground leading-tight">
                   What is a Large Language Model (LLM)?
                 </h2>
@@ -301,7 +301,7 @@ export default function OriginsPage() {
           <div className="max-w-6xl mx-auto grid lg:grid-cols-[1.05fr_0.95fr] gap-10 items-center">
             <SectionReveal>
               <div className="space-y-4">
-                <p className="text-sm uppercase tracking-[0.2em] text-emerald-600">The solution</p>
+                <p className="text-sm uppercase tracking-[0.2em] text-blue-600">The solution</p>
                 <h2 className="text-4xl md:text-5xl font-heading font-bold text-foreground leading-tight">
                   RAG: The Open Book Exam
                 </h2>
@@ -322,12 +322,12 @@ export default function OriginsPage() {
             <SectionReveal>
               <div className="flex items-center justify-between flex-wrap gap-4">
                 <div>
-                  <p className="text-sm uppercase tracking-[0.2em] text-emerald-600">Databases that make RAG work</p>
+                  <p className="text-sm uppercase tracking-[0.2em] text-blue-600">Databases that make RAG work</p>
                   <h2 className="text-4xl md:text-5xl font-heading font-bold text-foreground leading-tight">
                     Two retrieval engines, one orchestration
                   </h2>
                 </div>
-                <span className="text-sm px-4 py-2 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100">
+                <span className="text-sm px-4 py-2 rounded-full bg-blue-50 text-blue-700 border border-blue-100">
                   Text? Use vectors. Numbers? Use SQL.
                 </span>
               </div>
@@ -335,9 +335,9 @@ export default function OriginsPage() {
 
             <div className="grid lg:grid-cols-2 gap-8">
               <SectionReveal>
-                <div className="rounded-3xl border border-black/5 bg-white shadow-xl shadow-emerald-100/50 p-6 space-y-4 h-full flex flex-col">
+                <div className="rounded-3xl border border-black/5 bg-white shadow-xl shadow-blue-100/50 p-6 space-y-4 h-full flex flex-col">
                   <div className="flex items-center gap-3">
-                    <span className="text-xs font-semibold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800">
+                    <span className="text-xs font-semibold px-3 py-1 rounded-full bg-blue-100 text-blue-800">
                       Vector RAG
                     </span>
                     <p className="text-sm text-secondary">GPS for meaning</p>
@@ -382,7 +382,7 @@ export default function OriginsPage() {
           <div className="max-w-6xl mx-auto space-y-10">
             <SectionReveal>
               <div className="space-y-3">
-                <p className="text-sm uppercase tracking-[0.2em] text-emerald-600">Mechanism</p>
+                <p className="text-sm uppercase tracking-[0.2em] text-blue-600">Mechanism</p>
                 <h2 className="text-4xl md:text-5xl font-heading font-bold text-foreground leading-tight">
                   Embeddings: From text to 3D meaning
                 </h2>
@@ -393,9 +393,9 @@ export default function OriginsPage() {
             </SectionReveal>
 
             <SectionReveal delay={0.1}>
-              <div className="rounded-3xl border border-black/5 bg-white shadow-xl shadow-emerald-100/50 p-8 space-y-6">
+              <div className="rounded-3xl border border-black/5 bg-white shadow-xl shadow-blue-100/50 p-8 space-y-6">
                 <div className="grid md:grid-cols-2 gap-8">
-                  <div className="rounded-2xl overflow-hidden border border-emerald-100 bg-emerald-50/30">
+                  <div className="rounded-2xl overflow-hidden border border-blue-100 bg-blue-50/30">
                     <Image
                       src="/ai-origins/chunking-sketch.png"
                       alt="Text chunking sketch"
@@ -404,7 +404,7 @@ export default function OriginsPage() {
                       className="w-full h-auto object-cover"
                     />
                   </div>
-                  <div className="rounded-2xl overflow-hidden border border-emerald-100 bg-emerald-50/30">
+                  <div className="rounded-2xl overflow-hidden border border-blue-100 bg-blue-50/30">
                     <Image
                       src="/ai-origins/vector-space-sketch.png"
                       alt="Vector space embedding sketch"
@@ -414,7 +414,7 @@ export default function OriginsPage() {
                     />
                   </div>
                 </div>
-                <div className="rounded-2xl border border-emerald-100 bg-emerald-50/70 p-5 text-sm text-emerald-900 leading-relaxed">
+                <div className="rounded-2xl border border-blue-100 bg-blue-50/70 p-5 text-sm text-blue-900 leading-relaxed">
                   Semantic search finds the nearest neighbors in the vector space, so generation is grounded by retrieved meaning—not brittle keyword matches.
                 </div>
               </div>
@@ -427,7 +427,7 @@ export default function OriginsPage() {
           <div className="max-w-6xl mx-auto space-y-12">
             <SectionReveal>
               <div className="space-y-3">
-                <p className="text-sm uppercase tracking-[0.2em] text-emerald-600">Selection + Orchestration</p>
+                <p className="text-sm uppercase tracking-[0.2em] text-blue-600">Selection + Orchestration</p>
                 <h2 className="text-4xl md:text-5xl font-heading font-bold text-foreground leading-tight">
                   Which one to use? Route by question.
                 </h2>
@@ -436,7 +436,7 @@ export default function OriginsPage() {
 
             <div className="grid md:grid-cols-2 gap-8">
               <SectionReveal>
-                <div className="rounded-3xl border border-black/5 bg-white shadow-xl shadow-emerald-100/50 p-4 space-y-4">
+                <div className="rounded-3xl border border-black/5 bg-white shadow-xl shadow-blue-100/50 p-4 space-y-4">
                 <WhichOneTable />
                   <p className="text-sm text-secondary leading-relaxed">
                     Vector = meaning (low cost). SQL = math/facts (low cost). Graph = connections (high cost). Pick by data type.
@@ -445,7 +445,7 @@ export default function OriginsPage() {
               </SectionReveal>
 
               <SectionReveal delay={0.1}>
-                <div className="rounded-3xl border border-black/5 bg-white shadow-xl shadow-emerald-100/50 p-4 space-y-4">
+                <div className="rounded-3xl border border-black/5 bg-white shadow-xl shadow-blue-100/50 p-4 space-y-4">
                 <AgenticRagFlowVisual />
                   <p className="text-sm text-secondary leading-relaxed">
                     Router asks: is this text or numbers? Vector RAG handles meaning; SQL RAG handles facts. Both converge into one final answer—the best of both worlds.
@@ -461,7 +461,7 @@ export default function OriginsPage() {
           <div className="max-w-6xl mx-auto grid lg:grid-cols-[1.05fr_0.95fr] gap-10 items-center">
             <SectionReveal>
               <div className="space-y-4">
-                <p className="text-sm uppercase tracking-[0.2em] text-emerald-600">Connections</p>
+                <p className="text-sm uppercase tracking-[0.2em] text-blue-600">Connections</p>
                 <h2 className="text-4xl md:text-5xl font-heading font-bold text-foreground leading-tight">
                   Graph RAG: Mapping Relationships
                 </h2>
@@ -485,8 +485,8 @@ export default function OriginsPage() {
         <section className="py-24 px-6 lg:px-8">
           <div className="max-w-5xl mx-auto">
             <SectionReveal>
-              <div className="rounded-3xl border border-black/5 bg-white shadow-xl shadow-emerald-100/50 p-10 space-y-5">
-                <p className="text-sm uppercase tracking-[0.2em] text-emerald-600">Semantic synthesis</p>
+              <div className="rounded-3xl border border-black/5 bg-white shadow-xl shadow-blue-100/50 p-10 space-y-5">
+                <p className="text-sm uppercase tracking-[0.2em] text-blue-600">Semantic synthesis</p>
                 <h2 className="text-4xl md:text-5xl font-heading font-bold text-foreground leading-tight">
                   Semantic Synthesis: Crafting the Answer
                 </h2>
@@ -502,9 +502,9 @@ export default function OriginsPage() {
         <section className="py-28 px-6 lg:px-8">
           <div className="max-w-5xl mx-auto">
             <SectionReveal>
-              <div className="rounded-3xl border border-black/5 bg-white shadow-xl shadow-emerald-100/50 p-10 space-y-6">
+              <div className="rounded-3xl border border-black/5 bg-white shadow-xl shadow-blue-100/50 p-10 space-y-6">
                 <div className="space-y-3">
-                  <p className="text-sm uppercase tracking-[0.2em] text-emerald-600">Prompt engineering</p>
+                  <p className="text-sm uppercase tracking-[0.2em] text-blue-600">Prompt engineering</p>
                   <h2 className="text-4xl md:text-5xl font-heading font-bold text-foreground leading-tight">
                     The Ultimate Translator: Natural Language as Code
                   </h2>
@@ -516,7 +516,7 @@ export default function OriginsPage() {
                   <p className="text-base text-secondary">
                     We don&apos;t need bloated plugins or pre-packaged skills. A highly engineered prompt with strict thresholds, schema, and logic becomes the command layer—replacing thousands of lines of traditional code with one orchestrated instruction set.
                   </p>
-                  <div className="rounded-2xl overflow-hidden border border-emerald-100 bg-emerald-50/30">
+                  <div className="rounded-2xl overflow-hidden border border-blue-100 bg-blue-50/30">
                     <Image
                       src="/ai-origins/prompt-translation.png"
                       alt="Natural language translated to infrastructure action"

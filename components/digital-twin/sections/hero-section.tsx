@@ -26,13 +26,13 @@ export default function DigitalTwinHeroSection() {
     <section className="relative isolate overflow-hidden pt-16 pb-20 rounded-b-[2.5rem]">
       <div
         className="absolute inset-0 -z-10"
-        style={{ background: "linear-gradient(160deg, #1e1b4b 0%, #312e81 45%, #1e1b4b 100%)" }}
+        style={{ background: "linear-gradient(160deg, #0a1838 0%, #1e3a8a 45%, #0a1838 100%)" }}
         aria-hidden
       />
       <div className="relative isolate z-0">
         {/* Indigo-family glow so it harmonizes with the indigo hero (Meet 22
             palette restore) instead of the default teal/blue/violet. */}
-        <InteractiveGlow colors={["#6366F1", "#4F46E5", "#818CF8"]} />
+        <InteractiveGlow colors={["#2563eb", "#2563eb", "#93b4fb"]} />
       </div>
 
       <div className="relative z-10 max-w-4xl mx-auto px-6 lg:px-8 text-center space-y-6">
@@ -43,12 +43,12 @@ export default function DigitalTwinHeroSection() {
           className="space-y-6"
         >
           <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-white/80">
-            <Fingerprint className="h-3.5 w-3.5 text-indigo-300" />
+            <Fingerprint className="h-3.5 w-3.5 text-blue-300" />
             A real, working proof of concept
           </span>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold leading-[1.05] text-white">
             An AI that actually knows{" "}
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-300 to-indigo-100">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-300 to-blue-100">
               one person
             </span>
             — not a stranger guessing.
@@ -64,7 +64,7 @@ export default function DigitalTwinHeroSection() {
               onClick={scrollToChat}
               whileHover={reduceMotion ? undefined : { scale: 1.03 }}
               whileTap={reduceMotion ? undefined : { scale: 0.97 }}
-              className="min-h-[44px] cursor-pointer inline-flex items-center gap-2 rounded-xl bg-indigo-400 px-6 py-3 text-sm font-semibold text-indigo-950 shadow-lg hover:brightness-105 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#1e1b4b]"
+              className="min-h-[44px] cursor-pointer inline-flex items-center gap-2 rounded-xl bg-blue-400 px-6 py-3 text-sm font-semibold text-blue-950 shadow-lg hover:brightness-105 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#0a1838]"
             >
               <MessageCircle className="h-4 w-4" />
               Talk to a real digital twin
@@ -72,7 +72,7 @@ export default function DigitalTwinHeroSection() {
             <button
               type="button"
               onClick={scrollToMap}
-              className="min-h-[44px] cursor-pointer inline-flex items-center gap-2 rounded-xl border border-white/20 px-6 py-3 text-sm font-semibold text-white/90 hover:bg-white/5 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#1e1b4b]"
+              className="min-h-[44px] cursor-pointer inline-flex items-center gap-2 rounded-xl border border-white/20 px-6 py-3 text-sm font-semibold text-white/90 hover:bg-white/5 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#0a1838]"
             >
               <Sparkles className="h-4 w-4" />
               Explore the section

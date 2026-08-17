@@ -285,12 +285,12 @@ function ExamplesGrid() {
                   <p className="text-xs font-semibold text-foreground uppercase tracking-wide mb-1">Why current tools fail</p>
                   <p className="text-secondary leading-relaxed">{ex.whyCurrentToolsFail}</p>
                 </div>
-                <div className="rounded-xl bg-emerald-50 border border-emerald-100 p-4 space-y-2">
-                  <p className="text-xs font-semibold text-emerald-700 uppercase tracking-wide">System design</p>
-                  <p className="text-sm text-emerald-950 leading-relaxed">{ex.systemDesign.description}</p>
+                <div className="rounded-xl bg-blue-50 border border-blue-100 p-4 space-y-2">
+                  <p className="text-xs font-semibold text-blue-700 uppercase tracking-wide">System design</p>
+                  <p className="text-sm text-blue-950 leading-relaxed">{ex.systemDesign.description}</p>
                   <div className="flex flex-wrap gap-1.5 pt-1">
                     {ex.systemDesign.layers.map((l) => (
-                      <span key={l} className="text-xs bg-white text-emerald-800 px-2.5 py-1 rounded-full font-medium border border-emerald-100">
+                      <span key={l} className="text-xs bg-white text-blue-800 px-2.5 py-1 rounded-full font-medium border border-blue-100">
                         {l}
                       </span>
                     ))}
@@ -314,7 +314,7 @@ export default function ExecutionChecklistPage() {
         <div className="max-w-5xl mx-auto px-6 lg:px-8 space-y-16">
           {/* Intro */}
           <section className="relative isolate overflow-hidden rounded-3xl py-10 px-2 -mx-2">
-            <InteractiveGlow colors={["#1BC4A6", "#D97706", "#2563EB"]} />
+            <InteractiveGlow colors={["#2563eb", "#D97706", "#2563EB"]} />
             <div className="relative z-10 space-y-3">
               <h1 className="text-5xl md:text-6xl font-heading font-bold text-foreground leading-tight">
                 Execution Checklist
@@ -349,7 +349,7 @@ export default function ExecutionChecklistPage() {
                   key={item.title}
                   className="hover-glow rounded-2xl border border-black/5 bg-white/80 p-4 shadow-sm flex gap-3 items-start"
                 >
-                  <CheckSquare className="h-5 w-5 text-emerald-600 mt-0.5" aria-hidden />
+                  <CheckSquare className="h-5 w-5 text-blue-600 mt-0.5" aria-hidden />
                   <div className="space-y-2">
                     <h3 className="text-base font-semibold text-foreground">{item.title}</h3>
                     <p className="text-sm text-secondary leading-relaxed">{item.body}</p>
