@@ -184,10 +184,11 @@ export default function Home() {
               {/* Interactive isometric terrain — the hero is a dark, cinematic
                   band (Apple-tone) with a voxel topography that ripples toward
                   the cursor. The rest of the page stays light. */}
-              <VoxelTopographyGrid fill primaryColor="#2563eb" wireColor="rgba(96,140,240,0.35)" bgColor="#060a17" />
-              {/* Scrim so the copy stays legible over the moving terrain. */}
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#060a17] via-[#060a17]/70 to-[#060a17]/30" aria-hidden />
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#060a17]/85 via-transparent to-transparent" aria-hidden />
+              <VoxelTopographyGrid fill primaryColor="#2563eb" wireColor="rgba(120,160,255,0.45)" bgColor="#060a17" maxHeight={90} speed={0.02} />
+              {/* Light scrims — just enough for legibility, terrain stays clearly
+                  visible (bottom + left carry the copy). */}
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#060a17] via-[#060a17]/35 to-transparent" aria-hidden />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#060a17]/70 via-transparent to-transparent" aria-hidden />
 
               <div className="relative px-8 py-16 lg:px-14 lg:py-24 space-y-10">
                 <div className="flex items-center gap-3 flex-wrap">
