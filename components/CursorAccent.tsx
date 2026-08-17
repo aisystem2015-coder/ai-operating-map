@@ -39,7 +39,7 @@ export default function CursorAccent() {
       cx += (tx - cx) * 0.12;
       cy += (ty - cy) * 0.12;
       // signal blue → warm, both from Francisco's palette, very soft
-      el.style.background = `radial-gradient(600px circle at ${cx}px ${cy}px, rgba(37,99,235,0.10), rgba(212,149,106,0.05) 40%, transparent 62%)`;
+      el.style.background = `radial-gradient(720px circle at ${cx}px ${cy}px, rgba(37,99,235,0.16), rgba(212,149,106,0.08) 38%, transparent 64%)`;
       raf = requestAnimationFrame(paint);
     };
     let spotEl: HTMLElement | null = null;

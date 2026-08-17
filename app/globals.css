@@ -211,8 +211,8 @@ html {
   z-index: 0;
   opacity: 0;
   transition: opacity 260ms ease;
-  background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 50%),
-    rgba(37, 99, 235, 0.16), rgba(212, 149, 106, 0.06) 45%, transparent 62%);
+  background: radial-gradient(320px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(37, 99, 235, 0.24), rgba(212, 149, 106, 0.10) 42%, transparent 66%);
 }
 @media (hover: hover) and (pointer: fine) {
   .hover-glow:hover::before { opacity: 1; }
@@ -221,7 +221,7 @@ html {
 /* Stronger, snappier tab glow + a moving sheen; press feedback. */
 .tab-glow { transition: transform 180ms var(--ease-out-strong), box-shadow 220ms ease, background-color 180ms ease, color 160ms ease; }
 @media (hover: hover) and (pointer: fine) {
-  .tab-glow:hover { box-shadow: 0 10px 24px -12px rgba(37, 99, 235, 0.6), 0 0 0 1px rgba(37, 99, 235, 0.18); }
+  .tab-glow:hover { box-shadow: 0 12px 30px -10px rgba(37, 99, 235, 0.75), 0 0 0 1px rgba(37, 99, 235, 0.28); text-shadow: 0 0 18px rgba(37,99,235,0.35); }
 }
 .tab-glow:active { transform: translateY(0) scale(0.97); }
 

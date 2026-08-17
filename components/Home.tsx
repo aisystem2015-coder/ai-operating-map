@@ -185,7 +185,7 @@ export default function Home() {
               {/* Interactive isometric terrain — the hero is a dark, cinematic
                   band (Apple-tone) with a voxel topography that ripples toward
                   the cursor. The rest of the page stays light. */}
-              <VoxelTopographyGrid fill primaryColor="#2563eb" wireColor="rgba(120,160,255,0.45)" bgColor="#060a17" maxHeight={90} speed={0.02} />
+              <VoxelTopographyGrid fill primaryColor="#2563eb" wireColor="rgba(140,175,255,0.55)" bgColor="#060a17" tileSize={24} maxHeight={115} speed={0.024} />
               {/* Light scrims — just enough for legibility, terrain stays clearly
                   visible (bottom + left carry the copy). */}
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#060a17] via-[#060a17]/35 to-transparent" aria-hidden />
