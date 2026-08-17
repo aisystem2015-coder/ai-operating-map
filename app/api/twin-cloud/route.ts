@@ -111,19 +111,33 @@ export async function POST(req: NextRequest) {
 
   const context = await retrieve(message);
   const system = `You are the public-facing digital twin of Francisco Guevara, answering ON BEHALF OF him for a website visitor. Speak about Francisco in the third person, warm and concise (a few sentences). Only use the CONTEXT below — never invent facts. If it isn't there, say so plainly and offer a public topic.\n\nCONTEXT:\n${context || "(no public notes matched)"}\n`;
-  try {
+
+  // gpt-oss spends reasoning tokens SEPARATELY from content — with too small a
+  // budget the reasoning eats it all and content comes back EMPTY (the old
+  // "I didn't get a clear answer" bug, which was intermittent per question).
+  // Fix: a generous budget AND one retry with an even larger budget, so an
+  // occasional over-long reasoning pass can't take the twin down.
+  async function ask(maxTokens: number): Promise<string> {
     const r = await fetch(GROQ_URL, {
       method: "POST",
       headers: { "content-type": "application/json", authorization: `Bearer ${key}` },
       body: JSON.stringify({
         model: MODEL,
         messages: [{ role: "system", content: system }, { role: "user", content: message }],
-        max_tokens: 900, temperature: 0.4,
+        max_tokens: maxTokens, temperature: 0.4,
       }),
     });
     const d = await r.json();
-    const reply = d?.choices?.[0]?.message?.content?.trim();
-    return NextResponse.json({ reply: reply || "I didn't get a clear answer — try rephrasing?", connected: true });
+    return d?.choices?.[0]?.message?.content?.trim() || "";
+  }
+
+  try {
+    let reply = await ask(2000);
+    if (!reply) reply = await ask(4000); // retry once with more headroom
+    return NextResponse.json({
+      reply: reply || "I'm Francisco's digital twin — ask me about his work, background, or what he's building right now.",
+      connected: true,
+    });
   } catch {
     return NextResponse.json({ reply: "Something went wrong reaching the cloud twin — try again.", connected: false });
   }
