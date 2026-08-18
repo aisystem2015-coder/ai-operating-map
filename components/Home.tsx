@@ -15,6 +15,7 @@ import { NeuroNoise } from "@/components/ui/neuro-noise";
 import VoxelTopographyGrid from "@/components/ui/voxel-topography-grid";
 import { BorderBeam } from "@/components/ui/border-beam";
 import PositioningManifesto from "@/components/positioning-manifesto";
+import MayaArchitecture from "@/components/case-studies/maya-architecture";
 import {
   Zap, Brain, Network, Bot, TrendingUp, Shield, Eye,
   Layers, Target, Globe, CheckCircle, XCircle, AlertTriangle,
@@ -240,6 +241,9 @@ export default function Home() {
 
           {/* ── 1b. POSITIONING MANIFESTO — the category, made unmissable ── */}
           <PositioningManifesto />
+
+          {/* ── 1c. CASE STUDY — living proof (Maya, architecture) ── */}
+          <MayaArchitecture />
 
           {/* ── 2. SEVEN SHIFTS ── */}
           <section className="space-y-10">
