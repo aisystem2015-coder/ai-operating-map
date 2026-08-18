@@ -174,10 +174,11 @@ export default function MayaArchitecture() {
           >
             <PenLine className="absolute right-5 top-5 h-6 w-6 text-white/20" />
             <p className="text-xl md:text-2xl font-heading font-semibold leading-snug max-w-3xl">
-              &ldquo;I used to draw every one of these by hand — one board was a whole afternoon. I learned
-              architecture the old way. Now I describe my site, my steps, my logic, and the analysis comes
-              back in hours. It didn&apos;t replace what I know as an architect. It gave my thinking a faster
-              pair of hands.&rdquo;
+              &ldquo;For me, architecture was always my hands and the hours — a single board of analysis
+              meant a whole afternoon at the drafting table. Three months ago, I couldn&apos;t have told you
+              what any of this was. Now I sit down, describe my site the way I&apos;d explain it to a friend,
+              and the maps take shape while we talk. It never replaced the architect in me. It just gave me
+              back the hours — and the room to finally think like one.&rdquo;
             </p>
             <footer className="mt-3 text-sm text-white/70">Maya Avila — thesis defense, December 12</footer>
           </motion.blockquote>
