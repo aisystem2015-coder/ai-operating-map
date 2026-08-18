@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Cpu, LineChart, Layers, Fingerprint, Brain, CheckSquare, MessageSquareText, Newspaper, BookMarked } from "lucide-react";
+import { Cpu, LineChart, Layers, Fingerprint, Brain, CheckSquare, MessageSquareText, Newspaper, BookMarked, Building2 } from "lucide-react";
 
 // The AI Operating Map's own left rail — SaaS-style, the way Francisco framed it
 // in Meet 23 ("menu on the left, content in the middle, like Claude/enterprise
@@ -17,6 +17,12 @@ const GROUPS: { label: string; items: { href: string; label: string; icon: typeo
       { href: "/what-works", label: "What Works Today", icon: Layers },
       { href: "/what-works/digital-twins", label: "Digital Twin", icon: Fingerprint },
       { href: "/ai-mindset", label: "AI Mindset", icon: Brain },
+    ],
+  },
+  {
+    label: "In practice",
+    items: [
+      { href: "/case-studies", label: "Case Studies", icon: Building2 },
     ],
   },
   {

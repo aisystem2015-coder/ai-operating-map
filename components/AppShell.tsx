@@ -17,6 +17,7 @@ const MAP_PREFIXES = [
   "/ai-map",
   "/what-works",
   "/vertical-ai",
+  "/case-studies",
 ];
 
 export default function AppShell({ children }: { children: React.ReactNode }) {

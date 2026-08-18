@@ -66,7 +66,7 @@ export default function Navigation() {
   const isWhatWorksActive = pathname === "/what-works" || pathname.startsWith("/what-works/");
   // Two-door model (Meet 23): are we on the "AI Operating Map" side or the
   // "Francisco" side? Drives which top tab reads as active.
-  const MAP_PREFIXES = ["/origins", "/market-reality", "/ai-mindset", "/execution-checklist", "/how-to-prompt", "/ai-now-2026", "/resources", "/ai-map", "/what-works", "/vertical-ai"];
+  const MAP_PREFIXES = ["/origins", "/market-reality", "/ai-mindset", "/execution-checklist", "/how-to-prompt", "/ai-now-2026", "/resources", "/ai-map", "/what-works", "/vertical-ai", "/case-studies"];
   const isMapActive = MAP_PREFIXES.some((p) => pathname === p || pathname.startsWith(p + "/"));
 
   return (
