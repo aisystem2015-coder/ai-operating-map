@@ -43,12 +43,12 @@ const majorShifts2026 = [
 
 const colorMap: Record<string, { bg: string; text: string; border: string; badge: string }> = {
   emerald: { bg: "bg-blue-50", text: "text-blue-700", border: "border-blue-200", badge: "bg-blue-100 text-blue-700" },
-  violet:  { bg: "bg-violet-50",  text: "text-violet-700",  border: "border-violet-200",  badge: "bg-violet-100 text-violet-700" },
+  violet:  { bg: "bg-blue-50",     text: "text-blue-700",     border: "border-blue-200",     badge: "bg-blue-100 text-blue-700" },
   blue:    { bg: "bg-blue-50",    text: "text-blue-700",    border: "border-blue-200",    badge: "bg-blue-100 text-blue-700" },
-  orange:  { bg: "bg-orange-50",  text: "text-orange-700",  border: "border-orange-200",  badge: "bg-orange-100 text-orange-700" },
+  orange:  { bg: "bg-amber-50",   text: "text-amber-700",   border: "border-amber-200",   badge: "bg-amber-100 text-amber-800" },
   indigo:  { bg: "bg-blue-50",  text: "text-blue-700",  border: "border-blue-200",  badge: "bg-blue-100 text-blue-700" },
-  teal:    { bg: "bg-teal-50",    text: "text-teal-700",    border: "border-teal-200",    badge: "bg-teal-100 text-teal-700" },
-  pink:    { bg: "bg-pink-50",    text: "text-pink-700",    border: "border-pink-200",    badge: "bg-pink-100 text-pink-700" },
+  teal:    { bg: "bg-blue-50",     text: "text-blue-700",     border: "border-blue-200",     badge: "bg-blue-100 text-blue-700" },
+  pink:    { bg: "bg-blue-50",     text: "text-blue-700",     border: "border-blue-200",     badge: "bg-blue-100 text-blue-700" },
   red:     { bg: "bg-red-50",     text: "text-red-700",     border: "border-red-200",     badge: "bg-red-100 text-red-700" },
 };
 
@@ -76,12 +76,12 @@ const models2026 = [
 ];
 
 const tierColors: Record<string, string> = {
-  Frontier: "bg-yellow-100 text-yellow-800 border border-yellow-200",
-  Expert: "bg-purple-100 text-purple-800 border border-purple-200",
+  Frontier: "bg-amber-100 text-amber-800 border border-amber-200",
+  Expert: "bg-blue-100 text-blue-900 border border-blue-300",
   Default: "bg-blue-100 text-blue-800 border border-blue-200",
   Fast: "bg-blue-100 text-blue-800 border border-blue-200",
   Reasoning: "bg-blue-100 text-blue-800 border border-blue-200",
-  Open: "bg-teal-100 text-teal-800 border border-teal-200",
+  Open: "bg-slate-100 text-slate-700 border border-slate-200",
 };
 
 const genericTraits = [

@@ -24,7 +24,7 @@ interface Point {
 }
 
 export function EmbeddingsVisualization({
-  mainColor = "#4D9DFB",
+  mainColor = "#2563eb",
   secondaryColor = "#00FDCF",
   gridColor = "#80808015",
   className,

@@ -24,7 +24,7 @@ interface Point3D {
 
 // Color palette for different points
 const colorPalette = [
-  "#4D9DFB", // Blue
+  "#2563eb", // Blue
   "#00FDCF", // Teal
   "#FF6B6B", // Red
   "#FFD93D", // Yellow
@@ -39,14 +39,14 @@ const colorPalette = [
 // Aligned points get special colors
 const alignedColorPalette = [
   "#00FDCF", // Teal
-  "#4D9DFB", // Blue
+  "#2563eb", // Blue
   "#A78BFA", // Purple
   "#FFD93D", // Yellow
   "#6BCF7F", // Green
 ];
 
 export function Embeddings3DVisualization({
-  mainColor = "#4D9DFB",
+  mainColor = "#2563eb",
   secondaryColor = "#00FDCF",
   className,
 }: Embeddings3DVisualizationProps) {

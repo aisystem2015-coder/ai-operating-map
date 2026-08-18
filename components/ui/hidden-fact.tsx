@@ -16,7 +16,7 @@ export function HiddenFact({
   children, 
   className, 
   spotlightSize = 200,
-  hoverColor = '#4D9DFB',
+  hoverColor = '#2563eb',
   defaultColor = 'rgba(0, 0, 0, 0)',
   position
 }: HiddenFactProps) {

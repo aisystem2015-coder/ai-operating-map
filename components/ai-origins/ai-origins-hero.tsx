@@ -4,7 +4,7 @@ import { ParticleTextEffect } from "@/components/ui/particle-text-effect"
 import { motion } from "framer-motion"
 import Image from "next/image"
 
-// Site blue accent: #4D9DFB
+// Site blue accent: #2563eb
 // ORIGINS teal-green: #00FDCF
 const hexToRgb = (hex: string): { r: number; g: number; b: number } => {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
@@ -19,9 +19,9 @@ const hexToRgb = (hex: string): { r: number; g: number; b: number } => {
 
 export default function AIOriginsHero() {
   const wordColors = {
-    "THE": hexToRgb("#4D9DFB"), // Site blue
+    "THE": hexToRgb("#2563eb"), // Site blue
     "TECH": hexToRgb("#00FDCF"), // Teal-green
-    "AI": hexToRgb("#4D9DFB"), // Site blue
+    "AI": hexToRgb("#2563eb"), // Site blue
     "ORIGINS": hexToRgb("#00FDCF"), // Teal-green
   }
 

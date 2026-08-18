@@ -160,7 +160,7 @@ export default function Iceberg() {
               onMouseEnter={() => setHoveredAI(true)}
               onMouseLeave={() => setHoveredAI(false)}
             >
-              <h3 className="text-4xl md:text-5xl font-heading font-bold text-[#4D9DFB] mb-3">
+              <h3 className="text-4xl md:text-5xl font-heading font-bold text-[#2563eb] mb-3">
                 YOUR AI
               </h3>
               <p className="text-base md:text-lg text-secondary">
@@ -314,7 +314,7 @@ export default function Iceberg() {
                     opacity: hoveredAI ? 0.8 : 1,
                   }}
                 >
-                  <h3 className="text-3xl md:text-4xl font-heading font-bold text-[#4D9DFB] mb-8 text-center">
+                  <h3 className="text-3xl md:text-4xl font-heading font-bold text-[#2563eb] mb-8 text-center">
                     YOUR INFRASTRUCTURE
                   </h3>
                   <p className="text-base md:text-lg text-white/80 mb-8 text-center">
