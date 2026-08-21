@@ -82,9 +82,22 @@ function render(rows: { title: string; content: string; updated_at?: string }[],
   ).join("\n\n").slice(0, 9000);
 }
 
+// SECURITY FIX (21 aug 2026): the old `pub` filter treated ANY untagged note as
+// public-safe. 261 of 286 vault notes have no access_level at all — including
+// raw Drive-mirror dumps and internal planning docs never meant to be public —
+// and this endpoint's own anon Supabase key could read every one of them via
+// full-text search. Now: only explicit access_level 0/1 counts as public,
+// EXCEPT a small hand-picked identity allowlist (same list scripts/brain_retrieve.py
+// treats as the core "who is Francisco" fallback) — those 3 titles are untagged
+// but were deliberately curated to answer basic "who is Francisco" questions for
+// anonymous visitors, so excluding them would silently break that instead of
+// fixing a real leak. Same fix applied server-side in scripts/brain_retrieve.py.
+const CORE_PUBLIC_TITLES = ["Personal — Fran Guevara", "Negocio — Logitech", "Estrategia — Going Bullish"];
+
 async function retrieve(q: string) {
-  // public-safe: access_level null/0/1 only. This endpoint must never touch N2-4.
-  const pub = "or(access_level.is.null,access_level.lte.1)";
+  // public-safe: explicit access_level 0/1, or the curated identity allowlist above.
+  const coreOr = CORE_PUBLIC_TITLES.map((t) => `title.eq.${encodeURIComponent(t)}`).join(",");
+  const pub = `or(access_level.lte.1,and(access_level.is.null,or(${coreOr})))`;
   // Skip mega-notes (activity logs, full meeting transcripts of 200k+ chars):
   // they contain every keyword yet describe nothing, so ordering by size used
   // to surface pure noise. Focused notes are where the actual answers live.
