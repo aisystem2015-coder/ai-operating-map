@@ -94,6 +94,15 @@ function render(rows: { title: string; content: string; updated_at?: string }[],
 // fixing a real leak. Same fix applied server-side in scripts/brain_retrieve.py.
 const CORE_PUBLIC_TITLES = ["Personal — Fran Guevara", "Negocio — Logitech", "Estrategia — Going Bullish"];
 
+// "What is true NOW", as opposed to the rest of the vault, which is historical
+// synthesis true at the time it was written. Added 21 aug 2026 after the twin
+// was found describing Francisco in the present tense as working at Logitech,
+// with no mention that his contract ends this month — to a public audience,
+// while he is job-hunting. This note is ALWAYS retrieved and always placed
+// first, rather than left to compete on keyword match: a question phrased
+// "what's he up to these days" shares no keywords with the note that answers it.
+const CURRENT_STATE_TITLE = "Estado Actual";
+
 async function retrieve(q: string) {
   // public-safe: explicit access_level 0/1, or the curated identity allowlist above.
   const coreOr = CORE_PUBLIC_TITLES.map((t) => `title.eq.${encodeURIComponent(t)}`).join(",");
@@ -107,6 +116,10 @@ async function retrieve(q: string) {
   // FOCUSED notes first (char_count ascending), not the biggest dump.
   const order = wantsRecency(q) ? "updated_at.desc" : "char_count.asc";
 
+  // Unconditional, before anything else.
+  const currentState = (await get(
+    `${sel}&title=eq.${encodeURIComponent(CURRENT_STATE_TITLE)}&limit=1`)) || [];
+
   if (ts.length) {
     // Title matches are the most specific — take them first (no size cap: a
     // title match is on-topic even if the note is long).
@@ -117,7 +130,9 @@ async function retrieve(q: string) {
     const byContent = (await get(`${sel}&and=(${pub},${cap},or(${anyMatch}))&order=${order}&limit=6`)) || [];
     const seen = new Set<string>();
     const merged: { title: string; content: string; updated_at?: string }[] = [];
-    for (const r of [...byTitle, ...byContent]) {
+    // currentState first so it survives the slice(0, 5) below — a truncation
+    // that drops the "what's true now" note is exactly the failure this fixes.
+    for (const r of [...currentState, ...byTitle, ...byContent]) {
       if (r && r.title && !seen.has(r.title)) { seen.add(r.title); merged.push(r); }
     }
     if (merged.length) return render(merged.slice(0, 5), ts);
@@ -125,7 +140,8 @@ async function retrieve(q: string) {
   // Nothing matched (or a pure "what's the latest" question): newest focused
   // public notes beat an empty context, which is what made the twin improvise.
   const recent = await get(`${sel}&and=(${pub},${cap})&order=updated_at.desc&limit=3`);
-  return recent && recent.length ? render(recent, ts) : "";
+  const tail = [...currentState, ...(recent || [])];
+  return tail.length ? render(tail.slice(0, 4), ts) : "";
 }
 
 export async function POST(req: NextRequest) {
@@ -157,7 +173,13 @@ export async function POST(req: NextRequest) {
   }
 
   const context = await retrieve(message);
-  const system = `You are the public-facing digital twin of Francisco Guevara, answering ON BEHALF OF him for a website visitor. Speak about Francisco in the third person, warm and concise (a few sentences). Only use the CONTEXT below — never invent facts. If it isn't there, say so plainly and offer a public topic.\n\nCONTEXT:\n${context || "(no public notes matched)"}\n`;
+  const system = `You are the public-facing digital twin of Francisco Guevara, answering ON BEHALF OF him for a website visitor. Speak about Francisco in the third person, warm and concise (a few sentences). Only use the CONTEXT below — never invent facts. If it isn't there, say so plainly and offer a public topic.
+
+CURRENCY RULE: if a note titled "Estado Actual" appears in the CONTEXT, it describes what is true NOW and OVERRIDES every other note on any point where they disagree. The others are historical syntheses — true when written, not necessarily now. Never state something in the present tense that "Estado Actual" marks as ended, changed, or unconfirmed. Where it says a fact is unconfirmed, say it is unconfirmed rather than picking one version.
+
+CONTEXT:
+${context || "(no public notes matched)"}
+`;
 
   // gpt-oss spends reasoning tokens SEPARATELY from content — with too small a
   // budget the reasoning eats it all and content comes back EMPTY (the old
