@@ -103,15 +103,46 @@ const CORE_PUBLIC_TITLES = ["Personal — Fran Guevara", "Negocio — Logitech",
 // "what's he up to these days" shares no keywords with the note that answers it.
 const CURRENT_STATE_TITLE = "Estado Actual";
 
+// Notes that exist but are navigation/meta, not things a visitor would want
+// offered as a conversation topic.
+const NOT_A_TOPIC = ["README", "Índice", "Indice", "Adjuntos"];
+
+/**
+ * The topics this twin can genuinely talk about, derived from what is actually
+ * public right now rather than hardcoded — so it stays true as content grows
+ * and never offers something that has since been made private.
+ *
+ * Why this exists: the hardest unsolved problem in every personal-twin project
+ * surveyed is that a visitor cannot tell when they've exhausted the real
+ * content, so they keep asking and the model keeps obliging with plausible
+ * invention. A refusal that names two things Francisco HAS covered ends that
+ * loop honestly, and is far more useful to a recruiter than "I don't have that".
+ */
+async function offerableTopics(sel: string, pub: string): Promise<string[]> {
+  const rows = (await get(
+    `${sel}&and=(${pub})&order=char_count.desc&limit=20`)) || [];
+  return rows
+    .map((r: { title: string }) => r.title)
+    .filter((t: string) => t && !NOT_A_TOPIC.some((bad) => t.includes(bad)))
+    .slice(0, 6);
+}
+
+function publicFilter() {
+  const coreOr = CORE_PUBLIC_TITLES.map((t) => `title.eq.${encodeURIComponent(t)}`).join(",");
+  return `or(access_level.lte.1,and(access_level.is.null,or(${coreOr})))`;
+}
+
+const SELECT_COLS =
+  `${SUPABASE_URL}/rest/v1/vault_notes?select=title,folder,content,access_level,updated_at,char_count`;
+
 async function retrieve(q: string) {
   // public-safe: explicit access_level 0/1, or the curated identity allowlist above.
-  const coreOr = CORE_PUBLIC_TITLES.map((t) => `title.eq.${encodeURIComponent(t)}`).join(",");
-  const pub = `or(access_level.lte.1,and(access_level.is.null,or(${coreOr})))`;
+  const pub = publicFilter();
   // Skip mega-notes (activity logs, full meeting transcripts of 200k+ chars):
   // they contain every keyword yet describe nothing, so ordering by size used
   // to surface pure noise. Focused notes are where the actual answers live.
   const cap = "char_count.lt.40000";
-  const sel = `${SUPABASE_URL}/rest/v1/vault_notes?select=title,folder,content,access_level,updated_at,char_count`;
+  const sel = SELECT_COLS;
   const ts = terms(q);
   // FOCUSED notes first (char_count ascending), not the biggest dump.
   const order = wantsRecency(q) ? "updated_at.desc" : "char_count.asc";
@@ -172,10 +203,18 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  const context = await retrieve(message);
+  const [context, topics] = await Promise.all([
+    retrieve(message),
+    offerableTopics(SELECT_COLS, publicFilter()),
+  ]);
   const system = `You are the public-facing digital twin of Francisco Guevara, answering ON BEHALF OF him for a website visitor. Speak about Francisco in the third person, warm and concise (a few sentences). Only use the CONTEXT below — never invent facts. If it isn't there, say so plainly and offer a public topic.
 
 CURRENCY RULE: if a note titled "Estado Actual" appears in the CONTEXT, it describes what is true NOW and OVERRIDES every other note on any point where they disagree. The others are historical syntheses — true when written, not necessarily now. Never state something in the present tense that "Estado Actual" marks as ended, changed, or unconfirmed. Where it says a fact is unconfirmed, say it is unconfirmed rather than picking one version.
+
+WHEN YOU DON'T HAVE THE ANSWER: say so in one plain sentence, then name TWO specific things from the AVAILABLE TOPICS list you could talk about instead. Never pad a thin answer to sound complete, and never offer a topic that isn't on that list — the point is to let the visitor see where the real content ends, not to keep the conversation going at the cost of accuracy.
+
+AVAILABLE TOPICS (the only things you may offer):
+${topics.length ? topics.map((t) => `- ${t}`).join("\n") : "- (none loaded)"}
 
 CONTEXT:
 ${context || "(no public notes matched)"}
