@@ -82,17 +82,15 @@ function render(rows: { title: string; content: string; updated_at?: string }[],
   ).join("\n\n").slice(0, 9000);
 }
 
-// SECURITY FIX (21 aug 2026): the old `pub` filter treated ANY untagged note as
-// public-safe. 261 of 286 vault notes have no access_level at all — including
-// raw Drive-mirror dumps and internal planning docs never meant to be public —
-// and this endpoint's own anon Supabase key could read every one of them via
-// full-text search. Now: only explicit access_level 0/1 counts as public,
-// EXCEPT a small hand-picked identity allowlist (same list scripts/brain_retrieve.py
-// treats as the core "who is Francisco" fallback) — those 3 titles are untagged
-// but were deliberately curated to answer basic "who is Francisco" questions for
-// anonymous visitors, so excluding them would silently break that instead of
-// fixing a real leak. Same fix applied server-side in scripts/brain_retrieve.py.
-const CORE_PUBLIC_TITLES = ["Personal — Fran Guevara", "Negocio — Logitech", "Estrategia — Going Bullish"];
+// SECURITY (21 aug 2026, in two steps — see publicFilter() below for the full
+// story). Step 1: the original filter treated ANY untagged note as public-safe,
+// and 261 of 286 vault notes are untagged, including raw Drive-mirror dumps.
+// Step 2, same day: the replacement still allowlisted three untagged identity
+// notes, which turned out to expose personal life and financial goals. Both are
+// closed now. The rule that survived: public means access_level <= 1, marked
+// deliberately by a person. If one of those identity notes should be public,
+// tag it in the vault after reading what's actually in it — don't re-add an
+// allowlist here.
 
 // "What is true NOW", as opposed to the rest of the vault, which is historical
 // synthesis true at the time it was written. Added 21 aug 2026 after the twin
@@ -127,9 +125,22 @@ async function offerableTopics(sel: string, pub: string): Promise<string[]> {
     .slice(0, 6);
 }
 
+// TIGHTENED, same day it was introduced. Earlier today this filter also
+// allowlisted three UNTAGGED notes (Personal — Fran Guevara, Negocio —
+// Logitech, Estrategia — Going Bullish) so the public twin wouldn't lose its
+// basic "who is Francisco" answer. Then I asked the deployed twin to list what
+// it could discuss and it volunteered his personal life goals — "$500M by 30",
+// "mínimo 3 hijos, idealmente 5", financial independence — plus Logitech
+// internal system names. On a public site, under his name, while he is job
+// hunting and recruiters are the expected visitors.
+//
+// Nobody ever marked those three notes public; I allowlisted them to avoid
+// breaking an answer. That reason is gone: "Estado Actual" (access_level 1,
+// written deliberately for public consumption) and the curated level-1
+// "Perfil de Persona — Consolidado" now cover identity, and neither contains
+// the personal material. So public means what someone actually marked public.
 function publicFilter() {
-  const coreOr = CORE_PUBLIC_TITLES.map((t) => `title.eq.${encodeURIComponent(t)}`).join(",");
-  return `or(access_level.lte.1,and(access_level.is.null,or(${coreOr})))`;
+  return "access_level.lte.1";
 }
 
 const SELECT_COLS =
