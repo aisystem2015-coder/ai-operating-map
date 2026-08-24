@@ -22,9 +22,16 @@ export function GET(req: NextRequest) {
   const mcp = `${base}/api/twin-mcp`;
   return NextResponse.json({
     issuer: base,
-    authorization_endpoint: `${mcp}?p=authorize`,
-    token_endpoint: `${mcp}?p=token`,
-    registration_endpoint: `${mcp}?p=register`,
+    // Real paths, NOT `?p=` query params. Grok appends its own parameters with
+    // "?" assuming the endpoint has no query string, which turned
+    // `${mcp}?p=authorize` into `...?p=authorize?response_type=code&...` — two
+    // question marks, a `p` value that matched nothing, and an "invalid token"
+    // error on a flow that never reached authorization. Claude appended with
+    // "&" and worked, which is why only one client broke. A path has no such
+    // trap regardless of how a client concatenates.
+    authorization_endpoint: `${mcp}/authorize`,
+    token_endpoint: `${mcp}/token`,
+    registration_endpoint: `${mcp}/register`,
     response_types_supported: ["code"],
     grant_types_supported: ["authorization_code"],
     code_challenge_methods_supported: ["S256"],

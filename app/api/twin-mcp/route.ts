@@ -18,10 +18,10 @@
  */
 import { NextRequest, NextResponse } from "next/server";
 import { retrieve, MAX_CLOUD_LEVEL } from "@/lib/twin-retrieval";
+import { verifyToken } from "@/lib/twin-oauth";
 import {
-  registerClient, getClient, createCode, consumeCode,
-  issueToken, verifyToken, verifyPkce,
-} from "@/lib/twin-oauth";
+  handleRegister, handleToken, handleAuthorize, handleProtectedResource,
+} from "@/lib/twin-mcp-oauth-handlers";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -203,44 +203,10 @@ export async function POST(req: NextRequest) {
   const path = url.searchParams.get("p") || "mcp";
 
   // ── OAuth: dynamic client registration ──
-  if (path === "register") {
-    const body = await req.json().catch(() => ({}));
-    const uris: string[] = body?.redirect_uris || [];
-    if (!uris.length) {
-      return NextResponse.json({ error: "invalid_client_metadata" }, { status: 400 });
-    }
-    const c = await registerClient(uris, body?.client_name);
-    return NextResponse.json({
-      client_id: c.client_id, client_secret: c.client_secret,
-      redirect_uris: c.redirect_uris, client_name: c.client_name,
-      token_endpoint_auth_method: "none",
-    }, { status: 201 });
-  }
-
-  // ── OAuth: code → token ──
-  if (path === "token") {
-    const form = await req.formData().catch(() => null);
-    const get = (k: string) => (form?.get(k) as string | null) || undefined;
-    const code = get("code");
-    const verifier = get("code_verifier");
-    const clientId = get("client_id");
-    if (!code) return NextResponse.json({ error: "invalid_request" }, { status: 400 });
-
-    const row = await consumeCode(code);
-    if (!row) return NextResponse.json({ error: "invalid_grant" }, { status: 400 });
-    if (clientId && row.client_id !== clientId) {
-      return NextResponse.json({ error: "invalid_grant" }, { status: 400 });
-    }
-    if (!(await verifyPkce(row.code_challenge, verifier))) {
-      return NextResponse.json({ error: "invalid_grant" }, { status: 400 });
-    }
-    const { token, expiresIn } = await issueToken(
-      row.client_id, row.scopes || [], row.resource);
-    return NextResponse.json({
-      access_token: token, token_type: "bearer",
-      expires_in: expiresIn, scope: (row.scopes || []).join(" "),
-    });
-  }
+  // Legacy ?p= forms, kept so connectors registered before the real paths
+  // existed keep working. Both delegate to the same handlers.
+  if (path === "register") return handleRegister(req);
+  if (path === "token") return handleToken(req);
 
   // ── MCP JSON-RPC ──
   const bearer = extractBearer(req.headers.get("authorization"));
@@ -252,7 +218,7 @@ export async function POST(req: NextRequest) {
       { status: 401, headers: {
           "content-type": "application/json",
           "WWW-Authenticate":
-            `Bearer resource_metadata="${baseUrl(req)}/api/twin-mcp?p=protected-resource"`,
+            `Bearer resource_metadata="${baseUrl(req)}/api/twin-mcp/protected-resource"`,
         } });
   }
 
@@ -297,35 +263,13 @@ export async function GET(req: NextRequest) {
   const url = new URL(req.url);
   const base = baseUrl(req);
   const self = `${base}/api/twin-mcp`;
-  switch (url.searchParams.get("p")) {
-    case "authorize": {
-      // Auto-approve, matching the Mac connector exactly. A token grants level 0
-      // (public) only — the real gate is the per-request accessCode — so there is
-      // nothing here for a human to approve. See lib/twin-oauth.ts.
-      const clientId = url.searchParams.get("client_id") || "";
-      const redirectUri = url.searchParams.get("redirect_uri") || "";
-      const client = await getClient(clientId);
-      if (!client) return NextResponse.json({ error: "invalid_client" }, { status: 400 });
-      if (!client.redirect_uris.includes(redirectUri)) {
-        return NextResponse.json({ error: "invalid_redirect_uri" }, { status: 400 });
-      }
-      const code = await createCode({
-        clientId, redirectUri,
-        codeChallenge: url.searchParams.get("code_challenge") || undefined,
-        scopes: (url.searchParams.get("scope") || "").split(" ").filter(Boolean),
-        resource: url.searchParams.get("resource") || undefined,
-      });
-      const target = new URL(redirectUri);
-      target.searchParams.set("code", code);
-      const state = url.searchParams.get("state");
-      if (state !== null) target.searchParams.set("state", state);
-      return NextResponse.redirect(target.toString());
-    }
-    case "protected-resource":
-      return NextResponse.json({
-        resource: self,
-        authorization_servers: [base],
-      });
+  // A client that appended with "?" leaves the real params glued onto `p`, e.g.
+  // p="authorize?response_type=code&...". Match on the prefix so a malformed URL
+  // still lands in the right branch; handleAuthorize un-glues the rest.
+  const p = url.searchParams.get("p") || "";
+  if (p.startsWith("authorize")) return handleAuthorize(req);
+  if (p.startsWith("protected-resource")) return handleProtectedResource(req);
+  switch (p) {
     default: {
       // AUTH CHALLENGE FIRST on a bare GET, matching the Mac connector, which
       // demonstrably works with real clients. Evidence, not guesswork: the Mac
@@ -344,7 +288,7 @@ export async function GET(req: NextRequest) {
           { status: 401, headers: {
               "content-type": "application/json",
               "WWW-Authenticate":
-                `Bearer resource_metadata="${base}/api/twin-mcp?p=protected-resource"`,
+                `Bearer resource_metadata="${base}/api/twin-mcp/protected-resource"`,
             } });
       }
       // Authenticated, but this transport has no server-push stream: JSON-RPC
