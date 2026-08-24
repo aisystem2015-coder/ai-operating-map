@@ -101,6 +101,85 @@ function render(rows: { title: string; content: string; updated_at?: string }[],
 // "what's he up to these days" shares no keywords with the note that answers it.
 const CURRENT_STATE_TITLE = "Estado Actual";
 
+// ─── curated answers for when generation is unavailable ─────────────────────
+// Added 24 aug 2026, after the public twin was found returning the same generic
+// non-answer to every question: Groq's free tier caps at 200k tokens/day and the
+// account had used 199,978. Both models 429 — the daily cap is per ACCOUNT, not
+// per model, so the model-level fallback added on 21 aug does nothing here
+// (it protects against a decommissioned or empty-returning model, not a quota).
+//
+// The questions people actually ask are few and repeat constantly: the analytics
+// table shows "Who is Francisco", "What are his skills", "What is a digital
+// twin", "What is the AI Operating Map" and "Tell me about his time at Logitech"
+// over and over. So a handful of accurate written answers covers most real
+// traffic when the model is down.
+//
+// WHY NOT A CACHE TABLE: this repository is public and the anon Supabase key is
+// in this file, so granting anon INSERT would let anyone write what Francisco's
+// twin says about him. A read-only constant has no such hole.
+//
+// These are drawn from the public (access_level <= 1) notes. Keep them short and
+// keep them true; a stale fact here is exactly the failure the Estado Actual
+// note exists to prevent.
+const FALLBACK_ANSWERS: { match: RegExp; reply: string }[] = [
+  {
+    match: /\b(who is|quien es|qui[eé]n es|about francisco|sobre francisco)\b/i,
+    reply:
+      "Francisco Guevara is a Bolivian professional based in the San Francisco Bay Area, " +
+      "working in global operations at Logitech on a fixed-term contract that runs to the " +
+      "end of August 2026. He works as a generalist — the internal \"Swiss army knife\" — " +
+      "and outside that role he's building an AI Operating Map and a personal Digital Twin, " +
+      "both about how operations teams actually adopt AI.",
+  },
+  {
+    match: /\b(skills?|habilidades|what can he do|qu[eé] sabe hacer)\b/i,
+    reply:
+      "Francisco works at the seam between operations and AI: business architecture, " +
+      "stakeholder management, and translating technical systems into something a " +
+      "non-technical team will actually use. He's a deliberate generalist rather than a " +
+      "specialist, and he builds the systems he talks about — the Digital Twin and the " +
+      "AI Operating Map are his own work, not case studies.",
+  },
+  {
+    match: /\b(digital twin|gemelo digital)\b/i,
+    reply:
+      "A digital twin, here, means a person's own knowledge captured as structured data " +
+      "they own — so any AI model can be connected to it and answer as them, from their " +
+      "material rather than from guesswork. Francisco built one for himself: his notes, " +
+      "history and decisions live in a database he controls, with access tiers deciding " +
+      "what's public and what never leaves his machine. This chat is that system running.",
+  },
+  {
+    match: /\b(ai operating map|operating map)\b/i,
+    reply:
+      "The AI Operating Map is Francisco's written work on how AI actually lands inside " +
+      "operations teams — what works, where pilots stall, and why the blockers are usually " +
+      "data and mindset rather than the model. It came out of the World Summit AI in " +
+      "Amsterdam and has been updated since with 2026 data.",
+  },
+  {
+    match: /\b(logitech)\b/i,
+    reply:
+      "Francisco works in Logitech's global operations, crossing time zones daily, and was " +
+      "picked for an internal AI-impact programme before AI became an enterprise priority " +
+      "there. His contract is fixed-term and tied to his visa, and it ends at the end of " +
+      "August 2026 — that's a contract expiring, not a resignation.",
+  },
+  {
+    match: /\b(vision|visi[oó]n|opinion|opini[oó]n|think about ai|piensa de la ia)\b/i,
+    reply:
+      "Francisco's line is that AI isn't a product, it's the reasoning layer inside a " +
+      "system — and that value compounds from what you build around the model, not from " +
+      "the model alone. In practice he argues most AI efforts stall on data and mindset " +
+      "long before they stall on technology.",
+  },
+];
+
+function fallbackAnswer(message: string): string | null {
+  const hit = FALLBACK_ANSWERS.find((f) => f.match.test(message));
+  return hit ? hit.reply : null;
+}
+
 // Notes that exist but are navigation/meta, not things a visitor would want
 // offered as a conversation topic.
 const NOT_A_TOPIC = ["README", "Índice", "Indice", "Adjuntos"];
@@ -258,9 +337,24 @@ ${context || "(no public notes matched)"}
     let reply = await ask(MODEL, 2500);
     if (!reply) reply = await ask(FALLBACK_MODEL, 2500);
     if (!reply) reply = await ask(MODEL, 5000); // last try, extra headroom
+    if (reply) return NextResponse.json({ reply, connected: true });
+
+    // Generation unavailable. Answer from the curated set if the question is one
+    // of the common ones, and say plainly that the live twin is down rather than
+    // returning a cheerful non-answer — which is what a visitor saw for every
+    // single question while the quota was exhausted, with connected:true, so
+    // nothing anywhere reported a problem.
+    const canned = fallbackAnswer(message);
     return NextResponse.json({
-      reply: reply || "I'm Francisco's digital twin — ask me about his work, background, or what he's building right now.",
-      connected: true,
+      reply: canned
+        ? canned + "\n\n_(Answering from a written summary — the live twin is " +
+          "temporarily unavailable, so I can't go deeper than this right now.)_"
+        : "The live twin is temporarily unavailable, so I can't answer that one " +
+          "right now. I can still tell you about Francisco's background, his " +
+          "skills, his time at Logitech, the AI Operating Map, or what a digital " +
+          "twin is — or try again shortly.",
+      connected: false,
+      degraded: true,
     });
   } catch {
     return NextResponse.json({ reply: "Something went wrong reaching the cloud twin — try again.", connected: false });
