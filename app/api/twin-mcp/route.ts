@@ -47,13 +47,31 @@ const LEVEL_PASSWORDS: Record<number, string | undefined> = {
   4: process.env.TWIN_LEVEL_4_PASSWORD,
 };
 
+/**
+ * 1, not 0 — and this is a correctness fix, not a loosening.
+ *
+ * NOTHING in the vault is tagged access_level 0. Every genuinely public note
+ * (Estado Actual, Perfil de Persona, Live CV, Wins, Qué es el Digital Twin) is
+ * tagged 1, and the deployed website has always served `<= 1` to anonymous
+ * visitors. So level 0 selects the empty set: an unauthenticated connector got
+ * a payload with no notes and no core profile at all — the twin appearing to
+ * know nothing about Francisco. Exactly the bug found in
+ * twin_public_backend.mjs on 24 aug, reproduced here on the first end-to-end
+ * test of this endpoint.
+ */
+const DEFAULT_LEVEL = 1;
+
 function levelForCode(code?: string): number {
-  if (!code) return 0;
+  if (!code) return DEFAULT_LEVEL;
   for (const [lvl, pw] of Object.entries(LEVEL_PASSWORDS)) {
     // Compare against configured passwords only. An unset env var must never
     // match an empty/undefined accessCode into granting a level.
     if (pw && code === pw) return Number(lvl);
   }
+  // A WRONG code lands here. It must not be treated as "no code given": falling
+  // back to DEFAULT_LEVEL would silently hand public access to someone who just
+  // guessed at a password, and they'd get a plausible answer with no sign the
+  // code was rejected. Same clamp the Mac connector uses.
   return 0;
 }
 
