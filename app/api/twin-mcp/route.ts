@@ -137,6 +137,28 @@ const TOOL = {
   },
 };
 
+/**
+ * Pull the token out of an Authorization header, tolerantly.
+ *
+ * Clients differ in what they do with a header a user typed by hand. Grok's
+ * connector form takes raw headers, so if Francisco enters "Bearer <token>" and
+ * the client also prepends its own scheme, the server sees
+ * "Bearer Bearer <token>" — and a single-strip regex leaves "Bearer <token>" as
+ * the token, which fails with an unhelpful "invalid token" while the token
+ * itself is perfectly valid. Same for stray quotes or whitespace from a paste.
+ *
+ * Being permissive about the WRAPPER costs nothing: the token still has to
+ * match a live row. This forgives formatting, not authentication.
+ */
+function extractBearer(header: string | null): string {
+  let v = (header || "").trim();
+  // Repeated scheme prefixes, any casing.
+  while (/^Bearer\s+/i.test(v)) v = v.replace(/^Bearer\s+/i, "").trim();
+  // Quotes some UIs add around a pasted value.
+  v = v.replace(/^["']|["']$/g, "").trim();
+  return v;
+}
+
 const jsonrpc = (id: unknown, result: unknown) =>
   NextResponse.json({ jsonrpc: "2.0", id, result });
 const rpcError = (id: unknown, code: number, message: string) =>
@@ -221,8 +243,7 @@ export async function POST(req: NextRequest) {
   }
 
   // ── MCP JSON-RPC ──
-  const auth = req.headers.get("authorization") || "";
-  const bearer = auth.replace(/^Bearer\s+/i, "");
+  const bearer = extractBearer(req.headers.get("authorization"));
   if (!(await verifyToken(bearer))) {
     // The 401 + WWW-Authenticate challenge is what starts the OAuth dance in
     // every MCP client. Without the header they give up instead of registering.
@@ -316,7 +337,7 @@ export async function GET(req: NextRequest) {
       // the endpoint isn't usable and stop. Receiving 401 tells it exactly what
       // to do next: go read the discovery document and start OAuth. Only once
       // authenticated does the honest "no SSE here" answer make sense.
-      const auth = (req.headers.get("authorization") || "").replace(/^Bearer\s+/i, "");
+      const auth = extractBearer(req.headers.get("authorization"));
       if (!(await verifyToken(auth))) {
         return new NextResponse(
           JSON.stringify({ error: "invalid_token" }),
