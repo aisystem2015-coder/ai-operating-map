@@ -306,6 +306,23 @@ export async function GET(req: NextRequest) {
         authorization_servers: [base],
       });
     default:
-      return NextResponse.json({ status: "twin mcp (cloud)", maxLevel: MAX_CLOUD_LEVEL });
+      // 405, not a 200 status blob. In MCP's Streamable HTTP transport a GET on
+      // the endpoint means "open an SSE stream"; a server that doesn't support
+      // streaming is required to answer 405. Returning 200 with arbitrary JSON
+      // made clients that probe with GET first — Grok among them — fail to
+      // recognise this as an MCP server at all, and Francisco hit exactly that:
+      // a connector screen it could never complete.
+      //
+      // Keeps a human-readable hint in the body for anyone who pastes the URL
+      // into a browser, since that is the other way people arrive here.
+      return new NextResponse(
+        JSON.stringify({
+          error: "method_not_allowed",
+          hint: "This is an MCP endpoint. It speaks JSON-RPC over POST; SSE streaming is not supported. " +
+                "Add this URL as a custom MCP connector rather than opening it in a browser.",
+          maxLevel: MAX_CLOUD_LEVEL,
+        }),
+        { status: 405, headers: { "content-type": "application/json", allow: "POST" } },
+      );
   }
 }
