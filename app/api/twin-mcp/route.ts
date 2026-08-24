@@ -305,24 +305,37 @@ export async function GET(req: NextRequest) {
         resource: self,
         authorization_servers: [base],
       });
-    default:
-      // 405, not a 200 status blob. In MCP's Streamable HTTP transport a GET on
-      // the endpoint means "open an SSE stream"; a server that doesn't support
-      // streaming is required to answer 405. Returning 200 with arbitrary JSON
-      // made clients that probe with GET first — Grok among them — fail to
-      // recognise this as an MCP server at all, and Francisco hit exactly that:
-      // a connector screen it could never complete.
+    default: {
+      // AUTH CHALLENGE FIRST on a bare GET, matching the Mac connector, which
+      // demonstrably works with real clients. Evidence, not guesswork: the Mac
+      // server answers an unauthenticated GET with 401 + WWW-Authenticate,
+      // while this one answered 405 — and Claude connected while Grok never
+      // got past its connector screen.
       //
-      // Keeps a human-readable hint in the body for anyone who pastes the URL
-      // into a browser, since that is the other way people arrive here.
+      // A client that probes with GET and receives 405 can reasonably conclude
+      // the endpoint isn't usable and stop. Receiving 401 tells it exactly what
+      // to do next: go read the discovery document and start OAuth. Only once
+      // authenticated does the honest "no SSE here" answer make sense.
+      const auth = (req.headers.get("authorization") || "").replace(/^Bearer\s+/i, "");
+      if (!(await verifyToken(auth))) {
+        return new NextResponse(
+          JSON.stringify({ error: "invalid_token" }),
+          { status: 401, headers: {
+              "content-type": "application/json",
+              "WWW-Authenticate":
+                `Bearer resource_metadata="${base}/api/twin-mcp?p=protected-resource"`,
+            } });
+      }
+      // Authenticated, but this transport has no server-push stream: JSON-RPC
+      // over POST only. 405 is the correct answer per Streamable HTTP.
       return new NextResponse(
         JSON.stringify({
           error: "method_not_allowed",
-          hint: "This is an MCP endpoint. It speaks JSON-RPC over POST; SSE streaming is not supported. " +
-                "Add this URL as a custom MCP connector rather than opening it in a browser.",
+          hint: "MCP endpoint: JSON-RPC over POST. SSE streaming is not supported.",
           maxLevel: MAX_CLOUD_LEVEL,
         }),
         { status: 405, headers: { "content-type": "application/json", allow: "POST" } },
       );
+    }
   }
 }
