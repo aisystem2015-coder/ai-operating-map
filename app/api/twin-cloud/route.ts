@@ -304,7 +304,7 @@ async function askGemini(system: string, message: string): Promise<string> {
   const body = JSON.stringify({
     systemInstruction: { parts: [{ text: system }] },
     contents: [{ role: "user", parts: [{ text: message }] }],
-    generationConfig: { temperature: 0.4, maxOutputTokens: 2500 },
+    generationConfig: { temperature: 0.4, maxOutputTokens: 900 },
   });
   for (const model of GEMINI_MODELS) {
     try {
@@ -517,9 +517,19 @@ ${context || "(no public notes matched)"}
     // both models share one key, so a 429 on the primary means the fallback is
     // already gone too. `ask` throws QuotaExhausted rather than returning "" so
     // these lines stop instead of firing two more doomed requests.
-    let reply = await ask(MODEL, 2500);
-    if (!reply) reply = await ask(FALLBACK_MODEL, 2500);
-    if (!reply) reply = await ask(MODEL, 5000); // last try, extra headroom
+    // 900, no 2500. Groq cobra `max_tokens` RESERVADOS contra la cuota diaria,
+    // se usen o no, y este twin responde en pocas frases: las respuestas reales
+    // medidas el 25 ago iban de 278 a 1.400 caracteres, o sea 80-400 tokens.
+    // Reservar 2500 pagaba ~2000 tokens de aire en cada pregunta.
+    //
+    // Con 200.000 tokens/día eso era la diferencia entre ~33 y ~50 preguntas
+    // diarias — y a 33 el twin se caía solo, sin que nadie hiciera nada raro.
+    let reply = await ask(MODEL, 900);
+    if (!reply) reply = await ask(FALLBACK_MODEL, 900);
+    // El tercer intento subía a 5000 y podía costar 10.000 tokens en una sola
+    // pregunta fallida. 1400 da margen real al modelo que gasta tokens razonando
+    // sin convertir un fallo en el 5% del presupuesto del día.
+    if (!reply) reply = await ask(MODEL, 1400);
     if (reply) return NextResponse.json({ reply, connected: true });
 
     // Generation unavailable. Answer from the curated set if the question is one
