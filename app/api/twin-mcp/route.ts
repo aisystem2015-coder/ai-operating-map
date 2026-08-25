@@ -61,18 +61,42 @@ const LEVEL_PASSWORDS: Record<number, string | undefined> = {
  */
 const DEFAULT_LEVEL = 1;
 
-function levelForCode(code?: string): number {
-  if (!code) return DEFAULT_LEVEL;
+/** True when no level password is configured at all — i.e. the deployment has
+ *  no way to honour ANY code, so every code looks wrong. Distinguishing this
+ *  from a genuinely wrong code is the whole point of `levelForCode` returning
+ *  a reason: see the comment there. */
+function noLevelsConfigured(): boolean {
+  return !Object.values(LEVEL_PASSWORDS).some(Boolean);
+}
+
+type LevelDecision = { level: number; reason: "default" | "matched" | "wrong" | "unconfigured" };
+
+function levelForCode(code?: string): LevelDecision {
+  if (!code) return { level: DEFAULT_LEVEL, reason: "default" };
   for (const [lvl, pw] of Object.entries(LEVEL_PASSWORDS)) {
     // Compare against configured passwords only. An unset env var must never
     // match an empty/undefined accessCode into granting a level.
-    if (pw && code === pw) return Number(lvl);
+    if (pw && code === pw) return { level: Number(lvl), reason: "matched" };
   }
-  // A WRONG code lands here. It must not be treated as "no code given": falling
-  // back to DEFAULT_LEVEL would silently hand public access to someone who just
-  // guessed at a password, and they'd get a plausible answer with no sign the
-  // code was rejected. Same clamp the Mac connector uses.
-  return 0;
+  // Nothing matched. Two very different situations land here and they must not
+  // be collapsed:
+  //
+  // 1. UNCONFIGURED — this deployment has no level passwords set, so a correct
+  //    code is indistinguishable from a wrong one. Clamping to 0 here means
+  //    typing your OWN password returns *less* than typing nothing (measured on
+  //    24 aug: 803 chars with the right code vs 19,720 without it). The twin
+  //    looks like it forgot who Francisco is, exactly when he reaches for more
+  //    access — and nothing in the response says the server was misconfigured.
+  //    So: keep the default level and say so out loud.
+  //
+  // 2. WRONG code — clamp to 0. Falling back to DEFAULT_LEVEL would silently
+  //    hand public access to someone who just guessed at a password, and they'd
+  //    get a plausible answer with no sign the code was rejected. Same clamp the
+  //    Mac connector uses.
+  if (noLevelsConfigured()) {
+    return { level: DEFAULT_LEVEL, reason: "unconfigured" };
+  }
+  return { level: 0, reason: "wrong" };
 }
 
 const LEVEL_LABELS: Record<number, string> = {
@@ -169,8 +193,23 @@ async function callTool(args: { question?: string; accessCode?: string }) {
   if (!question) {
     return { content: [{ type: "text", text: "Falta la pregunta." }], isError: true };
   }
-  const level = levelForCode(args?.accessCode);
+  const { level, reason } = levelForCode(args?.accessCode);
   logQuestion(question, level);
+
+  if (reason === "unconfigured") {
+    // Answering at the default level is right — losing access to the public
+    // twin over a server-side gap would be worse. But it must not pass for a
+    // working unlock, or the misconfiguration survives unnoticed.
+    return {
+      content: [{ type: "text", text:
+        `Este conector no tiene ningún código configurado, así que no puede ` +
+        `verificar el que mandaste — ni siquiera para decirte si es correcto. ` +
+        `Respondo igual con el nivel público (${LEVEL_LABELS[level]}).\n\n` +
+        `Es una falta de configuración del servidor, no un código equivocado: ` +
+        `faltan las variables TWIN_LEVEL_*_PASSWORD en Vercel. Mientras tanto, ` +
+        `los niveles privados se consultan por el conector de la Mac mini.` }],
+    };
+  }
 
   if (level > MAX_CLOUD_LEVEL) {
     // Say exactly what happened. A silent downgrade to public would look like
