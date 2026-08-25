@@ -285,24 +285,42 @@ class QuotaExhausted extends Error {}
  * before: the curated fallback answers and the response says the quota is gone.
  * Adding the variable in Vercel is the whole install.
  */
+/**
+ * Model chain, newest first. More than one name because Google decommissions
+ * these on its own schedule and answers a dead one with a 404, not a warning:
+ * gemini-2.0-flash and gemini-2.5-flash were BOTH already dead when this key was
+ * issued on 25 aug — and ListModels still advertised 2.5-flash as available, so
+ * asking the API which models exist is not a reliable check.
+ *
+ * Groq taught the same lesson when llama-3.3-70b disappeared and took the twin
+ * with it. A backup provider that 404s is worse than none: it looks configured.
+ * `-latest` sits last as a catch-all for the day every pinned name above dies.
+ */
+const GEMINI_MODELS = ["gemini-3.6-flash", "gemini-3-flash-preview", "gemini-flash-latest"];
+
 async function askGemini(system: string, message: string): Promise<string> {
   const key = process.env.GEMINI_API_KEY;
   if (!key) return "";
-  const url = "https://generativelanguage.googleapis.com/v1beta/models/" +
-    "gemini-2.0-flash:generateContent";
-  const r = await fetch(`${url}?key=${encodeURIComponent(key)}`, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({
-      systemInstruction: { parts: [{ text: system }] },
-      contents: [{ role: "user", parts: [{ text: message }] }],
-      generationConfig: { temperature: 0.4, maxOutputTokens: 2500 },
-    }),
+  const body = JSON.stringify({
+    systemInstruction: { parts: [{ text: system }] },
+    contents: [{ role: "user", parts: [{ text: message }] }],
+    generationConfig: { temperature: 0.4, maxOutputTokens: 2500 },
   });
-  if (!r.ok) return "";
-  const d = await r.json();
-  return (d?.candidates?.[0]?.content?.parts ?? [])
-    .map((p: { text?: string }) => p?.text || "").join("").trim();
+  for (const model of GEMINI_MODELS) {
+    try {
+      const r = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/` +
+        `${model}:generateContent?key=${encodeURIComponent(key)}`,
+        { method: "POST", headers: { "content-type": "application/json" }, body },
+      );
+      if (!r.ok) continue; // 404 = decommissioned; try the next name
+      const d = await r.json();
+      const text = (d?.candidates?.[0]?.content?.parts ?? [])
+        .map((p: { text?: string }) => p?.text || "").join("").trim();
+      if (text) return text;
+    } catch { /* red o modelo caído: seguir con el siguiente */ }
+  }
+  return "";
 }
 
 /**
