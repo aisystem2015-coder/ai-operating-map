@@ -270,6 +270,42 @@ async function retrieve(q: string) {
 class QuotaExhausted extends Error {}
 
 /**
+ * Second generation provider, for when Groq's daily cap is gone.
+ *
+ * Groq's 200k-tokens/day cap is per ACCOUNT, so the existing gpt-oss-120b ->
+ * 20b fallback buys nothing against it: one key, one budget, both models dead
+ * at the same instant. Real redundancy needs a different company.
+ *
+ * Gemini is the pick because its free tier is separately metered, generous, and
+ * Francisco already has a Google account — no new vendor relationship. It is
+ * only ever reached when Groq is exhausted, so its own quota stays untouched on
+ * a normal day and is full precisely when it's needed.
+ *
+ * With GEMINI_API_KEY unset this returns null and everything behaves exactly as
+ * before: the curated fallback answers and the response says the quota is gone.
+ * Adding the variable in Vercel is the whole install.
+ */
+async function askGemini(system: string, message: string): Promise<string> {
+  const key = process.env.GEMINI_API_KEY;
+  if (!key) return "";
+  const url = "https://generativelanguage.googleapis.com/v1beta/models/" +
+    "gemini-2.0-flash:generateContent";
+  const r = await fetch(`${url}?key=${encodeURIComponent(key)}`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      systemInstruction: { parts: [{ text: system }] },
+      contents: [{ role: "user", parts: [{ text: message }] }],
+      generationConfig: { temperature: 0.4, maxOutputTokens: 2500 },
+    }),
+  });
+  if (!r.ok) return "";
+  const d = await r.json();
+  return (d?.candidates?.[0]?.content?.parts ?? [])
+    .map((p: { text?: string }) => p?.text || "").join("").trim();
+}
+
+/**
  * Cheap liveness for the watchdog: proves the twin COULD answer, without
  * spending the budget that lets it actually answer.
  *
@@ -325,11 +361,24 @@ async function healthCheck(key?: string) {
         const msg = (() => {
           try { return JSON.parse(body)?.error?.message || body; } catch { return body; }
         })();
-        out.model = { ok: false, status: r.status, error: String(msg).slice(0, 300) };
-        out.degraded = true;
-        out.reason = r.status === 429
-          ? `cuota de Groq agotada — ${String(msg).slice(0, 200)}`
-          : `Groq devolvió ${r.status}`;
+        // Groq is down, but the twin is only DOWN if the backup is down too —
+        // so check before reporting. Calling it degraded while Gemini answers
+        // fine would page Francisco about a working twin, and an alert that
+        // cries wolf gets ignored exactly when it matters.
+        const backup = process.env.GEMINI_API_KEY ? await askGemini("ok", "ok") : "";
+        out.model = {
+          ok: Boolean(backup), status: r.status,
+          error: String(msg).slice(0, 300),
+          ...(backup ? { servedBy: "gemini (respaldo)" } : {}),
+        };
+        if (backup) {
+          out.note = "Groq caído; responde el respaldo. El twin sigue en pie.";
+        } else {
+          out.degraded = true;
+          out.reason = r.status === 429
+            ? `cuota de Groq agotada y sin respaldo — ${String(msg).slice(0, 160)}`
+            : `Groq devolvió ${r.status} y no hay respaldo`;
+        }
       }
     } catch (e) {
       out.model = { ok: false, error: String(e).slice(0, 120) };
@@ -475,6 +524,19 @@ ${context || "(no public notes matched)"}
     });
   } catch (e) {
     if (e instanceof QuotaExhausted) {
+      // Groq is out for the day. Try the other company before giving up — this
+      // is the only path that reaches Gemini, so its free tier is still intact
+      // exactly when Groq's isn't.
+      try {
+        const viaGemini = await askGemini(system, message);
+        if (viaGemini) {
+          return NextResponse.json({
+            reply: viaGemini, connected: true, provider: "gemini",
+            note: "Groq agotó su cuota diaria; respondió el proveedor secundario.",
+          });
+        }
+      } catch { /* cae al resumen curado, abajo */ }
+
       // Name the wall. A visitor still gets the curated answer; whoever is
       // debugging gets the number and the reset time instead of a shrug.
       const canned = fallbackAnswer(message);
