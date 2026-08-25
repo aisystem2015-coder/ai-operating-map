@@ -211,6 +211,34 @@ async function callTool(args: { question?: string; accessCode?: string }) {
     };
   }
 
+  if (reason === "wrong") {
+    // Un código que no coincide acá puede ser dos cosas MUY distintas, y este
+    // conector no puede distinguirlas: un código inventado, o un código de nivel
+    // 3-4 legítimo. Los niveles 3 y 4 no tienen contraseña configurada en la
+    // nube a propósito —su contenido está cifrado y sólo la Mac tiene la llave—
+    // así que un código correcto de nivel 3 llega acá igual que basura.
+    //
+    // Medido el 25 ago: mandar el código real de nivel 3 devolvía 803 caracteres
+    // de contenido público, idéntico a mandar "zzz9". Francisco leía eso como
+    // "mi contraseña no sirve", cuando lo cierto es "ese nivel no se sirve por
+    // este canal".
+    //
+    // El mensaje NO confirma si el código era válido. Decir "sí, ese es el de
+    // nivel 3, pero no puedo" le regala a quien adivina la confirmación de que
+    // acertó, y estas contraseñas son de dos y tres dígitos.
+    return {
+      content: [{ type: "text", text:
+        `Ese código no desbloquea nada en este canal.\n\n` +
+        `Dos motivos posibles, y desde acá no se distinguen:\n` +
+        `1. Es un código de nivel 3 o 4. Esos NO se sirven desde la nube: su ` +
+        `contenido está cifrado en reposo y sólo la Mac mini tiene la llave. ` +
+        `Se consultan por el conector de la Mac, no por este.\n` +
+        `2. El código es incorrecto.\n\n` +
+        `Sigo pudiendo responder con material público. Este conector llega hasta ` +
+        `nivel ${MAX_CLOUD_LEVEL} (${LEVEL_LABELS[MAX_CLOUD_LEVEL]}).` }],
+    };
+  }
+
   if (level > MAX_CLOUD_LEVEL) {
     // Say exactly what happened. A silent downgrade to public would look like
     // the twin "forgetting" his private material, which is worse than a refusal.
