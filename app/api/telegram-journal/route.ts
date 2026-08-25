@@ -113,8 +113,14 @@ async function transcribe(bytes: Uint8Array, filename: string): Promise<string> 
  *  nota de Francisco porque un clasificador no respondió sería peor que
  *  guardarla en el nivel conservador. */
 async function classify(text: string): Promise<Classified> {
+  // 800 y no 200: gpt-oss gasta tokens RAZONANDO antes de escribir, aparte del
+  // contenido. Con un presupuesto chico el razonamiento se lo come entero y la
+  // respuesta vuelve VACÍA — de forma intermitente, según la pregunta. Ya había
+  // mordido en /api/twin-cloud; acá volvió a aparecer y mandó la primera entrada
+  // real de Francisco al fallback (nivel 2 por defecto) en vez de clasificarla.
+  // La salida son ~40 tokens de JSON; el resto es espacio para que piense.
   const body = (model: string) => JSON.stringify({
-    model, max_tokens: 200, temperature: 0,
+    model, max_tokens: 800, temperature: 0,
     messages: [{ role: "system", content: CLASSIFY_PROMPT }, { role: "user", content: text }],
   });
   const parse = (raw: string, by: string): Classified | null => {
@@ -158,7 +164,7 @@ async function classify(text: string): Promise<Classified> {
             body: JSON.stringify({
               systemInstruction: { parts: [{ text: CLASSIFY_PROMPT }] },
               contents: [{ role: "user", parts: [{ text }] }],
-              generationConfig: { temperature: 0, maxOutputTokens: 200 },
+              generationConfig: { temperature: 0, maxOutputTokens: 800 },
             }),
           });
         if (!r.ok) continue;
