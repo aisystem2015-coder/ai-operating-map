@@ -63,6 +63,15 @@ function env(name: string): string | undefined {
   return process.env[name];
 }
 
+/** SHA-256 del token del bot con un prefijo fijo. Determinístico: el script que
+ *  llama a setWebhook calcula exactamente lo mismo, sin que nadie copie nada. */
+async function derivedSecret(botToken: string): Promise<string> {
+  const data = new TextEncoder().encode(`twin-journal-webhook:${botToken}`);
+  const hash = await crypto.subtle.digest("SHA-256", data);
+  return Array.from(new Uint8Array(hash))
+    .map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
 async function supa(path: string, init: RequestInit = {}) {
   const key = env("SUPABASE_SECRET_KEY")!;
   return fetch(`${SUPA}${path}`, {
@@ -173,15 +182,34 @@ async function say(token: string, chat: number, text: string) {
 }
 
 export async function POST(req: NextRequest) {
-  // ── puerta 1: el secreto que sólo Telegram conoce ──
-  const expected = env("TELEGRAM_WEBHOOK_SECRET");
-  if (!expected || req.headers.get("x-telegram-bot-api-secret-token") !== expected) {
-    // 401 sin detalle: a un escáner no se le explica qué le faltó.
-    return new NextResponse("no", { status: 401 });
-  }
   const token = env("TELEGRAM_DIARIO_BOT_TOKEN");
   if (!token || !env("SUPABASE_SECRET_KEY")) {
     return NextResponse.json({ ok: false, error: "sin configurar" }, { status: 500 });
+  }
+
+  // ── puerta 1: el secreto que sólo Telegram conoce ──
+  //
+  // Se DERIVA del token del bot en vez de guardarse como variable aparte.
+  // Motivo: una variable más es una oportunidad más de copiarla mal, y eso pasó
+  // — el valor cargado en Vercel no coincidió con el del servidor, Telegram
+  // devolvió 401 durante media hora, y como la variable es `Sensitive` no se
+  // puede leer para compararla. El único arreglo posible era que una persona la
+  // volviera a pegar a ciegas.
+  //
+  // Derivarla elimina esa clase de error entera: los dos lados calculan el mismo
+  // valor a partir de algo que ya comparten. No es menos seguro — el token del
+  // bot es secreto, así que su SHA-256 es igual de imposible de adivinar.
+  //
+  // Acepta CUALQUIERA de los dos, no uno con prioridad sobre el otro. Si la
+  // variable explícita ganara, un valor mal cargado seguiría bloqueando todo —
+  // que es exactamente la situación que este cambio viene a resolver. Así, una
+  // variable vieja o mal pegada queda inofensiva en vez de ser el problema.
+  const sent = req.headers.get("x-telegram-bot-api-secret-token") || "";
+  const explicit = env("TELEGRAM_WEBHOOK_SECRET");
+  const ok = sent === await derivedSecret(token) || (explicit ? sent === explicit : false);
+  if (!ok) {
+    // 401 sin detalle: a un escáner no se le explica qué le faltó.
+    return new NextResponse("no", { status: 401 });
   }
 
   const update = await req.json().catch(() => null);
@@ -278,7 +306,8 @@ export async function GET() {
   return NextResponse.json({
     endpoint: "telegram-journal",
     configured: {
-      secret: Boolean(env("TELEGRAM_WEBHOOK_SECRET")),
+      secret: true, // derivado del token del bot; ya no hace falta cargarlo
+      secretMode: env("TELEGRAM_WEBHOOK_SECRET") ? "variable" : "derivado",
       botToken: Boolean(env("TELEGRAM_DIARIO_BOT_TOKEN")),
       supabase: Boolean(env("SUPABASE_SECRET_KEY")),
       groq: Boolean(env("GROQ_API_KEY")),
