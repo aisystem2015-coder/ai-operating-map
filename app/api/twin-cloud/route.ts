@@ -265,6 +265,89 @@ async function retrieve(q: string) {
   return tail.length ? render(tail.slice(0, 4), ts) : "";
 }
 
+/** Groq's daily token cap was hit. Distinct from "empty content" because it
+ *  cannot be retried away — the budget is gone until the window resets. */
+class QuotaExhausted extends Error {}
+
+/**
+ * Cheap liveness for the watchdog: proves the twin COULD answer, without
+ * spending the budget that lets it actually answer.
+ *
+ * Checks the two links that can independently break:
+ *   brain  — retrieval really reads Supabase and gets notes back
+ *   model  — Groq accepts the key and has budget left (1-token ping)
+ *
+ * `degraded` stays in the response because the watchdog keys off it. What
+ * changed is that it can now be true for a NAMED reason instead of "the answer
+ * looked short", which is what a rate-limited generation used to look like.
+ */
+async function healthCheck(key?: string) {
+  const out: Record<string, unknown> = { health: true, degraded: false };
+
+  // ── brain ──
+  try {
+    const ctx = await retrieve("¿quién es Francisco Guevara?");
+    const chars = (ctx || "").length;
+    out.brain = { ok: chars > 500, chars };
+    if (chars <= 500) {
+      out.degraded = true;
+      out.reason = `retrieval devolvió ${chars} chars — Supabase vacío o filtrado de más`;
+    }
+  } catch (e) {
+    out.brain = { ok: false, error: String(e).slice(0, 120) };
+    out.degraded = true;
+    out.reason = "no se pudo leer Supabase";
+  }
+
+  // ── model ──
+  if (!key) {
+    out.model = { ok: false, error: "sin GROQ_API_KEY" };
+    out.degraded = true;
+    out.reason = out.reason || "falta GROQ_API_KEY en Vercel";
+  } else {
+    try {
+      const r = await fetch(GROQ_URL, {
+        method: "POST",
+        headers: { "content-type": "application/json", authorization: `Bearer ${key}` },
+        body: JSON.stringify({
+          model: MODEL,
+          messages: [{ role: "user", content: "ok" }],
+          max_tokens: 1,
+        }),
+      });
+      if (r.ok) {
+        out.model = { ok: true, model: MODEL };
+      } else {
+        // The 429 body is the ONLY place Groq states the daily budget. Carry the
+        // message through verbatim so the alert says "199,285/200,000, resets in
+        // 40m" instead of a bare "the twin is down".
+        const body = await r.text();
+        const msg = (() => {
+          try { return JSON.parse(body)?.error?.message || body; } catch { return body; }
+        })();
+        out.model = { ok: false, status: r.status, error: String(msg).slice(0, 300) };
+        out.degraded = true;
+        out.reason = r.status === 429
+          ? `cuota de Groq agotada — ${String(msg).slice(0, 200)}`
+          : `Groq devolvió ${r.status}`;
+      }
+    } catch (e) {
+      out.model = { ok: false, error: String(e).slice(0, 120) };
+      out.degraded = true;
+      out.reason = out.reason || "no se pudo alcanzar Groq";
+    }
+  }
+
+  out.connected = !out.degraded;
+  // The old canary judged health by answer length. Keep a long-enough string so
+  // an un-updated watchdog doesn't read a healthy twin as broken.
+  out.reply = out.degraded
+    ? `TWIN DEGRADADO: ${out.reason}`
+    : "Health check OK — retrieval lee Supabase y el modelo responde. " +
+      "Esta respuesta no consume presupuesto de generación.";
+  return NextResponse.json(out);
+}
+
 export async function POST(req: NextRequest) {
   const key = process.env.GROQ_API_KEY;
   let message = "";
@@ -275,9 +358,21 @@ export async function POST(req: NextRequest) {
   }
   if (!message) return NextResponse.json({ reply: "Say something and I'll take a look." });
 
-  // ?health=1 is the watchdog canary — answer normally but DON'T log it, so the
-  // twin-question analytics stay clean.
+  // ?health=1 is the watchdog canary. It used to answer normally (just without
+  // logging). That made the canary the single biggest consumer of the twin's
+  // own budget: a full generation costs ~6,000 tokens, it ran every 30 minutes
+  // = 48/day = ~288,000 tokens against Groq's 200,000/day free cap. The health
+  // check alone could not fit inside the daily quota, so the monitor was what
+  // took the twin down — on 25 aug the account sat at 199,285/200,000 and every
+  // question needing real context failed while short ones still squeaked through.
+  //
+  // Now it verifies the same chain WITHOUT generating: retrieval really reads
+  // Supabase, and the model is really reachable via a 1-token ping. ~10 tokens
+  // instead of ~6,000. A 429 on that ping is more informative than a generation
+  // anyway — it's the only place Groq states the DAILY budget, which never
+  // appears in the x-ratelimit headers (those are per-minute).
   const isHealth = new URL(req.url).searchParams.get("health") === "1";
+  if (isHealth) return healthCheck(key);
 
   // log the question (same table the HOTB reads)
   if (!isHealth) fetch(`${SUPABASE_URL}/rest/v1/twin_questions`, {
@@ -315,6 +410,13 @@ ${context || "(no public notes matched)"}
   // "I didn't get a clear answer" bug, which was intermittent per question).
   // Fix: a generous budget AND one retry with an even larger budget, so an
   // occasional over-long reasoning pass can't take the twin down.
+  // Why `lastError` exists: this used to read `d?.choices?.[0]?...` and return ""
+  // on anything unexpected. A 429 has no `choices`, so a quota wall and an
+  // over-long reasoning pass produced the identical empty string, and all three
+  // retries then burned against a quota that was already gone. The caller could
+  // only report "temporarily unavailable" — true, useless, and it cost 40
+  // minutes of guessing on 25 aug to find out the account was at 199,285/200,000.
+  let lastError = "";
   async function ask(model: string, maxTokens: number): Promise<string> {
     const r = await fetch(GROQ_URL, {
       method: "POST",
@@ -325,15 +427,29 @@ ${context || "(no public notes matched)"}
         max_tokens: maxTokens, temperature: 0.4,
       }),
     });
+    if (!r.ok) {
+      const body = await r.text();
+      try { lastError = JSON.parse(body)?.error?.message || body; }
+      catch { lastError = body; }
+      lastError = `${r.status}: ${String(lastError).slice(0, 300)}`;
+      // A daily-quota 429 will not clear on retry — retrying just makes the log
+      // noisier and the recovery time longer. Signal "stop" to the caller.
+      if (r.status === 429) throw new QuotaExhausted(lastError);
+      return "";
+    }
     const d = await r.json();
     return d?.choices?.[0]?.message?.content?.trim() || "";
   }
 
   try {
-    // Model-level redundancy so the twin NEVER goes dark: if the primary model
-    // rate-limits or returns empty (gpt-oss spends reasoning tokens separately,
-    // so content can come back empty), fall back to a second Groq model on a
-    // different capacity bucket. Both share the same key.
+    // Model-level redundancy for the EMPTY-CONTENT failure only: gpt-oss spends
+    // reasoning tokens separately, so a too-tight budget returns no content, and
+    // a second model on a different capacity bucket usually answers.
+    //
+    // It does NOT protect against the daily quota — that cap is per ACCOUNT, and
+    // both models share one key, so a 429 on the primary means the fallback is
+    // already gone too. `ask` throws QuotaExhausted rather than returning "" so
+    // these lines stop instead of firing two more doomed requests.
     let reply = await ask(MODEL, 2500);
     if (!reply) reply = await ask(FALLBACK_MODEL, 2500);
     if (!reply) reply = await ask(MODEL, 5000); // last try, extra headroom
@@ -355,8 +471,26 @@ ${context || "(no public notes matched)"}
           "twin is — or try again shortly.",
       connected: false,
       degraded: true,
+      reason: lastError || "el modelo devolvió contenido vacío tres veces",
     });
-  } catch {
-    return NextResponse.json({ reply: "Something went wrong reaching the cloud twin — try again.", connected: false });
+  } catch (e) {
+    if (e instanceof QuotaExhausted) {
+      // Name the wall. A visitor still gets the curated answer; whoever is
+      // debugging gets the number and the reset time instead of a shrug.
+      const canned = fallbackAnswer(message);
+      return NextResponse.json({
+        reply: canned
+          ? canned + "\n\n_(Respuesta desde un resumen escrito — el twin en vivo " +
+            "agotó su cuota diaria de generación y vuelve en unos minutos.)_"
+          : "El twin en vivo agotó su cuota diaria de generación. Puedo contarte " +
+            "sobre su experiencia, sus skills, su paso por Logitech o el AI " +
+            "Operating Map — o probá de nuevo más tarde.",
+        connected: false, degraded: true, quotaExhausted: true, reason: e.message,
+      });
+    }
+    return NextResponse.json({
+      reply: "Something went wrong reaching the cloud twin — try again.",
+      connected: false, degraded: true, reason: String(e).slice(0, 200),
+    });
   }
 }
