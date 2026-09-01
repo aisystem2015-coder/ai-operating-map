@@ -51,8 +51,9 @@ const ALLOWED_CHATS = [8785492560];
 /** Thematic folders under Digital Twin/Temas/ in the vault, + a catch-all for
  *  ordinary daily stuff that isn't a real theme. */
 const TOPICS = [
-  "Salud", "Salud Mental y Energia", "Trabajo", "Filosofia",
-  "Finanzas", "Objetivos", "Legal y Migracion", "Aprendizaje", "Habitos y Diario",
+  "Salud", "Salud Mental y Energia", "Trabajo", "Filosofia", "Finanzas",
+  "Objetivos", "Legal y Migracion", "Aprendizaje", "Familia", "Relaciones",
+  "Habitos y Diario",
 ];
 
 /** How long a half-finished exchange stays live before the next message is
@@ -73,6 +74,8 @@ TOPICS: ${TOPICS.join(", ")}
 - Objetivos = life goals, long-term plans, what he's aiming at
 - Legal y Migracion = visa, contracts, legal, immigration, location
 - Aprendizaje = things he's learning, studying, reading
+- Familia = parents, siblings, family dynamics, family history
+- Relaciones = partner, ex-partners, dating, close friendships
 - Habitos y Diario = ordinary day-to-day, routines, how the day went — the catch-all
 
 LEVEL (only used when the caller did NOT give an explicit level):

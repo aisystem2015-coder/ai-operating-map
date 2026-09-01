@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { decryptL4Blocks } from "@/lib/twin-fernet";
 
 // Fully-CLOUD twin chat: retrieves from the Supabase brain and generates the
 // answer with Groq (Llama 3.3 70B) — ZERO dependency on the Mac mini. This is
@@ -604,10 +605,18 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  const [context, topics] = await Promise.all([
+  const [rawContext, topics] = await Promise.all([
     retrieve(message, level),
     offerableTopics(SELECT_COLS, publicFilter()),
   ]);
+  // N4 (íntimo) content is stored encrypted at rest (scripts/twin_crypto.py).
+  // Decrypt the <!--TWIN-L4-ENC--> blocks in-memory only when this request
+  // actually cleared level 3+ and we hold the N4 passphrase — the 480k-iter KDF
+  // never runs on the public path. A block we can't decrypt becomes a marker,
+  // not ciphertext in the prompt.
+  const context = level >= 3
+    ? await decryptL4Blocks(rawContext, LEVEL_PASSWORDS[4])
+    : rawContext;
   const voice = unlocked
     ? `A valid access code unlocked level ${level} — treat the asker as Francisco himself or someone he trusted with the code. You may speak plainly and in the first person if asked.`
     : `You are answering ON BEHALF OF Francisco for a website visitor you've never met — speak about him in the third person, never as him.`;

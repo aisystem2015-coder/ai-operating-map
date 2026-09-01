@@ -22,6 +22,8 @@
  *   - OR across meaningful terms, never AND (the 14 aug bug)
  */
 
+import { decryptL4Blocks } from "./twin-fernet";
+
 const SUPABASE_URL = "https://zgznqcopbgkfphubucpw.supabase.co";
 const SUPABASE_ANON = "sb_publishable_bbSN-nNr0_t4bK-YP6QOCg_uNEsfOfe";
 // Server-side only (this file is imported solely by API routes). Reads N2-4,
@@ -280,5 +282,9 @@ export async function retrieve(question: string, maxLevel: number): Promise<stri
     parts.push(block);
     total += block.length;
   }
-  return parts.join("\n");
+  const assembled = parts.join("\n");
+  // Decrypt at-rest N4 blocks only when this request actually cleared level 3+.
+  return level >= 3
+    ? decryptL4Blocks(assembled, process.env.TWIN_LEVEL_4_PASSWORD)
+    : assembled;
 }
