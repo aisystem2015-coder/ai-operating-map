@@ -341,25 +341,40 @@ ${DEPTH_HARD_RULES}`;
 // Belt-and-suspenders: the model does not always obey a word ceiling. Levels
 // 0-2 are hard-capped by trimming to whole sentences within the limit; 3-4 pass
 // through. This can't add detail the level forbids, only remove overrun.
-// Last-resort cleanup: even with the prompt rule and scrubbed context, the
-// model occasionally narrates the plumbing ("en su diario de nivel 3
-// (bloqueado)…"). Strip those phrases from the finished reply.
-function scrubReply(text: string): string {
-  return text
-    // Leading clause that cites where it's written: "según/en/de acuerdo a
-    // su/mis diario|notas|apuntes|registros|entradas [personales/privadas]
-    // [de nivel 3] [(bloqueado)] [que tomó … | con fecha … | del …][,:]"
-    .replace(/\b(?:en|seg[uú]n|de acuerdo a|conforme a)\s+(?:su|el|la|mi|sus|las|mis)\s+(?:diario|notas?|apuntes?|registros?|entradas?)(?:\s+(?:personales?|priv[ao]d[ao]s?|[íi]ntim[ao]s?))?(?:\s+de\s+nivel\s*\d)?(?:\s*\(bloqueado\))?(?:\s+(?:que\s+(?:tom[oó]|escrib[ií][oó]|hizo|registr[oó])|con\s+fecha|del?|fechad[ao])\s*[^,.;:]{0,45})?[,:]?\s*/gi, "")
-    .replace(/\b(?:una?\s+)?(?:nota|entrada)\s+(?:de\s+nivel\s*\d\s*)?(?:bloqueada|marcada como bloqueada)[,:]?\s*/gi, "")
-    .replace(/\b(?:est[aá]|figura|qued[oó])\s+(?:guardad[oa]|registrad[oa]|anotad[oa])\s+en\s+(?:el\s+)?nivel\s*\d[,:]?\s*/gi, "")
-    .replace(/,?\s*seg[uú]n\s+(?:lo\s+que\s+)?(?:anot[oó]|escribi[oó]|registr[oó])[^,.;:]{0,30}/gi, "")
-    .replace(/\s{2,}/g, " ")
-    .replace(/\s+([,.;:])/g, "$1")
-    .replace(/([,;:])\s*([,.;:])/g, "$2")
-    .replace(/\s+\./g, ".")
-    .replace(/^\s*[,.:;]\s*/, "")
-    .replace(/^([a-záéíóúñ])/, (m) => m.toUpperCase())
-    .trim();
+// Last-resort cleanup of plumbing the model still narrates. Two tiers (Maya,
+// 1 sep):
+//  - TIER WORDS ("nivel 3", "bloqueado", "diario de nivel N (bloqueado)"): the
+//    access-tier mechanism. NEVER appears, any level, any surface.
+//  - DATED-RECORD framing ("según un registro del 1 de septiembre…", "en mis
+//    notas…"): that dated layer IS level-3 content, so it's fine from N3 up and
+//    only stripped below N3. (Telegram has no levels and isn't routed here.)
+const tidy = (s: string) => s
+  .replace(/\s{2,}/g, " ")
+  .replace(/\s+([,.;:])/g, "$1")
+  .replace(/([,;:])\s*([,.;:])/g, "$2")
+  .replace(/\s+\./g, ".")
+  .replace(/^\s*[,.:;]\s*/, "")
+  .replace(/^([a-záéíóúñ])/, (m) => m.toUpperCase())
+  .trim();
+
+const CITE_WORD = /(?:diario|notas?|apuntes?|registros?|entradas?)/i;
+function scrubReply(text: string, level: number): string {
+  // TIER WORDS — surgical, never eat surrounding content.
+  let t = text
+    .replace(/\s*\(?bloquead[oa]\)?/gi, "")               // "(bloqueado)" / "bloqueada"
+    .replace(/\s*(?:de|en)\s+(?:el\s+)?nivel\s*[0-4]\b/gi, "")  // "de nivel 3" / "en el nivel 3"
+    .replace(/\b(?:en|seg[uú]n)\s+(?:su|mi|sus|mis|el|la)\s+(?:diario|entrada)s?\b[,:]?\s*/gi, "");
+  // DATED-RECORD FRAMING — only below N3 (from N3 up it IS the content's level).
+  // Match a LEADING clause that ends at the first comma, bounded, and only if it
+  // actually cites where it's written.
+  if (level < 3) {
+    t = t.replace(/^\s*(?:en|seg[uú]n|de acuerdo a|conforme a|de|del?)\s+[^,.]{3,70},\s*/i, (m) =>
+      CITE_WORD.test(m) ? "" : m);
+    t = t.replace(/\bexiste\s+un\s+registro\b[^,.]{0,60}(?=[,.])[,.]?\s*/gi, "");
+    t = t.replace(/,\s*(?:seg[uú]n|conforme a)\s+[^,.]{3,60}(?=[,.])/gi, (m) =>
+      CITE_WORD.test(m) || /anot|escrib|registr/i.test(m) ? "" : m);
+  }
+  return tidy(t);
 }
 
 const WORD_CAP: Record<number, number> = { 0: 35, 1: 35, 2: 75, 3: 220 };
@@ -763,7 +778,7 @@ ${context || "(no public notes matched)"}
     let reply = await ask(MODEL, budget);
     if (!reply) reply = await ask(FALLBACK_MODEL, budget);
     if (!reply) reply = await ask(MODEL, Math.round(budget * 1.5));
-    if (reply) return NextResponse.json({ reply: capForLevel(scrubReply(reply), level), connected: true });
+    if (reply) return NextResponse.json({ reply: capForLevel(scrubReply(reply, level), level), connected: true });
 
     // Generation unavailable. Answer from the curated set if the question is one
     // of the common ones, and say plainly that the live twin is down rather than
