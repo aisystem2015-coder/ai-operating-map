@@ -346,9 +346,10 @@ ${DEPTH_HARD_RULES}`;
 // (bloqueado)…"). Strip those phrases from the finished reply.
 function scrubReply(text: string): string {
   return text
-    // "en/según su diario (de nivel 3) (bloqueado)…", "en/según la(s) nota(s)/
-    // apuntes/registros (que tomó ese día)…", "en su entrada del …"
-    .replace(/\b(?:en|seg[uú]n)\s+(?:su|el|la|mi|sus|las|mis)\s+(?:diario|notas?|apuntes?|registros?|entradas?)(?:\s+de\s+nivel\s*\d)?(?:\s*\(bloqueado\))?(?:\s+(?:que\s+(?:tom[oó]|escrib[ií][oó]|hizo)|del?)\s+[^,.;:]{0,40})?[,:]?\s*/gi, "")
+    // Leading clause that cites where it's written: "según/en/de acuerdo a
+    // su/mis diario|notas|apuntes|registros|entradas [personales/privadas]
+    // [de nivel 3] [(bloqueado)] [que tomó … | con fecha … | del …][,:]"
+    .replace(/\b(?:en|seg[uú]n|de acuerdo a|conforme a)\s+(?:su|el|la|mi|sus|las|mis)\s+(?:diario|notas?|apuntes?|registros?|entradas?)(?:\s+(?:personales?|priv[ao]d[ao]s?|[íi]ntim[ao]s?))?(?:\s+de\s+nivel\s*\d)?(?:\s*\(bloqueado\))?(?:\s+(?:que\s+(?:tom[oó]|escrib[ií][oó]|hizo|registr[oó])|con\s+fecha|del?|fechad[ao])\s*[^,.;:]{0,45})?[,:]?\s*/gi, "")
     .replace(/\b(?:una?\s+)?(?:nota|entrada)\s+(?:de\s+nivel\s*\d\s*)?(?:bloqueada|marcada como bloqueada)[,:]?\s*/gi, "")
     .replace(/\b(?:est[aá]|figura|qued[oó])\s+(?:guardad[oa]|registrad[oa]|anotad[oa])\s+en\s+(?:el\s+)?nivel\s*\d[,:]?\s*/gi, "")
     .replace(/,?\s*seg[uú]n\s+(?:lo\s+que\s+)?(?:anot[oó]|escribi[oó]|registr[oó])[^,.;:]{0,30}/gi, "")
