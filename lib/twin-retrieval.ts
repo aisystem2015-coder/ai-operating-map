@@ -215,7 +215,26 @@ export async function retrieve(question: string, maxLevel: number): Promise<stri
     // zero rows for every real question (fixed 14 aug 2026).
     const ors = terms.flatMap((t) => [`title.ilike.*${t}*`, `content.ilike.*${t}*`]).join(",");
     const byTitle = await q(`${SELECT}&and=(${lf},or(${terms.map((t) => `title.ilike.*${t}*`).join(",")}))&order=${order}&limit=4`, key);
-    const byContent = await q(`${SELECT}&and=(${lf},${cap},or(${ors}))&order=${order}&limit=6`, key);
+    // RELEVANCE-RANK content matches in JS (same bug/fix as twin-cloud, 1 sep
+    // 2026): `order=char_count.asc&limit=6` let the six smallest notes with any
+    // query word win over a focused note that actually answers the question.
+    // Pull a wide candidate set, score by distinct query terms hit (title hits
+    // weigh more), keep the top.
+    const cand = await q(`${SELECT}&and=(${lf},${cap},or(${ors}))&order=char_count.asc&limit=40`, key);
+    const uniqTerms = Array.from(new Set(terms.map((t) => fold(t.toLowerCase()))));
+    const score = (n: Note) => {
+      const t = fold((n.title || "").toLowerCase());
+      const c = fold((n.content || "").toLowerCase());
+      let s = 0;
+      for (const term of uniqTerms) { if (t.includes(term)) s += 5; if (c.includes(term)) s += 2; }
+      return s;
+    };
+    const byContent = cand
+      .map((n) => ({ n, s: score(n) }))
+      .filter((x) => x.s > 0)
+      .sort((a, b) => b.s - a.s || (a.n.content || "").length - (b.n.content || "").length)
+      .slice(0, 8)
+      .map((x) => x.n);
     const seen = new Set<string>();
     for (const r of [...byTitle, ...byContent]) {
       if (r?.title && !seen.has(r.title)) { seen.add(r.title); hits.push(r); }

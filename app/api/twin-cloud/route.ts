@@ -324,9 +324,35 @@ async function retrieve(q: string, level = 0) {
     // title match is on-topic even if the note is long).
     const titleAny = ts.map((t) => `title.ilike.*${t}*`).join(",");
     const byTitle = (await get(`${sel}&and=(${scope},or(${titleAny}))&order=${order}&limit=4`, key)) || [];
-    // Then content matches from focused notes only.
+    // Content matches. RELEVANCE-RANK them in JS, don't size-rank in the query.
+    // Bug found 1 sep 2026 when N3 went live: `order=char_count.asc&limit=6`
+    // meant the six SMALLEST notes containing any query word won, regardless of
+    // how on-topic they were. "francisco" alone appears in dozens of 500-byte
+    // notes, so a focused 3k note that actually answers the question (e.g.
+    // "Barrido de Meets — Familia" for a parents question) never made the cut.
+    // Fine on the tiny curated public tier; collapses at N3 with hundreds of
+    // notes in scope. Fix: pull a WIDE candidate set, then score by how many
+    // distinct query terms each note hits (title hits weigh more), take the top.
     const anyMatch = ts.flatMap((t) => [`content.ilike.*${t}*`, `title.ilike.*${t}*`]).join(",");
-    const byContent = (await get(`${sel}&and=(${scope},${cap},or(${anyMatch}))&order=${order}&limit=6`, key)) || [];
+    const cand = (await get(
+      `${sel}&and=(${scope},${cap},or(${anyMatch}))&order=char_count.asc&limit=40`, key)) || [];
+    const uniqTs = Array.from(new Set(ts.map((t) => fold(t.toLowerCase()))));
+    const score = (n: { title?: string; content?: string }) => {
+      const t = fold((n.title || "").toLowerCase());
+      const c = fold((n.content || "").toLowerCase());
+      let s = 0;
+      for (const term of uniqTs) {
+        if (t.includes(term)) s += 5;
+        if (c.includes(term)) s += 2;
+      }
+      return s;
+    };
+    const byContent = (cand as { title: string; content: string; updated_at?: string }[])
+      .map((n) => ({ n, s: score(n) }))
+      .filter((x) => x.s > 0)
+      .sort((a, b) => b.s - a.s || (a.n.content || "").length - (b.n.content || "").length)
+      .slice(0, 8)
+      .map((x) => x.n);
     const seen = new Set<string>();
     const merged: { title: string; content: string; updated_at?: string }[] = [];
     // currentState first so it survives the slice(0, 5) below — a truncation
