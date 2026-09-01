@@ -678,12 +678,16 @@ ${context || "(no public notes matched)"}
     //
     // Con 200.000 tokens/día eso era la diferencia entre ~33 y ~50 preguntas
     // diarias — y a 33 el twin se caía solo, sin que nadie hiciera nada raro.
-    let reply = await ask(MODEL, 900);
-    if (!reply) reply = await ask(FALLBACK_MODEL, 900);
-    // El tercer intento subía a 5000 y podía costar 10.000 tokens en una sola
-    // pregunta fallida. 1400 da margen real al modelo que gasta tokens razonando
-    // sin convertir un fallo en el 5% del presupuesto del día.
-    if (!reply) reply = await ask(MODEL, 1400);
+    // Token budget scales with level. N0-2 answers are short by design (and are
+    // the high-traffic public path, so they stay tight to protect Groq's daily
+    // quota). N3-4 give full detail to Francisco / trusted holders and are rare,
+    // so they get real headroom — a detailed N4 answer with structure was being
+    // cut off at ~1400. gpt-oss spends reasoning tokens separately, so these are
+    // generous on purpose.
+    const budget = level >= 4 ? 4000 : level === 3 ? 2600 : 900;
+    let reply = await ask(MODEL, budget);
+    if (!reply) reply = await ask(FALLBACK_MODEL, budget);
+    if (!reply) reply = await ask(MODEL, Math.round(budget * 1.5));
     if (reply) return NextResponse.json({ reply: capForLevel(reply, level), connected: true });
 
     // Generation unavailable. Answer from the curated set if the question is one
