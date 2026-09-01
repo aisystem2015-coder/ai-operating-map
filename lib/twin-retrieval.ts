@@ -278,10 +278,23 @@ export async function retrieve(question: string, maxLevel: number): Promise<stri
   for (const n of hits) {
     if (seenTitles.has(n.title)) continue;
     seenTitles.add(n.title);
-    const body = stripFrontmatter(n.content).slice(0, MAX_NOTE_CHARS);
+    // Strip pipeline plumbing the model must never quote: the "> 🔒 LOCKED nivel
+    // N" marker, "# Diario — Nivel N (bloqueado)" headings, "(nivel N)"
+    // annotations. It once echoed "en su diario de nivel 3 (bloqueado)".
+    const body = stripFrontmatter(n.content)
+      .replace(/^\s*>?\s*🔒.*$/gim, "")
+      .replace(/^#{1,6}\s*Diario\s*[—-]\s*Nivel\s*\d.*$/gim, "")
+      .replace(/\bdiario\s+(?:de\s+)?nivel\s*\d\s*\(bloqueado\)/gi, "esto")
+      .replace(/\n{3,}/g, "\n\n").trim()
+      .slice(0, MAX_NOTE_CHARS);
     if (!body) continue;
     const when = n.updated_at ? n.updated_at.slice(0, 10) : "sin fecha";
-    const block = `### ${n.title}  (nivel ${n.access_level ?? "—"} · ${when})\n${body}\n`;
+    // Internal note names ("Diario — Nivel 3 (bloqueado)") collapse to a neutral
+    // label; real topic titles stay. Never put "nivel N" in the heading.
+    const heading = /^Diario\b|bloqueado/i.test(n.title)
+      ? `### (nota personal · ${when})`
+      : `### ${n.title}  (${when})`;
+    const block = `${heading}\n${body}\n`;
     // `continue`, not `break`: one oversized note must not discard the smaller,
     // more relevant ones behind it.
     if (total + block.length > MAX_TOTAL_CHARS) continue;

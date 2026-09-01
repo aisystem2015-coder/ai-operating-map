@@ -97,8 +97,21 @@ async function get(url: string, key: string = SUPABASE_ANON) {
 
 // Extract the RELEVANT window of a note around the first matching term, instead
 // of always the first 1600 chars — a huge log's opening is never the answer.
+// Strip pipeline plumbing the model must never repeat: the "> 🔒 LOCKED nivel N"
+// marker (an instruction to us, not content), the "# Diario — Nivel N
+// (bloqueado)" headings, and stray "(nivel N)" annotations. Without this the
+// model echoed "en su diario de nivel 3 (bloqueado)" into an answer.
+function scrubInternal(body: string): string {
+  return body
+    .replace(/^\s*>?\s*🔒.*$/gim, "")
+    .replace(/^#{1,6}\s*Diario\s*[—-]\s*Nivel\s*\d.*$/gim, "")
+    .replace(/\bdiario\s+(?:de\s+)?nivel\s*\d\s*\(bloqueado\)/gi, "esto")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
 function snippet(content: string, ts: string[]) {
-  const body = (content || "").replace(/^---\n[\s\S]*?\n---\n/, "").trim();
+  const body = scrubInternal((content || "").replace(/^---\n[\s\S]*?\n---\n/, "").trim());
   const low = body.toLowerCase();
   let pos = -1;
   for (const t of ts) { const i = low.indexOf(t); if (i >= 0 && (pos < 0 || i < pos)) pos = i; }
@@ -107,9 +120,17 @@ function snippet(content: string, ts: string[]) {
   return (start > 0 ? "…" : "") + body.slice(start, start + 1400);
 }
 
+// Internal note names ("Diario — Nivel 3 (bloqueado)", "Barrido de Meets — …")
+// must not reach the model as a heading it can quote. Journal notes collapse to
+// a neutral date label; everything else keeps its title (those are real topics).
+function displayHeading(title: string, date?: string): string {
+  if (/^Diario\b|bloqueado/i.test(title)) return `### (nota personal${date ? ` · ${date}` : ""})`;
+  return `### ${title}${date ? ` (${date})` : ""}`;
+}
+
 function render(rows: { title: string; content: string; updated_at?: string }[], ts: string[]) {
   return (rows || []).map((n) =>
-    `### ${n.title}${n.updated_at ? ` (${n.updated_at.slice(0, 10)})` : ""}\n` + snippet(n.content, ts)
+    displayHeading(n.title, n.updated_at?.slice(0, 10)) + "\n" + snippet(n.content, ts)
   ).join("\n\n").slice(0, 9000);
 }
 
@@ -320,6 +341,19 @@ ${DEPTH_HARD_RULES}`;
 // Belt-and-suspenders: the model does not always obey a word ceiling. Levels
 // 0-2 are hard-capped by trimming to whole sentences within the limit; 3-4 pass
 // through. This can't add detail the level forbids, only remove overrun.
+// Last-resort cleanup: even with the prompt rule and scrubbed context, the
+// model occasionally narrates the plumbing ("en su diario de nivel 3
+// (bloqueado)…"). Strip those phrases from the finished reply.
+function scrubReply(text: string): string {
+  return text
+    .replace(/\b(?:en|seg[uú]n)\s+(?:su|el|mi)\s+diario(?:\s+de\s+nivel\s*\d)?(?:\s*\(bloqueado\))?[,:]?\s*/gi, "")
+    .replace(/\b(?:una?\s+)?(?:nota|entrada)\s+(?:de\s+nivel\s*\d\s*)?(?:bloqueada|marcada como bloqueada)[,:]?\s*/gi, "")
+    .replace(/\b(?:est[aá]|figura)\s+(?:guardad[oa]|registrad[oa])\s+en\s+nivel\s*\d[,:]?\s*/gi, "")
+    .replace(/\s{2,}/g, " ")
+    .replace(/^\s*[,.:;]\s*/, "")
+    .trim();
+}
+
 const WORD_CAP: Record<number, number> = { 0: 35, 1: 35, 2: 75, 3: 220 };
 function capForLevel(text: string, level: number): string {
   const cap = WORD_CAP[level];
@@ -336,7 +370,7 @@ HARD RULES:
 - Answer at THIS level's depth and NO deeper, even when the CONTEXT contains more. Summarize UP, never quote down. If the level is 0-2 and the CONTEXT is richer, compress it to the target above — do not leak the extra detail.
 - Topic, not level, decides WHAT a note is about; this level decides HOW MUCH comes out. Some topics (health, finances, family, relationships, anything intimate) simply DO NOT EXIST below their threshold — when this level is too low, say plainly you don't have that and name a topic you can talk about. Never give a "hint" of a topic that shouldn't appear at this level.
 - If a note is marked LOCKED to a level (frontmatter locked_level, or the body says "solo nivel N"), it must NEVER be paraphrased, summarized, or hinted at below that level — at a lower level it is simply absent, with no trace.
-- This is Francisco as a person, not a project log. NEVER mention meetings, transcripts, "meet N", a collaborator named Maya, note titles, or how any of this was captured — speak as if you simply know him.`;
+- This is Francisco as a person, not a project log. NEVER mention meetings, transcripts, "meet N", a collaborator named Maya, note titles, "his journal", "a locked note", "level 3", "bloqueado", or how/where any of this was recorded. Never describe something as private, restricted, or which tier it sits in. Just answer from what you know, as if you simply know him — or say you don't have it.`;
 
 const SELECT_COLS =
   `${SUPABASE_URL}/rest/v1/vault_notes?select=title,folder,content,access_level,updated_at,char_count`;
@@ -721,7 +755,7 @@ ${context || "(no public notes matched)"}
     let reply = await ask(MODEL, budget);
     if (!reply) reply = await ask(FALLBACK_MODEL, budget);
     if (!reply) reply = await ask(MODEL, Math.round(budget * 1.5));
-    if (reply) return NextResponse.json({ reply: capForLevel(reply, level), connected: true });
+    if (reply) return NextResponse.json({ reply: capForLevel(scrubReply(reply), level), connected: true });
 
     // Generation unavailable. Answer from the curated set if the question is one
     // of the common ones, and say plainly that the live twin is down rather than
