@@ -218,8 +218,14 @@ async function offerableTopics(sel: string, pub: string): Promise<string[]> {
 // written deliberately for public consumption) and the curated level-1
 // "Perfil de Persona — Consolidado" now cover identity, and neither contains
 // the personal material. So public means what someone actually marked public.
+// 3a (Francisco, 31 aug 2026): the twin is Francisco-the-person, not the project
+// record. Retrieval is hard-scoped to his persona folder — never the raw
+// Drive-mirror ("09 - Drive Sync" = meeting transcripts + sprint docs), which is
+// what used to make the twin cite "meet 21" / Maya.
+const PERSONA_FOLDER = "05 - Contexto Fran";
+
 function publicFilter() {
-  return "access_level.lte.1";
+  return `access_level.lte.1,folder.eq.${encodeURIComponent(PERSONA_FOLDER)}`;
 }
 
 const SELECT_COLS =

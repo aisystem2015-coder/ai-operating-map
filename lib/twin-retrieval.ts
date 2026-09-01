@@ -31,6 +31,15 @@ export const MAX_CLOUD_LEVEL = 2;
  */
 const UNCLASSIFIED_MIN_LEVEL = 2;
 
+/**
+ * 3a (Francisco, 31 aug 2026, "back to basics"): the twin is Francisco-the-
+ * person, not the project record. Retrieval is hard-scoped to his persona
+ * folder — never the raw Drive mirror ("09 - Drive Sync" = meeting transcripts
+ * + sprint docs), which is what used to make the twin answer "según Maya en el
+ * meet 21". Mirrors PERSONA_FOLDER in brain_retrieve.py.
+ */
+const PERSONA_FOLDER = "05 - Contexto Fran";
+
 const MAX_NOTE_CHARS = 2200;
 const MAX_TOTAL_CHARS = 24000; // measured optimum, see brain_retrieve.py
 const CORE_MAX_PER_NOTE = 2600;
@@ -79,11 +88,16 @@ export function searchTerms(q: string): string[] {
 export const wantsRecency = (q: string) =>
   ((q || "").toLowerCase().match(/[0-9a-zà-ÿñ]{3,}/g) || []).some((w) => RECENCY.has(fold(w)));
 
-/** PostgREST equivalent of level_clause() in brain_retrieve.py. */
+/**
+ * PostgREST equivalent of level_clause() + the persona-folder scope in
+ * brain_retrieve.py. Always ANDs `folder = PERSONA_FOLDER`, so nothing outside
+ * the Digital Twin folder is ever retrievable by the twin.
+ */
 function levelFilter(maxLevel: number): string {
-  return maxLevel >= UNCLASSIFIED_MIN_LEVEL
+  const lvl = maxLevel >= UNCLASSIFIED_MIN_LEVEL
     ? `or(access_level.lte.${maxLevel},access_level.is.null)`
     : `access_level.lte.${maxLevel}`;
+  return `${lvl},folder.eq.${encodeURIComponent(PERSONA_FOLDER)}`;
 }
 
 type Note = {
