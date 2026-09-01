@@ -291,17 +291,17 @@ export async function POST(req: NextRequest) {
       throw new Error(`supabase ${ins.status}: ${body.slice(0, 160)}`);
     }
 
-    const label = ["público", "compartible", "personal", "sensible", "íntimo"][c.nivel];
+    const label = ["public", "shareable", "personal", "sensitive", "intimate"][c.nivel];
     await say(token, chat,
-      `✅ Guardado en *${c.nota}* — nivel ${c.nivel} (${label})` +
-      (c.by === "fallback" ? "\n_(clasificado por defecto: ningún modelo respondió)_" : "") +
+      `✅ Saved to *${c.nota}* — level ${c.nivel} (${label})` +
+      (c.by === "fallback" ? "\n_(classified by default: no model responded)_" : "") +
       (kind === "voice" ? `\n\n_"${raw.slice(0, 140)}${raw.length > 140 ? "…" : ""}"_` : ""));
 
     return NextResponse.json({ ok: true, nivel: c.nivel, nota: c.nota, by: c.by });
   } catch (e) {
     // Decirle al usuario que falló. El bot de la Mac fallaba callado y una nota
     // perdida sólo se descubría al buscarla semanas después.
-    await say(token, chat, `⚠️ No pude guardar eso: ${String(e).slice(0, 180)}`);
+    await say(token, chat, `⚠️ Couldn't save that: ${String(e).slice(0, 180)}`);
     // 200 igual: un 500 hace que Telegram reintente el mismo mensaje en bucle.
     return NextResponse.json({ ok: false, error: String(e).slice(0, 200) });
   }
