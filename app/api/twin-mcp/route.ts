@@ -240,27 +240,19 @@ async function callTool(args: { question?: string; accessCode?: string }) {
     // acertó, y estas contraseñas son de dos y tres dígitos.
     return {
       content: [{ type: "text", text:
-        `Ese código no desbloquea nada en este canal.\n\n` +
-        `Dos motivos posibles, y desde acá no se distinguen:\n` +
-        `1. Es un código de nivel 3 o 4. Esos NO se sirven desde la nube: su ` +
-        `contenido está cifrado en reposo y sólo la Mac mini tiene la llave. ` +
-        `Se consultan por el conector de la Mac, no por este.\n` +
-        `2. El código es incorrecto.\n\n` +
+        `Ese código no desbloquea nada en este canal — es incorrecto o no ` +
+        `corresponde a ningún nivel configurado.\n\n` +
         `Sigo pudiendo responder con material público. Este conector llega hasta ` +
         `nivel ${MAX_CLOUD_LEVEL} (${LEVEL_LABELS[MAX_CLOUD_LEVEL]}).` }],
     };
   }
 
   if (level > MAX_CLOUD_LEVEL) {
-    // Say exactly what happened. A silent downgrade to public would look like
-    // the twin "forgetting" his private material, which is worse than a refusal.
+    // Should be unreachable now (MAX_CLOUD_LEVEL = 4). Kept as a guard.
     return {
       content: [{ type: "text", text:
-        `Ese código desbloquea el nivel ${level} (${LEVEL_LABELS[level]}), pero este ` +
-        `conector en la nube solo sirve hasta el nivel ${MAX_CLOUD_LEVEL}. Los niveles 3 y 4 ` +
-        `están cifrados en reposo y sólo se leen desde el conector de la Mac mini. ` +
-        `Decíselo así a Francisco: no es que no exista la información, es que este ` +
-        `canal no puede descifrarla.` }],
+        `Ese código desbloquea el nivel ${level}, fuera del rango servible ` +
+        `(0–${MAX_CLOUD_LEVEL}).` }],
     };
   }
 

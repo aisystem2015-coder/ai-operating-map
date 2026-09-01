@@ -57,9 +57,39 @@ function terms(q: string) {
 const wantsRecency = (q: string) =>
   (q.toLowerCase().match(/[0-9a-zà-ÿñ]{3,}/g) || []).some((w) => RECENCY.has(fold(w)));
 
-async function get(url: string) {
+// Server-side only. Reads N2-4 (the anon key can't, post-RLS). Absent => this
+// route stays exactly as the old public-only path.
+const SUPABASE_SECRET = process.env.SUPABASE_SECRET_KEY;
+
+// 2026-07-28: per-level passwords. A valid TWIN_LEVEL_N_PASSWORD unlocks level N
+// for THIS request. Wrong / missing => level 0. `level` MUST come only from here
+// — never from anything the client sends — because for N2+ this route reads with
+// the service key, which bypasses RLS.
+const LEVEL_PASSWORDS: Record<number, string | undefined> = {
+  1: process.env.TWIN_LEVEL_1_PASSWORD,
+  2: process.env.TWIN_LEVEL_2_PASSWORD,
+  3: process.env.TWIN_LEVEL_3_PASSWORD,
+  4: process.env.TWIN_LEVEL_4_PASSWORD,
+};
+function levelForCode(code: string): number {
+  if (!code) return 0;
+  for (const [lvl, pw] of Object.entries(LEVEL_PASSWORDS)) {
+    if (pw && code === pw) return Number(lvl);
+  }
+  return 0;
+}
+// The level we can actually serve: what the code unlocked, unless it's N2+ and
+// we have no secret key to read it (fail closed to public).
+function servableLevel(codeLevel: number): number {
+  return codeLevel >= 2 && !SUPABASE_SECRET ? 1 : codeLevel;
+}
+function keyFor(level: number): string {
+  return level >= 2 && SUPABASE_SECRET ? SUPABASE_SECRET : SUPABASE_ANON;
+}
+
+async function get(url: string, key: string = SUPABASE_ANON) {
   try {
-    const r = await fetch(url, { headers: { apikey: SUPABASE_ANON, authorization: `Bearer ${SUPABASE_ANON}` }, cache: "no-store" });
+    const r = await fetch(url, { headers: { apikey: key, authorization: `Bearer ${key}` }, cache: "no-store" });
     return r.ok ? await r.json() : null;
   } catch { return null; }
 }
@@ -249,13 +279,33 @@ const filterExcluded = <T extends { title: string }>(rows: T[]) =>
 function publicFilter() {
   return `access_level.lte.1,folder.eq.${encodeURIComponent(PERSONA_FOLDER)}`;
 }
+// PostgREST scope for `level`. N<=1: only tagged <=1. N>=2: also untagged
+// (UNCLASSIFIED_MIN_LEVEL=2 in brain_retrieve.py). Always persona-folder-only.
+function levelScope(level: number) {
+  const persona = `folder.eq.${encodeURIComponent(PERSONA_FOLDER)}`;
+  if (level <= 1) return `access_level.lte.1,${persona}`;
+  return `or(access_level.lte.${level},access_level.is.null),${persona}`;
+}
+
+function levelDepthInstructions(level: number): string {
+  const per: Record<number, string> = {
+    0: 'one or two natural sentences, the way a colleague who admires him would introduce him. No dates, no figures, no family names, no private detail. For any sensitive topic give only its most surface version (e.g. "he has had past relationships" — nothing more).',
+    1: 'one or two natural sentences, the way a colleague who admires him would introduce him. No dates, no figures, no family names, no private detail. For any sensitive topic give only its most surface version (e.g. "he has had past relationships" — nothing more).',
+    2: 'a short, natural paragraph. You may include the "why" behind an opinion and approximate timeframes ("in mid-2026"). Still a summary, never a report — no exhaustive lists, no drilling into intimate detail, no family names.',
+    3: "full personal detail is allowed — full names, dates, family dynamics, the intimate reasoning behind a decision.",
+    4: "no barrier.",
+  };
+  return `DEPTH FOR THIS LEVEL (${level}): ${per[level] ?? per[2]}
+- Answer at the depth of THIS level and no deeper, even if the CONTEXT contains more. Summarize UP, never quote down.
+- This is Francisco as a person, not a project log. NEVER mention meetings, transcripts, "meet N", a collaborator named Maya, note titles, or how any of this was captured — speak as if you simply know him.`;
+}
 
 const SELECT_COLS =
   `${SUPABASE_URL}/rest/v1/vault_notes?select=title,folder,content,access_level,updated_at,char_count`;
 
-async function retrieve(q: string) {
-  // public-safe: explicit access_level 0/1, or the curated identity allowlist above.
-  const pub = publicFilter();
+async function retrieve(q: string, level = 0) {
+  const scope = levelScope(level);
+  const key = keyFor(level);
   // Skip mega-notes (activity logs, full meeting transcripts of 200k+ chars):
   // they contain every keyword yet describe nothing, so ordering by size used
   // to surface pure noise. Focused notes are where the actual answers live.
@@ -267,16 +317,16 @@ async function retrieve(q: string) {
 
   // Unconditional, before anything else.
   const currentState = (await get(
-    `${sel}&title=eq.${encodeURIComponent(CURRENT_STATE_TITLE)}&limit=1`)) || [];
+    `${sel}&and=(${scope})&title=eq.${encodeURIComponent(CURRENT_STATE_TITLE)}&limit=1`, key)) || [];
 
   if (ts.length) {
     // Title matches are the most specific — take them first (no size cap: a
     // title match is on-topic even if the note is long).
     const titleAny = ts.map((t) => `title.ilike.*${t}*`).join(",");
-    const byTitle = (await get(`${sel}&and=(${pub},or(${titleAny}))&order=${order}&limit=4`)) || [];
+    const byTitle = (await get(`${sel}&and=(${scope},or(${titleAny}))&order=${order}&limit=4`, key)) || [];
     // Then content matches from focused notes only.
     const anyMatch = ts.flatMap((t) => [`content.ilike.*${t}*`, `title.ilike.*${t}*`]).join(",");
-    const byContent = (await get(`${sel}&and=(${pub},${cap},or(${anyMatch}))&order=${order}&limit=6`)) || [];
+    const byContent = (await get(`${sel}&and=(${scope},${cap},or(${anyMatch}))&order=${order}&limit=6`, key)) || [];
     const seen = new Set<string>();
     const merged: { title: string; content: string; updated_at?: string }[] = [];
     // currentState first so it survives the slice(0, 5) below — a truncation
@@ -287,8 +337,8 @@ async function retrieve(q: string) {
     if (merged.length) return render(merged.slice(0, 5), ts);
   }
   // Nothing matched (or a pure "what's the latest" question): newest focused
-  // public notes beat an empty context, which is what made the twin improvise.
-  const recent = await get(`${sel}&and=(${pub},${cap})&order=updated_at.desc&limit=3`);
+  // notes beat an empty context, which is what made the twin improvise.
+  const recent = await get(`${sel}&and=(${scope},${cap})&order=updated_at.desc&limit=3`, key);
   const tail = filterExcluded([...currentState, ...(recent || [])]);
   return tail.length ? render(tail.slice(0, 4), ts) : "";
 }
@@ -445,13 +495,21 @@ async function healthCheck(key?: string) {
 
 export async function POST(req: NextRequest) {
   const key = process.env.GROQ_API_KEY;
-  let message = "";
+  let message = "", accessCode = "";
   try {
-    message = (await req.json())?.message?.toString().trim().slice(0, MAX) || "";
+    const b = await req.json();
+    message = b?.message?.toString().trim().slice(0, MAX) || "";
+    accessCode = b?.accessCode?.toString().trim() || "";
   } catch {
     return NextResponse.json({ reply: "Couldn't read that." }, { status: 400 });
   }
   if (!message) return NextResponse.json({ reply: "Say something and I'll take a look." });
+
+  // Level comes ONLY from a validated password. servableLevel drops N2+ to
+  // public if there's no secret key to read it (fail closed).
+  const codeLevel = levelForCode(accessCode);
+  const level = servableLevel(codeLevel);
+  const unlocked = level > 0;
 
   // ?health=1 is the watchdog canary. It used to answer normally (just without
   // logging). That made the canary the single biggest consumer of the twin's
@@ -473,7 +531,7 @@ export async function POST(req: NextRequest) {
   if (!isHealth) fetch(`${SUPABASE_URL}/rest/v1/twin_questions`, {
     method: "POST",
     headers: { "content-type": "application/json", apikey: SUPABASE_ANON, authorization: `Bearer ${SUPABASE_ANON}`, prefer: "return=minimal" },
-    body: JSON.stringify({ question: message, level: 0, surface: "website-cloud" }),
+    body: JSON.stringify({ question: message, level, surface: "website-cloud" }),
   }).catch(() => {});
 
   if (!key) {
@@ -484,12 +542,15 @@ export async function POST(req: NextRequest) {
   }
 
   const [context, topics] = await Promise.all([
-    retrieve(message),
+    retrieve(message, level),
     offerableTopics(SELECT_COLS, publicFilter()),
   ]);
-  const system = `You are the public-facing digital twin of Francisco Guevara, answering ON BEHALF OF him for a website visitor. Speak about Francisco in the third person, warm and concise — one or two natural sentences, the way a colleague who admires him would introduce him. No dates, no figures, no family names, no private detail; for any sensitive topic give only its most surface version (e.g. "he has had past relationships" — nothing more). Only use the CONTEXT below — never invent facts. If it isn't there, say so plainly and offer a public topic.
+  const voice = unlocked
+    ? `A valid access code unlocked level ${level} — treat the asker as Francisco himself or someone he trusted with the code. You may speak plainly and in the first person if asked.`
+    : `You are answering ON BEHALF OF Francisco for a website visitor you've never met — speak about him in the third person, never as him.`;
+  const system = `You are the digital twin of Francisco Guevara. ${voice} Only use the CONTEXT below — never invent facts. If it isn't there, say so plainly${unlocked ? "" : " and offer a public topic"}.
 
-This is Francisco as a person, not a project log: NEVER mention meetings, transcripts, "meet N", a collaborator named Maya, note titles, or how any of this was captured — speak as if you simply know him.
+${levelDepthInstructions(level)}
 
 CURRENCY RULE: if a note titled "Estado Actual" appears in the CONTEXT, it describes what is true NOW and OVERRIDES every other note on any point where they disagree. The others are historical syntheses — true when written, not necessarily now. Never state something in the present tense that "Estado Actual" marks as ended, changed, or unconfirmed. Where it says a fact is unconfirmed, say it is unconfirmed rather than picking one version.
 

@@ -205,49 +205,17 @@ function levelForCode(code: string): { level: number; codeValid: boolean } {
   return { level: 0, codeValid: false };
 }
 
-async function proxyToMacMini(message: string, accessCode: string) {
-  const backendUrl = process.env.TWIN_BACKEND_URL;
-  const secret = process.env.TWIN_SHARED_SECRET;
-  if (!backendUrl || !secret) {
-    return NextResponse.json({
-      reply: "The twin's backend isn't configured on this deployment yet.",
-      connected: false,
-    });
-  }
-  try {
-    const controller = new AbortController();
-    // Leaves headroom under the local backend's own 120s CLAUDE_TIMEOUT_MS
-    // and under Vercel's function budget (300s on Fluid Compute).
-    const timeout = setTimeout(() => controller.abort(), 130_000);
-    const res = await fetch(backendUrl, {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        "x-twin-shared-secret": secret,
-      },
-      body: JSON.stringify({ message, accessCode }),
-      signal: controller.signal,
-    });
-    clearTimeout(timeout);
-    const data = await res.json();
-    return NextResponse.json(data);
-  } catch {
-    return NextResponse.json({
-      reply: "Couldn't reach the twin's backend just now — try again in a moment.",
-      connected: false,
-    });
-  }
-}
-
-// Fully-cloud answer (Supabase brain + Groq), no Mac dependency. Used for public
-// visitors and as the fallback when the Mac backend is unreachable.
-async function cloudReply(request: NextRequest, message: string) {
+// Fully-cloud answer (Supabase brain + Groq), no Mac dependency. Since 2026-09-01
+// this serves ALL levels: /api/twin-cloud reads N2-4 with the service key when
+// the accessCode is a valid TWIN_LEVEL_N_PASSWORD. The old proxyToMacMini path
+// is gone — the twin no longer needs the Mac for any level.
+async function cloudReply(request: NextRequest, message: string, accessCode = "") {
   try {
     const origin = new URL(request.url).origin;
     const r = await fetch(`${origin}/api/twin-cloud`, {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ message }),
+      body: JSON.stringify({ message, accessCode }),
     });
     const d = await r.json();
     return NextResponse.json({ ...d, source: "cloud" });
@@ -299,20 +267,10 @@ export async function POST(request: NextRequest) {
   }).catch(() => {});
 
   if (process.env.VERCEL) {
-    // Public visitors → the fully-cloud path (Supabase + Groq), which has NO Mac
-    // dependency, so a flaky Tailscale funnel never takes the public twin down.
-    // Access-code tiers still go to the Mac (private material), but fall back to
-    // the public cloud answer if the Mac is unreachable. (Meet 22/23: the twin
-    // "se caía a cada rato" because everything routed through the Mac.)
-    if (!accessCode) {
-      return cloudReply(request, message);
-    }
-    const mac = await proxyToMacMini(message, accessCode);
-    try {
-      const data = await mac.clone().json();
-      if (data && data.connected === false) return cloudReply(request, message);
-    } catch { /* keep the Mac response */ }
-    return mac;
+    // Every level goes fully-cloud now (2026-09-01). /api/twin-cloud reads N2-4
+    // with the service key when accessCode is a valid TWIN_LEVEL_N_PASSWORD;
+    // no code / wrong code => public. No Mac dependency at any level.
+    return cloudReply(request, message, accessCode);
   }
 
   const { level: codeLevel, codeValid } = levelForCode(accessCode);

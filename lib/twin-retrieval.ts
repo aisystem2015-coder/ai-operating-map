@@ -6,10 +6,14 @@
  * That subprocess was the whole reason the connector died whenever the Mac was
  * off — and he leaves the machine behind at the end of August.
  *
- * SCOPE, deliberately: levels 0-2 only. Levels 3-4 are encrypted at rest with
- * PBKDF2-480k, which is far too slow for an edge function and is a separate
- * decision about where the passphrase lives. Callers asking for 3-4 get a clear
- * "not available here" rather than silence — see MAX_CLOUD_LEVEL.
+ * SCOPE (2026-09-01, "twin sin Mac" paso 2): levels 0-4. The old 0-2 cap was
+ * justified by "N3-4 encrypted at rest" — but nothing in Supabase is actually
+ * encrypted (verified: 0 ciphertext rows), so it was a policy cap, not a
+ * technical one. Now: the ANON key can only read access_level<=1 (Postgres RLS,
+ * added same week); N2-4 are read with SUPABASE_SECRET_KEY (service_role,
+ * bypasses RLS) and ONLY when the caller passed a valid TWIN_LEVEL_N_PASSWORD —
+ * `maxLevel` here must come exclusively from levelForCode(validated password),
+ * never from anything a client supplies. Fail closed: no secret key => clamp to 1.
  *
  * Kept faithful to the Python on the parts that are load-bearing:
  *   - the access-level clause, including "untagged is NOT public"
@@ -20,9 +24,13 @@
 
 const SUPABASE_URL = "https://zgznqcopbgkfphubucpw.supabase.co";
 const SUPABASE_ANON = "sb_publishable_bbSN-nNr0_t4bK-YP6QOCg_uNEsfOfe";
+// Server-side only (this file is imported solely by API routes). Reads N2-4,
+// which the anon key can no longer see. Absent => the file behaves exactly as
+// the old 0-2 (really 0-1 post-RLS) public path.
+const SUPABASE_SECRET = process.env.SUPABASE_SECRET_KEY;
 
-/** Above this, content is encrypted at rest and only the Mac can read it. */
-export const MAX_CLOUD_LEVEL = 2;
+/** Highest access level this cloud path can serve. */
+export const MAX_CLOUD_LEVEL = 4;
 
 /**
  * Untagged notes are NOT public. 261 of ~324 vault notes carry no access_level,
@@ -128,16 +136,29 @@ type Note = {
   access_level: number | null; updated_at?: string; char_count?: number;
 };
 
-async function q(url: string): Promise<Note[]> {
+async function q(url: string, key: string = SUPABASE_ANON): Promise<Note[]> {
   try {
     const r = await fetch(url, {
-      headers: { apikey: SUPABASE_ANON, authorization: `Bearer ${SUPABASE_ANON}` },
+      headers: { apikey: key, authorization: `Bearer ${key}` },
       cache: "no-store",
     });
     return r.ok ? ((await r.json()) as Note[]) : [];
   } catch {
     return [];
   }
+}
+
+/**
+ * The key to read `level` with. Anon (RLS-capped at 1) for public; the service
+ * key for N2+. Fail closed: asking for N2+ without a secret key drops to anon.
+ */
+function keyFor(level: number): string {
+  return level >= 2 && SUPABASE_SECRET ? SUPABASE_SECRET : SUPABASE_ANON;
+}
+/** The effective ceiling: what was asked, unless we have no key to read it. */
+function effectiveCeiling(maxLevel: number): number {
+  const wanted = Math.min(maxLevel, MAX_CLOUD_LEVEL);
+  return wanted >= 2 && !SUPABASE_SECRET ? 1 : wanted;
 }
 
 const SELECT = `${SUPABASE_URL}/rest/v1/vault_notes` +
@@ -151,7 +172,7 @@ function stripFrontmatter(s: string) {
 async function coreBlock(maxLevel: number): Promise<string> {
   const titles = CORE_TITLES.map((t) => `"${t}"`).join(",");
   const rows = await q(`${SELECT}&title=in.(${encodeURIComponent(titles)})` +
-    `&and=(${levelFilter(maxLevel)})`);
+    `&and=(${levelFilter(maxLevel)})`, keyFor(maxLevel));
   const byTitle = new Map(rows.map((r) => [r.title, r]));
   const out: string[] = [];
   for (const t of CORE_TITLES) {           // curated order, not DB order
@@ -170,7 +191,8 @@ async function coreBlock(maxLevel: number): Promise<string> {
  * answering for Francisco from nothing — the 14 aug failure mode.
  */
 export async function retrieve(question: string, maxLevel: number): Promise<string | null> {
-  const level = Math.min(maxLevel, MAX_CLOUD_LEVEL);
+  const level = effectiveCeiling(maxLevel);
+  const key = keyFor(level);
   const terms = searchTerms(question);
   const lf = levelFilter(level);
   const recent = wantsRecency(question);
@@ -192,15 +214,15 @@ export async function retrieve(question: string, maxLevel: number): Promise<stri
     // OR across terms — never AND. plainto_tsquery ANDing every word returned
     // zero rows for every real question (fixed 14 aug 2026).
     const ors = terms.flatMap((t) => [`title.ilike.*${t}*`, `content.ilike.*${t}*`]).join(",");
-    const byTitle = await q(`${SELECT}&and=(${lf},or(${terms.map((t) => `title.ilike.*${t}*`).join(",")}))&order=${order}&limit=4`);
-    const byContent = await q(`${SELECT}&and=(${lf},${cap},or(${ors}))&order=${order}&limit=6`);
+    const byTitle = await q(`${SELECT}&and=(${lf},or(${terms.map((t) => `title.ilike.*${t}*`).join(",")}))&order=${order}&limit=4`, key);
+    const byContent = await q(`${SELECT}&and=(${lf},${cap},or(${ors}))&order=${order}&limit=6`, key);
     const seen = new Set<string>();
     for (const r of [...byTitle, ...byContent]) {
       if (r?.title && !seen.has(r.title)) { seen.add(r.title); hits.push(r); }
     }
   }
   if (!hits.length) {
-    hits = await q(`${SELECT}&and=(${lf},${cap})&order=updated_at.desc&limit=3`);
+    hits = await q(`${SELECT}&and=(${lf},${cap})&order=updated_at.desc&limit=3`, key);
   }
   hits = hits.filter((n) => !TWIN_EXCLUDE_TITLES.has(n.title));
 
