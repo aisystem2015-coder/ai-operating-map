@@ -375,27 +375,51 @@ async function retrieve(q: string, level = 0) {
     const cand = (await get(
       `${sel}&and=(${scope},${cap},or(${anyMatch}))&order=char_count.asc&limit=40`, key)) || [];
     const uniqTs = Array.from(new Set(ts.map((t) => fold(t.toLowerCase()))));
-    const score = (n: { title?: string; content?: string }) => {
+    const score = (n: { title?: string; content?: string; char_count?: number }) => {
       const t = fold((n.title || "").toLowerCase());
       const c = fold((n.content || "").toLowerCase());
+      // Density: a term in a 400-char note is far more on-topic than the same
+      // term in a 20k-char note that mentions everything. Without this, mega
+      // activity logs bury the small focused note that actually answers — which
+      // is how a locked journal entry went unretrieved (1 sep 2026).
+      const cc = n.char_count || c.length || 1;
+      const perContentHit = cc < 2000 ? 3 : cc < 8000 ? 2 : 1;
       let s = 0;
       for (const term of uniqTs) {
         if (t.includes(term)) s += 5;
-        if (c.includes(term)) s += 2;
+        if (c.includes(term)) s += perContentHit;
       }
+      // Journal topic notes (Temas/<T>/Diario…) are the curated per-topic log —
+      // give them a nudge so a health question surfaces the health journal.
+      if (/^diario\b/i.test(n.title || "") || /bloqueado/i.test(n.title || "")) s += 4;
       return s;
     };
-    const byContent = (cand as { title: string; content: string; updated_at?: string }[])
+    const byContent = (cand as { title: string; content: string; updated_at?: string; char_count?: number }[])
       .map((n) => ({ n, s: score(n) }))
       .filter((x) => x.s > 0)
-      .sort((a, b) => b.s - a.s || (a.n.content || "").length - (b.n.content || "").length)
+      .sort((a, b) => b.s - a.s || (a.n.char_count || (a.n.content || "").length) - (b.n.char_count || (b.n.content || "").length))
       .slice(0, 8)
       .map((x) => x.n);
+    // Encrypted N4 notes: Postgres indexes the ciphertext, so `content.ilike`
+    // can never match a query word inside them. At level 4, pull every
+    // in-scope encrypted note (the "TWIN-L4-ENC" marker is always plaintext),
+    // decrypt in memory, and keep the ones a query term actually hits. Few N4
+    // notes exist and this path is Francisco-only, so the KDF cost is fine.
+    let encHits: { title: string; content: string; updated_at?: string }[] = [];
+    if (level >= 4) {
+      const encNotes = (await get(
+        `${sel}&and=(${scope},content.ilike.*TWIN-L4-ENC*)&limit=25`, key)) || [];
+      for (const n of encNotes as { title: string; content: string; updated_at?: string }[]) {
+        const plain = await decryptL4Blocks(n.content, LEVEL_PASSWORDS[4]);
+        const fc = fold(plain.toLowerCase());
+        if (uniqTs.some((term) => fc.includes(term))) encHits.push({ ...n, content: plain });
+      }
+    }
     const seen = new Set<string>();
     const merged: { title: string; content: string; updated_at?: string }[] = [];
     // currentState first so it survives the slice(0, 5) below — a truncation
     // that drops the "what's true now" note is exactly the failure this fixes.
-    for (const r of filterExcluded([...currentState, ...byTitle, ...byContent])) {
+    for (const r of filterExcluded([...currentState, ...encHits, ...byTitle, ...byContent])) {
       if (r && r.title && !seen.has(r.title)) { seen.add(r.title); merged.push(r); }
     }
     if (merged.length) return render(merged.slice(0, 5), ts);

@@ -227,14 +227,20 @@ export async function retrieve(question: string, maxLevel: number): Promise<stri
     const score = (n: Note) => {
       const t = fold((n.title || "").toLowerCase());
       const c = fold((n.content || "").toLowerCase());
+      // Density: a term in a 400-char note beats the same term in a 20k-char
+      // note that mentions everything (1 sep 2026 — a locked journal note went
+      // unretrieved because mega activity logs outscored it on raw hit count).
+      const cc = n.char_count || c.length || 1;
+      const perContentHit = cc < 2000 ? 3 : cc < 8000 ? 2 : 1;
       let s = 0;
-      for (const term of uniqTerms) { if (t.includes(term)) s += 5; if (c.includes(term)) s += 2; }
+      for (const term of uniqTerms) { if (t.includes(term)) s += 5; if (c.includes(term)) s += perContentHit; }
+      if (/^diario\b/i.test(n.title || "") || /bloqueado/i.test(n.title || "")) s += 4;
       return s;
     };
     const byContent = cand
       .map((n) => ({ n, s: score(n) }))
       .filter((x) => x.s > 0)
-      .sort((a, b) => b.s - a.s || (a.n.content || "").length - (b.n.content || "").length)
+      .sort((a, b) => b.s - a.s || (a.n.char_count || (a.n.content || "").length) - (b.n.char_count || (b.n.content || "").length))
       .slice(0, 8)
       .map((x) => x.n);
     const seen = new Set<string>();
