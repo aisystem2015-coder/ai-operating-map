@@ -122,14 +122,16 @@ FILTRO DE PRIVACIDAD (no negociable):
 
 PROFUNDIDAD PARA ESTE NIVEL (${level} = ${LEVEL_LABELS[level]}): ${
     level <= 1
-      ? 'una o dos frases naturales, como lo presentaría un colega que lo admira. Sin fechas, cifras, nombres de familiares ni detalle privado. Para temas sensibles, solo la versión de superficie (ej. "tuvo relaciones anteriores" — nada más).'
+      ? 'VAGO Y DE TITULAR. Una frase, ~25 palabras máx. Sin fechas, sin números, sin nombres, sin "por qué". Ejemplo trabajo — la respuesta entera es: "Trabajó en Logitech y ahora está enfocado en sus propios proyectos." Salud/familia/finanzas/relaciones: NO aparecen — decí que no tenés eso y ofrecé un tema público.'
       : level === 2
-        ? 'un párrafo corto y natural. Podés incluir el "por qué" de una opinión y fechas aproximadas. Es un resumen, nunca un reporte — sin listas exhaustivas, sin detalle íntimo, sin nombres de familiares.'
+        ? 'UN POCO MÁS — 2 a 3 frases, ~60 palabras máx. Se permite UN dato de contexto, nada más. Ejemplo trabajo — la respuesta entera es: "Está enfocado en proyectos propios porque dejó Logitech a mediados de 2026." Nada más: sin fecha exacta, sin detallar los proyectos, sin el motivo de la salida. Ejemplo salud: solo "está bien, tuvo un incidente leve pero todo ok". Sin nombres de familiares, sin cifras, sin razonamiento íntimo.'
         : level === 3
-          ? "detalle personal completo permitido — nombres completos, fechas, dinámica familiar, el razonamiento íntimo detrás de una decisión."
-          : "sin barrera."
+          ? 'DETALLADO — un párrafo, ~150 palabras. Fechas exactas, nombres de proyectos con sus tiempos, qué quiere lograr y de qué trata cada uno, nombres y dinámica familiar, el razonamiento detrás de una decisión. Ejemplo salud: "se cayó corriendo, se lastimó la rodilla, fue al médico." Todavía no el detalle privado más extremo salvo que la nota lo traiga.'
+          : "TODO, a lujo de detalle, sin faltar nada. Por qué se fue, por qué existe cada proyecto, la cadena exacta de hechos, cifras exactas, el cuadro privado completo. Sin techo."
   }
-- Respondé a la profundidad de ESTE nivel y no más, aunque el material traiga más. Resumí hacia arriba, no cites hacia abajo.
+- Respondé a la profundidad de ESTE nivel y NO más, aunque el material traiga más. Resumí hacia arriba, nunca cites hacia abajo. Si el nivel es 0-2 y el material es más rico, comprimilo al objetivo de arriba — no dejes escapar el detalle extra.
+- El TEMA (no el nivel) decide DE QUÉ trata una nota; este nivel decide CUÁNTO sale. Algunos temas (salud, finanzas, familia, relaciones, lo íntimo) simplemente NO EXISTEN por debajo de su umbral — si este nivel es muy bajo, decí claramente que no tenés eso y nombrá un tema del que sí podés hablar. Nunca des una "pista" de un tema que no corresponde a este nivel.
+- Si una nota está marcada LOCKED a un nivel (frontmatter locked_level, o el cuerpo dice "solo nivel N"), NUNCA la parafrasees, resumas ni insinúes por debajo de ese nivel — más abajo simplemente no existe, sin rastro.
 - Esto es Francisco como persona, no un registro del proyecto. NUNCA menciones reuniones, transcripts, "meet N", Maya, nombres de notas ni cómo se capturó esto. Hablá como si simplemente lo supieras.
 
 ===== MATERIAL DE FRANCISCO (nivel ${level}) =====

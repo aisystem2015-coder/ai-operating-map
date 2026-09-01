@@ -287,18 +287,55 @@ function levelScope(level: number) {
   return `or(access_level.lte.${level},access_level.is.null),${persona}`;
 }
 
+// Depth model v2 (Maya, 1 sep 2026). The SAME topic is told with more or less
+// detail per level — information is organised by TOPIC, the level only controls
+// how much of it comes out and how it's phrased. Calibrated against her two
+// worked examples (work / health) so the model has a concrete target, not just
+// an adjective.
 function levelDepthInstructions(level: number): string {
   const per: Record<number, string> = {
-    0: 'one or two natural sentences, the way a colleague who admires him would introduce him. No dates, no figures, no family names, no private detail. For any sensitive topic give only its most surface version (e.g. "he has had past relationships" — nothing more).',
-    1: 'one or two natural sentences, the way a colleague who admires him would introduce him. No dates, no figures, no family names, no private detail. For any sensitive topic give only its most surface version (e.g. "he has had past relationships" — nothing more).',
-    2: 'a short, natural paragraph. You may include the "why" behind an opinion and approximate timeframes ("in mid-2026"). Still a summary, never a report — no exhaustive lists, no drilling into intimate detail, no family names.',
-    3: "full personal detail is allowed — full names, dates, family dynamics, the intimate reasoning behind a decision.",
-    4: "no barrier.",
+    0: `VAGUE AND HEADLINE ONLY. One sentence, ~25 words max. No dates, no numbers, no names, no "why". `
+      + `Work example — the whole answer is: "He worked at Logitech and is now focused on his own projects." `
+      + `Health/family/finances/relationships: do NOT surface at all — say you don't have that and offer a public topic.`,
+    1: `VAGUE AND HEADLINE ONLY. One sentence, ~25 words max. No dates, no numbers, no names, no "why". `
+      + `Work example — the whole answer is: "He worked at Logitech and is now focused on his own projects." `
+      + `Health/family/finances/relationships: do NOT surface at all — say you don't have that and offer a public topic.`,
+    2: `A LITTLE MORE — 2 to 3 sentences, ~60 words max. One piece of context is allowed, nothing beyond it. `
+      + `Work example — the whole answer is: "He's focused on specific projects of his own because he left `
+      + `Logitech around mid-2026." Nothing more — no exact date, no project deep-dive, no reason for leaving. `
+      + `Health example: only "he's fine — had a minor issue but everything's OK". No specifics. `
+      + `No family names, no figures, no intimate reasoning.`,
+    3: `DETAILED — a full paragraph, ~150 words. Exact dates, project names with their timeframes, what he's `
+      + `trying to achieve and roughly what each project is about, family names and dynamics, the reasoning `
+      + `behind a decision. Health example: "he fell while running, hurt his knee, saw a doctor." Still not the `
+      + `most extreme private detail unless the note itself carries it.`,
+    4: `EVERYTHING, in full detail, nothing left out. Why he left, why each project exists, the specific `
+      + `chain of events, exact figures, the full private picture. No ceiling.`,
   };
   return `DEPTH FOR THIS LEVEL (${level}): ${per[level] ?? per[2]}
-- Answer at the depth of THIS level and no deeper, even if the CONTEXT contains more. Summarize UP, never quote down.
-- This is Francisco as a person, not a project log. NEVER mention meetings, transcripts, "meet N", a collaborator named Maya, note titles, or how any of this was captured — speak as if you simply know him.`;
+${DEPTH_HARD_RULES}`;
 }
+
+// Belt-and-suspenders: the model does not always obey a word ceiling. Levels
+// 0-2 are hard-capped by trimming to whole sentences within the limit; 3-4 pass
+// through. This can't add detail the level forbids, only remove overrun.
+const WORD_CAP: Record<number, number> = { 0: 35, 1: 35, 2: 75, 3: 220 };
+function capForLevel(text: string, level: number): string {
+  const cap = WORD_CAP[level];
+  if (!cap) return text;
+  const words = text.split(/\s+/);
+  if (words.length <= cap) return text;
+  const trimmed = words.slice(0, cap).join(" ");
+  const lastStop = Math.max(trimmed.lastIndexOf(". "), trimmed.lastIndexOf("! "), trimmed.lastIndexOf("? "));
+  return (lastStop > 40 ? trimmed.slice(0, lastStop + 1) : trimmed.replace(/[,;:\s]+$/, "") + "…");
+}
+
+const DEPTH_HARD_RULES = `
+HARD RULES:
+- Answer at THIS level's depth and NO deeper, even when the CONTEXT contains more. Summarize UP, never quote down. If the level is 0-2 and the CONTEXT is richer, compress it to the target above — do not leak the extra detail.
+- Topic, not level, decides WHAT a note is about; this level decides HOW MUCH comes out. Some topics (health, finances, family, relationships, anything intimate) simply DO NOT EXIST below their threshold — when this level is too low, say plainly you don't have that and name a topic you can talk about. Never give a "hint" of a topic that shouldn't appear at this level.
+- If a note is marked LOCKED to a level (frontmatter locked_level, or the body says "solo nivel N"), it must NEVER be paraphrased, summarized, or hinted at below that level — at a lower level it is simply absent, with no trace.
+- This is Francisco as a person, not a project log. NEVER mention meetings, transcripts, "meet N", a collaborator named Maya, note titles, or how any of this was captured — speak as if you simply know him.`;
 
 const SELECT_COLS =
   `${SUPABASE_URL}/rest/v1/vault_notes?select=title,folder,content,access_level,updated_at,char_count`;
@@ -647,7 +684,7 @@ ${context || "(no public notes matched)"}
     // pregunta fallida. 1400 da margen real al modelo que gasta tokens razonando
     // sin convertir un fallo en el 5% del presupuesto del día.
     if (!reply) reply = await ask(MODEL, 1400);
-    if (reply) return NextResponse.json({ reply, connected: true });
+    if (reply) return NextResponse.json({ reply: capForLevel(reply, level), connected: true });
 
     // Generation unavailable. Answer from the curated set if the question is one
     // of the common ones, and say plainly that the live twin is down rather than
