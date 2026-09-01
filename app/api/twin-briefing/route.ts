@@ -50,7 +50,10 @@ export async function GET(req: NextRequest) {
     q("twin_questions", `select=ts,question,level,surface&order=ts.desc&limit=15`, readKey),
     q("vault_notes", `select=path&limit=100000`, readKey),
     q("vault_notes", `select=updated_at&order=updated_at.desc&limit=1`, readKey),
-    fetch(new URL("/api/twin-cloud?health=1", req.url).toString(), { cache: "no-store" })
+    // Absolute URL, not `new URL("/api/...", req.url)` — an edge function
+    // fetching its own same-deployment relative path doesn't reliably resolve
+    // the alias and came back "unreachable". The cron only runs on production.
+    fetch("https://aioperatingmappackage.vercel.app/api/twin-cloud?health=1", { cache: "no-store" })
       .then((r) => r.json())
       .catch(() => ({ health: false, degraded: true, reason: "health check unreachable" })),
   ]);
