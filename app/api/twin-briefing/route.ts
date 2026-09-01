@@ -56,7 +56,10 @@ export async function GET(req: NextRequest) {
     fetch("https://aioperatingmappackage.vercel.app/api/twin-cloud?health=1", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: "{}",
+      // a non-empty message is required — twin-cloud returns early on "" BEFORE
+      // the ?health=1 short-circuit. healthCheck ignores the text; it's a
+      // 1-token ping, not a generation.
+      body: JSON.stringify({ message: "health" }),
       cache: "no-store",
     })
       .then((r) => r.json())
