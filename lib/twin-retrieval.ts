@@ -40,6 +40,29 @@ const UNCLASSIFIED_MIN_LEVEL = 2;
  */
 const PERSONA_FOLDER = "05 - Contexto Fran";
 
+/**
+ * 3b-1: notes that live in the persona folder but are meta / tooling / project
+ * logistics, not Francisco-the-person. Filtered out AFTER fetch (a post-filter
+ * dodges PostgREST `not.in` quoting inside `and()`). Mirrors brain_retrieve.py.
+ */
+const TWIN_EXCLUDE_TITLES = new Set([
+  "Datos Actuales — Mac mini y Stack",
+  "Niveles de Acceso del Twin",
+  "Qué es el Digital Twin — Industria y Síntesis para Francisco",
+  "README — Índice y Metodología",
+  "README — Adjuntos",
+  "Índice — Contexto Fran",
+  "Temas — Indice",
+  "Diario de Voz — Diseño del Pipeline",
+  "Finanzas — Log de Costos API",
+  "Wispr Flow — Índice",
+  "Wispr Flow — Dictados Técnicos (VSCode)",
+  "Documentos Sin Categorizar",
+  "Relacion con Maya",
+  "2026-08-21", "2026-08-22", "2026-08-23",
+  "2026-08-24", "2026-08-25", "2026-08-26",
+]);
+
 const MAX_NOTE_CHARS = 2200;
 const MAX_TOTAL_CHARS = 24000; // measured optimum, see brain_retrieve.py
 const CORE_MAX_PER_NOTE = 2600;
@@ -179,6 +202,7 @@ export async function retrieve(question: string, maxLevel: number): Promise<stri
   if (!hits.length) {
     hits = await q(`${SELECT}&and=(${lf},${cap})&order=updated_at.desc&limit=3`);
   }
+  hits = hits.filter((n) => !TWIN_EXCLUDE_TITLES.has(n.title));
 
   const parts: string[] = [];
   if (core) {

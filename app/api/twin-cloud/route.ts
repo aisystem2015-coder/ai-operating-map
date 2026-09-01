@@ -198,7 +198,7 @@ const NOT_A_TOPIC = ["README", "Índice", "Indice", "Adjuntos"];
 async function offerableTopics(sel: string, pub: string): Promise<string[]> {
   const rows = (await get(
     `${sel}&and=(${pub})&order=char_count.desc&limit=20`)) || [];
-  return rows
+  return filterExcluded(rows)
     .map((r: { title: string }) => r.title)
     .filter((t: string) => t && !NOT_A_TOPIC.some((bad) => t.includes(bad)))
     .slice(0, 6);
@@ -223,6 +223,28 @@ async function offerableTopics(sel: string, pub: string): Promise<string[]> {
 // Drive-mirror ("09 - Drive Sync" = meeting transcripts + sprint docs), which is
 // what used to make the twin cite "meet 21" / Maya.
 const PERSONA_FOLDER = "05 - Contexto Fran";
+
+// 3b-1: meta/tooling notes inside the persona folder that the twin must not
+// surface. Post-fetch filter (see filterExcluded), mirrors brain_retrieve.py.
+const TWIN_EXCLUDE_TITLES = new Set([
+  "Datos Actuales — Mac mini y Stack",
+  "Niveles de Acceso del Twin",
+  "Qué es el Digital Twin — Industria y Síntesis para Francisco",
+  "README — Índice y Metodología",
+  "README — Adjuntos",
+  "Índice — Contexto Fran",
+  "Temas — Indice",
+  "Diario de Voz — Diseño del Pipeline",
+  "Finanzas — Log de Costos API",
+  "Wispr Flow — Índice",
+  "Wispr Flow — Dictados Técnicos (VSCode)",
+  "Documentos Sin Categorizar",
+  "Relacion con Maya",
+  "2026-08-21", "2026-08-22", "2026-08-23",
+  "2026-08-24", "2026-08-25", "2026-08-26",
+]);
+const filterExcluded = <T extends { title: string }>(rows: T[]) =>
+  (rows || []).filter((r) => !TWIN_EXCLUDE_TITLES.has(r.title));
 
 function publicFilter() {
   return `access_level.lte.1,folder.eq.${encodeURIComponent(PERSONA_FOLDER)}`;
@@ -259,7 +281,7 @@ async function retrieve(q: string) {
     const merged: { title: string; content: string; updated_at?: string }[] = [];
     // currentState first so it survives the slice(0, 5) below — a truncation
     // that drops the "what's true now" note is exactly the failure this fixes.
-    for (const r of [...currentState, ...byTitle, ...byContent]) {
+    for (const r of filterExcluded([...currentState, ...byTitle, ...byContent])) {
       if (r && r.title && !seen.has(r.title)) { seen.add(r.title); merged.push(r); }
     }
     if (merged.length) return render(merged.slice(0, 5), ts);
@@ -267,7 +289,7 @@ async function retrieve(q: string) {
   // Nothing matched (or a pure "what's the latest" question): newest focused
   // public notes beat an empty context, which is what made the twin improvise.
   const recent = await get(`${sel}&and=(${pub},${cap})&order=updated_at.desc&limit=3`);
-  const tail = [...currentState, ...(recent || [])];
+  const tail = filterExcluded([...currentState, ...(recent || [])]);
   return tail.length ? render(tail.slice(0, 4), ts) : "";
 }
 
