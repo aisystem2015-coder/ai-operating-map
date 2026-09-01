@@ -346,11 +346,18 @@ ${DEPTH_HARD_RULES}`;
 // (bloqueado)…"). Strip those phrases from the finished reply.
 function scrubReply(text: string): string {
   return text
-    .replace(/\b(?:en|seg[uú]n)\s+(?:su|el|mi)\s+diario(?:\s+de\s+nivel\s*\d)?(?:\s*\(bloqueado\))?[,:]?\s*/gi, "")
+    // "en/según su diario (de nivel 3) (bloqueado)…", "en/según la(s) nota(s)/
+    // apuntes/registros (que tomó ese día)…", "en su entrada del …"
+    .replace(/\b(?:en|seg[uú]n)\s+(?:su|el|la|mi|sus|las|mis)\s+(?:diario|notas?|apuntes?|registros?|entradas?)(?:\s+de\s+nivel\s*\d)?(?:\s*\(bloqueado\))?(?:\s+(?:que\s+(?:tom[oó]|escrib[ií][oó]|hizo)|del?)\s+[^,.;:]{0,40})?[,:]?\s*/gi, "")
     .replace(/\b(?:una?\s+)?(?:nota|entrada)\s+(?:de\s+nivel\s*\d\s*)?(?:bloqueada|marcada como bloqueada)[,:]?\s*/gi, "")
-    .replace(/\b(?:est[aá]|figura)\s+(?:guardad[oa]|registrad[oa])\s+en\s+nivel\s*\d[,:]?\s*/gi, "")
+    .replace(/\b(?:est[aá]|figura|qued[oó])\s+(?:guardad[oa]|registrad[oa]|anotad[oa])\s+en\s+(?:el\s+)?nivel\s*\d[,:]?\s*/gi, "")
+    .replace(/,?\s*seg[uú]n\s+(?:lo\s+que\s+)?(?:anot[oó]|escribi[oó]|registr[oó])[^,.;:]{0,30}/gi, "")
     .replace(/\s{2,}/g, " ")
+    .replace(/\s+([,.;:])/g, "$1")
+    .replace(/([,;:])\s*([,.;:])/g, "$2")
+    .replace(/\s+\./g, ".")
     .replace(/^\s*[,.:;]\s*/, "")
+    .replace(/^([a-záéíóúñ])/, (m) => m.toUpperCase())
     .trim();
 }
 
